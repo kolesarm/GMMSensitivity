@@ -1,0 +1,181 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>MATLAB xUnit Test Framework: How to Write xUnit-Style Tests by Subclassing TestCase</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-02-20"><meta name="DC.source" content="exTestCase.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1><a href="../index.html">MATLAB xUnit Test Framework</a>: How to Write xUnit-Style Tests by Subclassing TestCase</h1><p>The MATLAB xUnit architecture is based closely on the xUnit style, in which each test case is an instance of a subclass of the base TestCase class.  Programmers who are familiar with this style may want to write their own TestCase subclasses instead of using <a href="./exSubfunctionTests.html">subfunction-based tests</a>.</p><p>This example shows a TestCase subclass containing test case methods and test fixture methods.  If you are not familiar with defining your own classes in MATLAB, you might want to review the MATLAB documentation on <a href="http://www.mathworks.com/access/helpdesk/help/techdoc/matlab_oop/ug_intropage.html">classes and object-oriented programming</a>, or you can simply stick to using subfunction-based tests.</p><p>The sample M-file begins with the <tt>classdef</tt> statement, which sets the name of the class and indicates that it is a subclass of <tt>TestCase</tt>.</p><pre class="codeinput">cd <span class="string">examples_general</span>
+dbtype <span class="string">TestUsingTestCase</span> <span class="string">1</span>
+</pre><pre class="codeoutput">
+1     classdef TestUsingTestCase &lt; TestCase
+
+</pre><p>The properties block contains a field that is initialized by the setup method and is used by the two test methods.</p><pre class="codeinput">dbtype <span class="string">TestUsingTestCase</span> <span class="string">3:5</span>
+</pre><pre class="codeoutput">
+3         properties
+4             fh
+5         end
+
+</pre><p>The first method in the methods block is the constructor.  It takes the desired test method name as its input argument, and it passes that input along to the base class constructor.</p><pre class="codeinput">dbtype <span class="string">TestUsingTestCase</span> <span class="string">7:10</span>
+</pre><pre class="codeoutput">
+7         methods
+8             function self = TestUsingTestCase(name)
+9                 self = self@TestCase(name);
+10            end
+
+</pre><p>The <tt>setUp</tt> method creates a figure window and stores its handle in the field <tt>fh</tt>.</p><pre class="codeinput">dbtype <span class="string">TestUsingTestCase</span> <span class="string">12:14</span>
+</pre><pre class="codeoutput">
+12            function setUp(self)
+13                self.fh = figure;
+14            end
+
+</pre><p>Test methods are those beginning with "test".</p><pre class="codeinput">dbtype <span class="string">TestUsingTestCase</span> <span class="string">20:26</span>
+</pre><pre class="codeoutput">
+20            function testColormapColumns(self)
+21                assertEqual(size(get(self.fh, 'Colormap'), 2), 3);
+22            end
+23    
+24            function testPointer(self)
+25                assertEqual(get(self.fh, 'Pointer'), 'arrow');
+26            end
+
+</pre><p>The <tt>tearDown</tt> method cleans up by deleting the figure window.</p><pre class="codeinput">dbtype <span class="string">TestUsingTestCase</span> <span class="string">16:18</span>
+</pre><pre class="codeoutput">
+16            function tearDown(self)
+17                delete(self.fh);
+18            end
+
+</pre><p>Run the test cases in the class by calling <tt>runxunit</tt> with the name of the class.</p><pre class="codeinput">runxunit <span class="string">TestUsingTestCase</span>
+</pre><pre class="codeoutput">Test suite: TestUsingTestCase
+Test suite location: C:\Users\psexton\Documents\GitHub\matlab-xunit-doctest\doc\examples_general\TestUsingTestCase.m
+20-Feb-2014 19:59:09
+
+Starting test run with 2 test cases.
+..
+PASSED in 0.123 seconds.
+</pre><p><a href="../index.html">Back to MATLAB xUnit Test Framework</a></p><p class="footer">Copyright 2008-2010 The MathWorks, Inc.<br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% <../index.html MATLAB xUnit Test Framework>: How to Write xUnit-Style Tests by Subclassing TestCase
+% The MATLAB xUnit architecture is based closely on the xUnit style, in
+% which each test case is an instance of a subclass of the base
+% TestCase class.  Programmers who are familiar with this style may
+% want to write their own TestCase subclasses instead of using
+% <./exSubfunctionTests.html subfunction-based tests>.
+%
+% This example shows a TestCase subclass containing test case
+% methods and test fixture methods.  If you are not familiar with
+% defining your own classes in MATLAB, you might want to review the
+% MATLAB documentation on 
+% <http://www.mathworks.com/access/helpdesk/help/techdoc/matlab_oop/ug_intropage.html 
+% classes and object-oriented programming>,
+% or you can simply stick to using subfunction-based tests.
+%
+% The sample M-file begins with the |classdef| statement, which sets
+% the name of the class and indicates that it is a subclass of
+% |TestCase|.
+
+cd examples_general
+dbtype TestUsingTestCase 1
+
+%%
+% The properties block contains a field that is initialized by the
+% setup method and is used by the two test methods.
+
+dbtype TestUsingTestCase 3:5
+
+%%
+% The first method in the methods block is the constructor.  It
+% takes the desired test method name as its input argument, and it
+% passes that input along to the base class constructor.
+
+dbtype TestUsingTestCase 7:10
+
+%%
+% The |setUp| method creates a figure window and stores its handle in
+% the field |fh|.
+
+dbtype TestUsingTestCase 12:14
+
+%%
+% Test methods are those beginning with "test".
+
+dbtype TestUsingTestCase 20:26
+
+%%
+% The |tearDown| method cleans up by deleting the figure window.
+
+dbtype TestUsingTestCase 16:18
+
+%%
+% Run the test cases in the class by calling |runxunit| with the name
+% of the class.
+
+runxunit TestUsingTestCase
+
+%%
+% <../index.html Back to MATLAB xUnit Test Framework>
+
+%%
+% Copyright 2008-2010 The MathWorks, Inc.
+##### SOURCE END #####
+--></body></html>

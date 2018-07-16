@@ -1,0 +1,23 @@
+Test suite: test
+Test suite location: /Users/leviboxell/Desktop/gslab_model/test/../test
+24-Apr-2017 12:50:11
+
+
+test
+
+   testExampleData
+      testExampleData ....................................... passed in     2.218000 seconds
+   testExampleData .......................................... passed in     2.221500 seconds
+
+
+   testExampleModel
+      testExampleModel ...................................... passed in     1.734095 seconds
+   testExampleModel ......................................... passed in     1.736930 seconds
+
+
+   testSave_Load
+      testSave_Load ......................................... passed in     2.352977 seconds
+   testSave_Load ............................................ passed in     2.357923 seconds
+
+test ........................................................ passed in     6.446961 seconds
+

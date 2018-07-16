@@ -1,0 +1,10 @@
+rev	dir	file	outdir	outfile	notes
+35729	%svn%/lib/third_party/matlab_xunit/	*	/lib/third_party/matlab_xunit/	""""
+35729	%svn%/lib/matlab/gslab_model/	*	/matlab/gslab_model/	""""
+35729	%svn%/lib/matlab/numerical_derivatives/	*	/matlab/numerical_derivatives/	""""
+35729	%svn%/lib/c/gslab_misc/	*	/matlab/gslab_misc_c/	""""
+35729	%svn%/lib/stata/gslab_misc/	*	/stata/gslab_misc/	""""
+35729	%svn%/lib/matlab/gslab_model/data	*	/data/	""""
+35729	%svn%/lib/matlab/gslab_misc/	*	/matlab/gslab_misc/	""""
+
+

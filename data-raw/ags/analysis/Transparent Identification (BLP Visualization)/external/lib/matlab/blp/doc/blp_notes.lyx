@@ -1,0 +1,1971 @@
+#LyX 2.2 created this file. For more info see http://www.lyx.org/
+\lyxformat 508
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\begin_preamble
+\usepackage{setspace}
+\usepackage[labelfont=bf]{caption}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{datetime}
+
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\Corr}{Corr}
+\DeclareMathOperator{\Cov}{Cov}
+\DeclareMathOperator{\E}{E}
+\DeclareMathOperator{\logit}{logit}
+\DeclareMathOperator{\I}{I}
+
+\DeclareMathOperator*{\argmax}{arg\,max} 
+\end_preamble
+\options leqno
+\use_default_options false
+\begin_modules
+theorems-ams
+\end_modules
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "times" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\float_placement H
+\paperfontsize 11
+\spacing other 1.1299999999999999
+\use_hyperref true
+\pdf_bookmarks false
+\pdf_bookmarksnumbered false
+\pdf_bookmarksopen false
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks false
+\pdf_pdfborder true
+\pdf_colorlinks true
+\pdf_backref false
+\pdf_pdfusetitle true
+\papersize default
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 0
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 0
+\use_package mhchem 1
+\use_package stackrel 0
+\use_package stmaryrd 0
+\use_package undertilde 0
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 1in
+\topmargin 1in
+\rightmargin 1in
+\bottommargin 1in
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Section
+Setup
+\end_layout
+
+\begin_layout Standard
+This document serves as a companion text to BLP (1995) by focusing only
+ on implementation matters and making those details more explicit.
+ Our notation follows that of BLP (1995) until section 2.3, at which point
+ we depart from their notation for clarity.
+\end_layout
+
+\begin_layout Standard
+Throughout the creation of this library, we made a number of choices over
+ implementation details when the correct option was ambiguous.
+ In these cases we consider both the details provided in BLP (1995) and
+ the methods found in BLP (1999) code.
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Accessed on July 16, 2014 via Archive.org's cached version: https://web.archive.org
+/web/20050430123542/http://www-personal.umich.edu/~jamesl/verstuff/instructions.htm
+l
+\end_layout
+
+\end_inset
+
+ See 
+\begin_inset CommandInset href
+LatexCommand href
+name "this Confluence page"
+target "https://confluence.chicagobooth.edu/x/RwIEAQ"
+
+\end_inset
+
+ for details about these choices.
+ This document will make note of instances where we purposefully depart
+ from details stated in BLP (1995).
+\end_layout
+
+\begin_layout Subsection
+\noindent
+Raw Inputs
+\end_layout
+
+\begin_layout Standard
+To begin, suppose we have 
+\begin_inset Formula $n$
+\end_inset
+
+ cars and 
+\begin_inset Formula $n_{m}$
+\end_inset
+
+ car models, each with 
+\begin_inset Formula $K$
+\end_inset
+
+ demand-side attributes 
+\begin_inset Formula $x$
+\end_inset
+
+ and some supply-side attributes 
+\begin_inset Formula $w$
+\end_inset
+
+.
+ In the BLP (1995) data set, 
+\begin_inset Formula $n=2217$
+\end_inset
+
+, 
+\begin_inset Formula $n_{m}=999$
+\end_inset
+
+,
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+BLP (1995) mention that they use 997 models (see p.
+ 869), but BLP (1999) code returns 999 models instead.
+\end_layout
+
+\end_inset
+
+ and 
+\begin_inset Formula $K=5$
+\end_inset
+
+ (constant, horsepower/weight, air conditioning standard, miles/dollar,
+ and space).
+ The supply-side attributes are a constant, log of horsepower/weight, air
+ conditioning, log of miles/gallon, log of space, and a time trend.
+ There are a total of 20 independent markets in the data, each of which
+ corresponds to a year between 1971 and 1990.
+ We index markets by 
+\begin_inset Formula $t$
+\end_inset
+
+, cars within each market by 
+\begin_inset Formula $j$
+\end_inset
+
+ (so that a market-car will have index 
+\begin_inset Formula $tj$
+\end_inset
+
+), car models by 
+\begin_inset Formula $m$
+\end_inset
+
+, and individuals (unobservables) by 
+\begin_inset Formula $i$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\noindent
+
+\series bold
+Firm/Model data:
+\series default
+
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+See derived/Transparent Identification (BLP Extract Data) which is mostly
+ a copy of the from BLP (1999) and only modifies it to save the variables
+ and modify Japan definition.
+\end_layout
+
+\end_inset
+
+ Using the BLP (1999) replication code and data, we are able to extract
+ the following variables for each of the 20 markets from 1971 to 1990: car
+ id, model id, firm id, year, market share, quantity, price, indicators
+ for production location, horsepower per weight, whether air conditioning
+ comes standard, miles per dollar, size of car, miles per gallon, and the
+ logit dependent variable (
+\begin_inset Formula $\text{ln}(s_{j})-\text{ln}(s_{0})$
+\end_inset
+
+).
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+We redefine a car to be from Japan if it is not produced in Europe and not
+ produced domestically in the US.
+ BLP (1999) makes additional restrictions, but our definition matches BLP
+ (1995)'s summary statistics.
+ 
+\end_layout
+
+\end_inset
+
+ All other firm/model variables used are transformations of these base variables.
+ 
+\end_layout
+
+\begin_layout Standard
+\noindent
+
+\series bold
+Unobservables:
+\series default
+
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+See derived/Transparent Identification (BLP Extract Unobservables)
+\end_layout
+
+\end_inset
+
+ For each individual in the model, we draw a vector of 
+\begin_inset Formula $v_{i}=\left(v_{iy},v_{i1}\dots,v_{iK}\right)$
+\end_inset
+
+ unobservables from a standard multivariate normal distribution with identity
+ variance-covariance matrix, where we set 
+\begin_inset Formula $y_{i}=e^{m_{t}+\hat{\sigma}_{y}v_{iy}}$
+\end_inset
+
+.
+ Note that the unobservables are fixed over the time period of the panel
+ (see BLP (1995) p.
+ 868).
+ Define 
+\begin_inset Formula $n_{s}=200$
+\end_inset
+
+ to be the number of unobservables used in simulation.
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+Note that this number matches the discussion in BLP's NBER Working Paper
+ No.
+ 4264, footnote 17.
+ 
+\end_layout
+
+\end_inset
+
+ Importance sampling is done directly in BLP (1999) code, which gives a
+ corresponding importance sampling weight 
+\begin_inset Formula $w_{i}^{u}$
+\end_inset
+
+ for each unobservable 
+\begin_inset Formula $i$
+\end_inset
+
+.
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+Note that importance sampling requires computation of market shares and
+ thus relies on a set of parameter inputs.
+ By default, BLP (1999) code uses a set of parameter guesses, which it also
+ uses as the starting values for estimation.
+ Since we ultimately decided to use BLP (1995) published parameters as our
+ starting values, we have altered BLP (1999) code so that it uses the published
+ parameters for importance sampling instead.
+ Thus, our unobservable draws differ slightly from the default ones from
+ BLP (1999) code.
+ For our bootstrap procedure, we draw 10 sets of 10 unobservables for each
+ year following the same procedure.
+ Then, for each block bootstrap at the market level, we use the first set
+ of unobservables for the first time a market year is selected, the second
+ set of unobservables for the second time a market year is selected, etc.
+ This gives a sample of 200 unobservables that are fixed across the bootstrap
+ panel.
+ We repeat this for each bootstrap iteration.
+ 
+\end_layout
+
+\end_inset
+
+ We use the weight when taking integrals across unobservables.
+ The BLP (1999) code also provides the mean of income for each year 
+\begin_inset Formula $m_{t}$
+\end_inset
+
+ and standard deviation of income 
+\begin_inset Formula $\sigma_{y}$
+\end_inset
+
+ across all years in the sample.
+\end_layout
+
+\begin_layout Subsection
+Utility
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:utility"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Let utility be defined by (see BLP (1995) equation 6.14a) 
+\begin_inset Formula 
+\[
+u_{itj}=\alpha\ln\left(e^{m_{t}+\hat{\sigma}_{y}v_{iy}}-p_{tj}\right)+x_{tj}\overline{\beta}+\xi_{tj}+\sum_{k}\sigma_{k}x_{tjk}v_{ik}+\epsilon_{itj}.
+\]
+
+\end_inset
+
+Note that income is assumed to be log-normal distributed, with parameters
+ 
+\begin_inset Formula $m_{i}$
+\end_inset
+
+ (mean) and 
+\begin_inset Formula $\hat{\sigma}_{y}$
+\end_inset
+
+ (standard deviation) estimated from the March Current Population Survey
+ (CPS) for each year of the panel.
+ We use income parameters extracted from BLP (1999) code.
+ We can separate the utility into a product-specific component that does
+ not vary with consumer characteristics 
+\begin_inset Formula 
+\[
+\delta_{tj}=\delta\left(x_{tj},p_{tj},\xi_{tj};\theta\right)=x_{tj}\overline{\beta}+\xi_{tj}
+\]
+
+\end_inset
+
+and the component that contains interactions between product specific attributes
+ and consumer characteristics 
+\begin_inset Formula 
+\[
+\mu_{itj}=\mu\left(x_{tj},p_{tj},v_{i};\theta\right)=\alpha\ln\left(e^{m_{t}+\hat{\sigma}_{y}v_{iy}}-p_{tj}\right)+\sum_{k}\sigma_{k}x_{tjk}v_{ik}.
+\]
+
+\end_inset
+
+Thus, we can rewrite the utility as 
+\begin_inset Formula 
+\[
+u_{itj}=\delta\left(x_{tj},p_{tj},\xi_{tj};\theta\right)+\mu\left(x_{tj},p_{tj},v_{i};\theta\right)+\epsilon_{itj}.
+\]
+
+\end_inset
+
+In practice, taking the natural log in the income term can result in imaginary
+ numbers.
+ Following BLP (1999) code, we can approximate it with 
+\begin_inset Formula 
+\begin{eqnarray*}
+\alpha\ln\left(e^{m_{t}+\hat{\sigma}_{y}v_{iy}}-p_{tj}\right) & = & \alpha\ln\left(e^{m_{t}+\hat{\sigma}_{y}v_{iy}}\right)+\alpha\ln\left(1-\frac{p_{jt}}{e^{m_{t}+\hat{\sigma}_{y}v_{iy}}}\right)\\
+ & \approx & \alpha\ln\left(e^{m_{t}+\hat{\sigma}_{y}v_{iy}}\right)-\frac{\alpha p_{jt}}{e^{m_{t}+\hat{\sigma}_{y}v_{iy}}}.
+\end{eqnarray*}
+
+\end_inset
+
+Since utility is with respect to the outside good, we can remove the constant
+ 
+\begin_inset Formula $\alpha\ln\left(e^{m_{t}+\hat{\sigma}_{y}v_{iy}}\right)$
+\end_inset
+
+ from the expression,
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+Note that by (BLP (1995) equation 6.14b), utility of the outside good is
+ 
+\begin_inset Formula 
+\[
+u_{i0t}=\alpha\ln\left(e^{m_{t}+\hat{\sigma}_{y}v_{iy}}\right)+\xi_{0t}+\sigma_{0}v_{i0}+\epsilon_{i0t}.
+\]
+
+\end_inset
+
+Removing the 
+\begin_inset Formula $\alpha\ln\left(e^{m_{t}+\hat{\sigma}_{y}v_{iy}}\right)$
+\end_inset
+
+ term from every utility term has the effect of normalizing 
+\begin_inset Formula $u_{i0t}$
+\end_inset
+
+ to 0.
+\end_layout
+
+\end_inset
+
+ leaving us with just the 
+\begin_inset Formula $-\frac{\alpha p_{jt}}{e^{m_{t}+\hat{\sigma}_{y}v_{iy}}}$
+\end_inset
+
+ term.
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+See BLP (1999) code, 
+\noun on
+struc-inst-steve2.arc
+\noun default
+, procedure 
+\noun on
+defdata
+\noun default
+ for confirmation.
+\end_layout
+
+\end_inset
+
+ Thus the utility computed is 
+\begin_inset Formula 
+\[
+u_{itj}=-\frac{\alpha p_{tj}}{e^{m_{t}+\hat{\sigma}_{y}v_{iy}}}+x_{tj}\overline{\beta}+\xi_{tj}+\sum_{k}\sigma_{k}x_{tjk}v_{ik}+\epsilon_{itj}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Instruments
+\end_layout
+
+\begin_layout Standard
+Suppose we have some attribute 
+\begin_inset Formula $x_{j}$
+\end_inset
+
+.
+ Then we define instruments to be the attribute itself, the sum of the attribute
+ for all other cars from the same firm and year (
+\begin_inset Quotes eld
+\end_inset
+
+own
+\begin_inset Quotes erd
+\end_inset
+
+ instruments), and the sum of the attribute for all cars from rival firms
+ in the same year (
+\begin_inset Quotes eld
+\end_inset
+
+all
+\begin_inset Quotes erd
+\end_inset
+
+ instruments).
+ In mathematical notation, they are (see also BLP (1995), section 5.1): 
+\begin_inset Formula 
+\[
+x_{j},\sum_{r\neq j,r\in\left\{ \mbox{firm, year}\right\} }x_{r},\sum_{r\notin\left\{ \mbox{firm}\right\} ,r\in\left\{ \mbox{year}\right\} }x_{r}.
+\]
+
+\end_inset
+
+The 
+\noun on
+BlpData
+\noun default
+ object takes care of these calculations.
+ We do this for each of the 
+\begin_inset Formula $K$
+\end_inset
+
+ demand attributes to generate the demand-side instruments, and each of
+ the supply attributes to generate the supply-side instruments.
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+Based on BLP (1999) code, it appears as if BLP (1995) had a mistake in the
+ implementation of their instruments.
+ When creating `own' firm instruments, instead of summing across a firm's
+ other models, they multiplied the instrument by the number of models the
+ firm was producing.
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+See https://asjira.stanford.edu/jira/browse/TRANS-172?focusedCommentId=1216137&pag
+e=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-1216137
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ For the supply side, we also add as an instrument the excluded demand-side
+ variable, miles / dollar (but not the sums of this variable across other
+ cars).
+\end_layout
+
+\begin_layout Standard
+This set of instruments is likely to be highly collinear.
+ To solve this problem, we remove collinearity as follows (see 
+\noun on
+RemoveCollinearity.m
+\noun default
+ for the implementation): 
+\end_layout
+
+\begin_layout Enumerate
+Choose a 
+\begin_inset Formula $R^{2}$
+\end_inset
+
+ tolerance.
+\end_layout
+
+\begin_layout Enumerate
+Start with the first column in instruments, let this be 
+\begin_inset Formula $x$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+Choose the next column in instruments, let this be 
+\begin_inset Formula $y$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+Regress 
+\begin_inset Formula $y$
+\end_inset
+
+ onto 
+\begin_inset Formula $x$
+\end_inset
+
+.
+ If the 
+\begin_inset Formula $R^{2}$
+\end_inset
+
+ is lower than the tolerance, accept 
+\begin_inset Formula $y$
+\end_inset
+
+ as a new instrument.
+ If the 
+\begin_inset Formula $R^{2}$
+\end_inset
+
+ is higher than the tolerance, drop the column.
+\end_layout
+
+\begin_layout Enumerate
+Redefine 
+\begin_inset Formula $y$
+\end_inset
+
+ to be the next column in instruments, and redefine 
+\begin_inset Formula $x$
+\end_inset
+
+ to be the columns of the accepted instruments.
+\end_layout
+
+\begin_layout Enumerate
+Redo steps 4-6 until all instruments have either been accepted or dropped.
+\end_layout
+
+\begin_layout Standard
+Following BLP (1999) code, we choose a 
+\begin_inset Formula $R^{2}$
+\end_inset
+
+ tolerance of 0.99, and do this collinearity check separately for the demand-
+ and supply-side instruments.
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+Consider 
+\begin_inset Formula $z_{s}^{own}=\{\text{constant, horsepower per weight, air conditioning, miles per dollar, and size\}}$
+\end_inset
+
+ and 
+\begin_inset Formula $z_{d}^{own}=\{{\text{constant, log of horsepower per weight, air conditioning, log of mpg, log of size, and year trends}}\}$
+\end_inset
+
+.
+ For the supply-side instruments, the order is: each element of 
+\begin_inset Formula $z_{s}^{own}$
+\end_inset
+
+ in order, own firm instruments in same order, rival firm instruments in
+ same order, and own miles per dollar.
+ For the demand-side instruments, the order is: each element of 
+\begin_inset Formula $z_{d}^{own}$
+\end_inset
+
+ in order, own firm instruments in same order, and rival firm instruments
+ in same order.
+ 
+\end_layout
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Standard
+In 
+\begin_inset CommandInset href
+LatexCommand href
+name "TRANS-244"
+target "https://jira.chicagobooth.edu/browse/TRANS-244"
+
+\end_inset
+
+, we found that demeaning the instruments has the effect of reducing mechanical
+ correlation among the moments and leads to standardized sensitivities smaller
+ in magnitude.
+ Thus, after removing collinear instruments, we demean all remaining, non-consta
+nt instruments prior to estimation to reduce mechanical correlation among
+ the moments.
+\end_layout
+
+\begin_layout Section
+Evaluation of distance vector 
+\begin_inset Formula $G_{j}\left(\theta,s^{n},P_{n_{s}}\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Solve for mean utility (
+\begin_inset Formula $\delta$
+\end_inset
+
+)
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:mean_utility"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Start with some estimate of 
+\begin_inset Formula $\delta$
+\end_inset
+
+, 
+\begin_inset Formula $\delta^{0}$
+\end_inset
+
+.
+ We use the logit estimate (estimate with no random coefficients)
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+Note that we use the logit estimate as the starting point for 
+\emph on
+every
+\emph default
+ iteration.
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Formula 
+\[
+\delta_{tj}^{0}=\ln\left(s_{tj}^{n}\right)-\ln\left(s_{0}^{n}\right),
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $s^{n}$
+\end_inset
+
+ is the observed vector of sampled market shares, and 
+\begin_inset Formula $s_{0}^{n}$
+\end_inset
+
+ is the outside share.
+ Then use the contraction mapping 
+\begin_inset Formula 
+\[
+\delta_{tj,\mbox{new}}=\delta_{tj,\mbox{prev}}+\ln\left(s_{tj}^{n}\right)-\ln\left[s_{tj}\left(p_{tj},x_{tj},\delta_{tj,\mbox{prev}},P_{n_{s}};\theta\right)\right]
+\]
+
+\end_inset
+
+to solve for 
+\begin_inset Formula $\delta$
+\end_inset
+
+.
+ In each iteration of the contraction mapping, we estimate the market shares
+ as follows.
+ First, compute the individual market shares as (see BLP (1995) equation
+ 6.6) 
+\begin_inset Formula 
+\[
+f\left(v_{i},\delta_{tj},p_{tj},x_{tj};\theta\right)=\frac{e^{\delta_{tj}+\mu\left(x_{tj},p_{tj},v_{i};\theta\right)}}{1+\sum_{j=1}^{J}e^{\delta_{tj}+\mu\left(x_{tj},p_{tj},v_{i};\theta\right)}}.
+\]
+
+\end_inset
+
+Note that each market 
+\begin_inset Formula $t$
+\end_inset
+
+ is treated separately, i.e.
+ the sum in the denominator is taken within each market.
+ BLP (1995) is ambiguous on this treatment across markets,
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+At the beginning of section 5, they make the simplifying assumption that
+ there is only a single cross section of autos in the data.
+ Later details are written with this simplification in mind.
+\end_layout
+
+\end_inset
+
+ but procedures in BLP (1999) code address this ambiguity.
+ Second, integrate out over the distribution of 
+\begin_inset Formula $v$
+\end_inset
+
+ to obtain the market shares conditional only on product attributes.
+ The simulator for this market share is 
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+This mirrors equation 6.13 in BLP(1995) and matches BLP(1999) code.
+\end_layout
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+s\left(p_{tj},x_{tj},\xi_{tj},P_{n_{s}};\theta\right)=\frac{1}{n_{s}}\sum_{i=1}^{n_{s}}f\left(v_{i},\delta_{tj},p_{tj},x_{tj};\theta\right)w_{i}^{u},
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $w_{i}^{u}$
+\end_inset
+
+ is the weight for individual 
+\begin_inset Formula $i$
+\end_inset
+
+ from importance sampling.
+\end_layout
+
+\begin_layout Standard
+The contraction mapping continues until a stopping condition is met.
+ Since the market shares are independent across markets, we can conduct
+ a separate contraction mapping for each market.
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+Indeed, this is what is done in BLP (1999) code.
+ Another advantage of this separation is that the markets can then be done
+ in parallel, which in practice tends to decrease estimation run time by
+ about 5-6x.
+\end_layout
+
+\end_inset
+
+ In each iteration, we obtain vectors 
+\begin_inset Formula $\delta_{tj,\mbox{prev}}$
+\end_inset
+
+ and 
+\begin_inset Formula $\delta_{tj,\mbox{new}}$
+\end_inset
+
+.
+ We continue onto the next iteration unless the following stopping condition
+ is met: 
+\begin_inset Formula 
+\[
+\max_{j}\left(\left|\frac{\delta_{tj,\mbox{prev}}}{\delta_{tj,\mbox{new}}}-1\right|\right)\leq\delta_{\mbox{tol}},
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $\delta_{\mbox{tol}}$
+\end_inset
+
+ is the tolerance, set to 
+\begin_inset Formula $10^{-14}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+Compute marginal cost
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:marginal_cost"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+First, note that the price is additively separable in marginal cost and
+ markup as follows 
+\begin_inset Formula 
+\[
+p=mc+\Delta\left(p,x,\xi;\theta\right)^{-1}s\left(p,x,\xi;\theta\right).
+\]
+
+\end_inset
+
+Let 
+\begin_inset Formula $b\left(p,x,\xi;\theta\right)=\Delta\left(p,x,\xi;\theta\right)^{-1}s\left(p,x,\xi;\theta\right)$
+\end_inset
+
+ be defined as markup.
+ Given markup, we then calculate marginal cost as 
+\begin_inset Formula $mc=p-b\left(p,x,\xi;\theta\right)$
+\end_inset
+
+.
+ Note that 
+\begin_inset Formula $\Delta\left(p,x,\xi;\theta\right)$
+\end_inset
+
+ is a 
+\begin_inset Formula $J$
+\end_inset
+
+ by 
+\begin_inset Formula $J$
+\end_inset
+
+ matrix where whose 
+\begin_inset Formula $\left(j,r\right)$
+\end_inset
+
+ element is (see BLP (1995) equations 6.9a and 6.9b) 
+\begin_inset Formula 
+\[
+\Delta_{jr}=-\begin{cases}
+\int f\left(v_{i},\delta_{j},x_{j},p_{j};\theta\right)\left(1-f\left(v_{i},\delta_{j},x_{j},p_{j};\theta\right)\right)\left[\partial\mu_{ij}/\partial p_{j}\right]P_{0}\left(dv\right), & j=r\\
+\int-f\left(v_{i},\delta_{j},x_{j},p_{j};\theta\right)f\left(v_{i},\delta_{r},x_{r},p_{r};\theta\right)\left[\partial\mu_{ir}/\partial p_{r}\right]P_{0}\left(dv\right), & \mbox{if \ensuremath{\left\{ j,r\right\} \in}same firm/market}\\
+0, & \mbox{otherwise}
+\end{cases},
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula 
+\[
+\partial\mu_{ij}/\partial p_{j}=\frac{-\alpha}{e^{m_{t}+\hat{\sigma}_{y}v_{iy}}}
+\]
+
+\end_inset
+
+(note that 
+\begin_inset Formula $\partial\mu_{ij}/\partial p_{j}$
+\end_inset
+
+ is derived from the approximation of utility from prices as seen in section
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:utility"
+
+\end_inset
+
+).
+ As described in BLP (1995), the non-zero terms in 
+\begin_inset Formula $\Delta$
+\end_inset
+
+ represent 
+\begin_inset Formula $-\partial s_{r}/\partial p_{j}$
+\end_inset
+
+.
+ BLP (1995) only explicitly states that the derivative is zero when cars
+ 
+\begin_inset Formula $j$
+\end_inset
+
+ and 
+\begin_inset Formula $r$
+\end_inset
+
+ are made by different 
+\emph on
+firms
+\emph default
+.
+ The extension of this statement to 
+\emph on
+markets
+\emph default
+ comes from the fact that (as mentioned in section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:mean_utility"
+
+\end_inset
+
+) market shares are independent across markets (i.e., changing the price of
+ a car in one market has no effect on market shares in a different market).
+\end_layout
+
+\begin_layout Standard
+We simulate the above integrals in a manner similar to our simulations for
+ market shares.
+ For example, the first term is 
+\begin_inset Formula 
+\[
+\frac{1}{n_{s}}\sum_{i=1}^{n_{s}}f\left(v_{i},\delta_{j},x_{j},p_{j};\theta\right)\left(1-f\left(v_{i},\delta_{j},x_{j},p_{j};\theta\right)\right)\left[\partial\mu_{ij}/\partial p_{j}\right]w_{i}^{u},
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $f\left(v_{i},\delta_{j},x_{j},p_{j};\theta\right)$
+\end_inset
+
+ is the 
+\emph on
+unweighted
+\emph default
+ individual market share as described in section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:mean_utility"
+
+\end_inset
+
+, and 
+\begin_inset Formula $w_{i}^{u}$
+\end_inset
+
+ is the weight for individual 
+\begin_inset Formula $i$
+\end_inset
+
+ from importance sampling.
+\end_layout
+
+\begin_layout Subsection
+Obtain error terms from IV regression
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:2sls"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In BLP (1995), the discussion splits the demand- and supply-side errors
+ as follows.
+ Given 
+\begin_inset Formula $\delta\left(x_{tj},p_{tj},\xi_{tj};\theta\right)$
+\end_inset
+
+, the demand-side unobservable is 
+\begin_inset Formula 
+\[
+\xi_{tj}=\delta\left(x_{tj},p_{tj},\xi_{tj};\theta\right)-x_{tj}\beta,
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $\beta$
+\end_inset
+
+ is the estimate of an IV regression of 
+\begin_inset Formula $\delta_{tj}$
+\end_inset
+
+ onto 
+\begin_inset Formula $x_{tj}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Then the supply-side unobservable is
+\begin_inset Formula 
+\[
+\omega_{tj}=\ln\left(mc_{tj}\right)-w_{tj}\gamma,
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $\gamma$
+\end_inset
+
+ is the estimate of an IV regression of 
+\begin_inset Formula $\ln\left(mc_{tj}\right)$
+\end_inset
+
+ onto 
+\begin_inset Formula $w_{tj}$
+\end_inset
+
+.
+ This means that 
+\begin_inset Formula $\beta$
+\end_inset
+
+ and 
+\begin_inset Formula $\gamma$
+\end_inset
+
+ are linear for any given 
+\begin_inset Formula $\left(\alpha,\sigma\right)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+We combine the supply-side and demand-side IV regressions together into
+ a single regression, which corresponds to the actual procedure done in
+ the BLP (1999) code.
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+See BLP (1999) code, 
+\noun on
+struc-inst-steve2.arc
+\noun default
+, procedure 
+\noun on
+obj
+\noun default
+ for confirmation.
+ See 
+\noun on
+base.prg
+\noun default
+, line 739 for instrument construction.
+\end_layout
+
+\end_inset
+
+ Let 
+\begin_inset Formula $x$
+\end_inset
+
+ (
+\begin_inset Formula $z_{1})$
+\end_inset
+
+ denote the demand-side variables (instruments) and 
+\begin_inset Formula $w$
+\end_inset
+
+ (
+\begin_inset Formula $z_{2}$
+\end_inset
+
+) denote the supply-side variables (instruments).
+ Denote 
+\begin_inset Formula 
+\[
+X=\begin{pmatrix}x & 0\\
+0 & w
+\end{pmatrix}
+\]
+
+\end_inset
+
+ and 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+Z=\begin{pmatrix}z_{1} & 0\\
+0 & z_{2}
+\end{pmatrix}.
+\]
+
+\end_inset
+
+Perform 2SLS on 
+\begin_inset Formula 
+\[
+\left[\begin{array}{c}
+\delta\\
+\text{log}(mc)
+\end{array}\right]=X\left[\begin{array}{c}
+\beta\\
+\gamma
+\end{array}\right]+\left[\begin{array}{c}
+\xi\\
+\omega
+\end{array}\right].
+\]
+
+\end_inset
+
+The 2SLS projection matrix used is 
+\begin_inset Formula $ZWZ'$
+\end_inset
+
+, where 
+\begin_inset Formula $W$
+\end_inset
+
+ is the appropriate GMM weight matrix from below (see section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:estimation"
+
+\end_inset
+
+), unless explicitely stated otherwise.
+ Using the 2SLS coefficient estimates 
+\begin_inset Formula $(\hat{\beta},\hat{\gamma})'$
+\end_inset
+
+, one can back-out estimates of the unobservables 
+\begin_inset Formula $(\hat{\xi},\hat{\omega})'$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Subsection
+Interact instruments with error terms from IV regression
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:iv-error-interaction"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+For a given car model, the moment condition associated with instrument 
+\begin_inset Formula $\ell$
+\end_inset
+
+ for model 
+\begin_inset Formula $m$
+\end_inset
+
+ is 
+\begin_inset Formula 
+\[
+g_{\ell,m}\left(\theta\right)=\sum_{tj}z_{tj,\ell}\epsilon_{tj},
+\]
+
+\end_inset
+
+where the sum is taken over all 
+\begin_inset Formula $tj$
+\end_inset
+
+ that belongs to the model.
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+According to BLP (1995) p.
+ 863, the GMM distance vector 
+\begin_inset Formula $g$
+\end_inset
+
+ is defined as the average across models 
+\begin_inset Formula $m$
+\end_inset
+
+ of 
+\begin_inset Formula 
+\[
+g_{m}\left(\theta\right)=\sum_{t}\left[f_{mt}\left(z\right)^{T}\otimes I_{2}\right]\left[\begin{array}{c}
+\xi_{mt}\left(\theta\right)\\
+\omega_{mt}\left(\theta\right)
+\end{array}\right]
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $f_{mt}\left(z\right)$
+\end_inset
+
+ is the basis function for the instruments.
+ Note that 
+\begin_inset Formula $f_{mt}\left(z\right)^{T}\otimes I_{2}$
+\end_inset
+
+ is simply the block-diagonal matrix with 
+\begin_inset Formula $f_{mt}\left(z\right)$
+\end_inset
+
+ duplicated on the top left and the bottom right blocks.
+ The only difference between this discussion and the one we implement (following
+ BLP (1999) code) is the construction of the instruments matrix 
+\begin_inset Formula $Z$
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+ Note that due to the stacking of the demand- and supply-side matrices,
+ we actually need to consider two sets of 
+\begin_inset Formula $tj$
+\end_inset
+
+'s.
+ For example, for the first model, we need to consider both the first car
+ and the corresponding supply-side row 
+\begin_inset Formula $n$
+\end_inset
+
+ rows below.
+ The portion of the GMM distance vector 
+\begin_inset Formula $g$
+\end_inset
+
+ associated with instrument 
+\begin_inset Formula $\ell$
+\end_inset
+
+ is then defined as the mean across models:
+\begin_inset Formula 
+\[
+g_{\ell}\left(\theta\right)=\frac{1}{n_{m}}\sum_{m}g_{\ell,m}\left(\theta\right).
+\]
+
+\end_inset
+
+Note that 
+\begin_inset Formula $g_{\ell}\left(\theta\right)$
+\end_inset
+
+ is a scalar.
+ 
+\begin_inset Formula $g$
+\end_inset
+
+ is then defined as the vector of these scalars across all instruments 
+\begin_inset Formula $\ell$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Section
+Estimation
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:estimation"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+As in  BLP (1999) code, we use two-stage GMM to estimate the model.
+ 
+\noun on
+Estimate.m
+\noun default
+ contains all the necessary code to perform both stages, calling 
+\noun on
+wtd_dist
+\noun default
+ and 
+\noun on
+ComputeDistanceVector.m
+\noun default
+ as the objective function.
+ We use Artelys KNITRO's Interior/Direct algorithm as our solver.
+\end_layout
+
+\begin_layout Standard
+In addition to the data, the solver requires two inputs to begin — starting
+ parameters and an initial GMM weight matrix.
+ Given starting parameters, we first compute the distance vector for 
+\emph on
+each model
+\emph default
+, using the standard 2SLS weight matrix for the IV regression portion of
+ the distance vector computation (see section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:2sls"
+
+\end_inset
+
+).
+ Then, the initial weight matrix is calculated as the inverse of the variance-co
+variance matrix for the matrix of distance vectors, taking each model as
+ one observation.
+\end_layout
+
+\begin_layout Standard
+Next, the starting parameters and initial weight matrix are passed to the
+ solver for the first-stage GMM estimation (minimizing 
+\begin_inset Formula $g'Wg$
+\end_inset
+
+ where 
+\begin_inset Formula $g$
+\end_inset
+
+ is as defined in section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:iv-error-interaction"
+
+\end_inset
+
+, and 
+\begin_inset Formula $W$
+\end_inset
+
+ is the weight matrix).
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+Note that the weight matrix is also used in the 2SLS estimation, as described
+ in section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:2sls"
+
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+ Once we have the first-stage parameter estimates, we compute the distance
+ vector again at these estimates (now using the GMM weight matrix for the
+ 2SLS weights instead), and use this information to obtain a new weight
+ matrix in the same manner as before.
+ The first-stage parameter estimates and new weight matrix is then passed
+ to the solver for the second-stage GMM estimation, which produces the final
+ parameter estimates.
+ Note that the final parameter estimates contain a random coefficient 
+\begin_inset Formula $(\alpha,\sigma)$
+\end_inset
+
+ portion (which is the entire parameter space from the perspective of the
+ solver) and a mean coefficient (
+\begin_inset Formula $\beta$
+\end_inset
+
+, 
+\begin_inset Formula $\gamma$
+\end_inset
+
+) portion (which is can be computed directly from 
+\begin_inset Formula $(\alpha,\sigma)$
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Standard
+In summary, the steps are:
+\end_layout
+
+\begin_layout Enumerate
+\noindent
+Determine a set of starting random coefficient parameters, 
+\begin_inset Formula $(\alpha,\sigma)_{\mbox{start}}$
+\end_inset
+
+.
+ We use BLP (1995) published values as our starting parameters.
+\end_layout
+
+\begin_layout Enumerate
+\noindent
+Using the standard 2SLS projection matrix for IV regression 
+\begin_inset Formula $Z\left(Z'Z\right)^{-1}Z'$
+\end_inset
+
+, compute the distance vector 
+\begin_inset Formula $\hat{g}_{m}$
+\end_inset
+
+ for
+\shape italic
+ each
+\shape default
+ model 
+\begin_inset Formula $m$
+\end_inset
+
+ at 
+\begin_inset Formula $(\alpha,\sigma)_{\mbox{start}}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+\noindent
+Define the initial GMM weight matrix 
+\begin_inset Formula $W_{\mbox{GMM1}}$
+\end_inset
+
+ as the inverse of the variance-covariance matrix for the distance vectors
+ 
+\begin_inset Formula $\hat{g}_{m}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+\noindent
+Using 
+\begin_inset Formula $(\alpha,\sigma)_{\mbox{start}}$
+\end_inset
+
+ and 
+\begin_inset Formula $W_{\mbox{GMM1}}$
+\end_inset
+
+, estimate the first-stage parameter estimates 
+\begin_inset Formula $(\alpha,\sigma)_{\mbox{GMM1}}$
+\end_inset
+
+ via GMM.
+\end_layout
+
+\begin_layout Enumerate
+\noindent
+Compute the new weight matrix 
+\begin_inset Formula $W_{\mbox{GMM2}}$
+\end_inset
+
+ in the same manner as before, but at 
+\begin_inset Formula $(\alpha,\sigma)_{\mbox{GMM1}}$
+\end_inset
+
+ and using 
+\begin_inset Formula $W_{\mbox{GMM1}}$
+\end_inset
+
+ for the 2SLS weight matrix instead.
+\end_layout
+
+\begin_layout Enumerate
+\noindent
+Using 
+\begin_inset Formula $(\alpha,\sigma)_{\mbox{GMM1}}$
+\end_inset
+
+ and 
+\begin_inset Formula $W_{\mbox{GMM2}}$
+\end_inset
+
+, estimate the final parameter estimates 
+\begin_inset Formula $(\alpha,\sigma)_{\mbox{GMM2}}$
+\end_inset
+
+ via GMM.
+ Extract 
+\begin_inset Formula $\beta$
+\end_inset
+
+ and 
+\begin_inset Formula $\gamma$
+\end_inset
+
+ using 
+\begin_inset Formula $(\alpha,\sigma)_{\mbox{GMM2}}$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+We constrain all elements of 
+\begin_inset Formula $\sigma$
+\end_inset
+
+ to be non-negative.
+ 
+\end_layout
+
+\begin_layout Section
+Post-estimation objects
+\end_layout
+
+\begin_layout Standard
+Table V from BLP (1995) details demand elasticities for a sample of cars
+ at the estimated parameters.
+ Though we are unable to reproduce these numbers, BLP (1999) code shows
+ precisely how this should be calculated (see 
+\noun on
+base.prg
+\noun default
+, near lines 960 and 1008 for price and attribute elasticities, respectively).
+ We implement the BLP (1999) code procedures described in the sections below.
+\end_layout
+
+\begin_layout Subsection
+Price elasticities
+\end_layout
+
+\begin_layout Standard
+Recall that in section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:marginal_cost"
+
+\end_inset
+
+, we already computed the derivative of market shares with respect to price.
+ In this case, we only need own-price elasticities, which is calculated
+ the same way as before: 
+\begin_inset Formula 
+\[
+\frac{\partial s_{j}}{\partial p_{j}}=\int f\left(v_{i},\delta_{j},x_{j},p_{j};\theta\right)\left(1-f\left(v_{i},\delta_{j},x_{j},p_{j};\theta\right)\right)\left[\partial\mu_{ij}/\partial p_{j}\right]P_{0}\left(dv\right),
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula 
+\[
+\partial\mu_{ij}/\partial p_{j}=\frac{-\alpha}{e^{m_{t}+\hat{\sigma}_{y}v_{iy}}}.
+\]
+
+\end_inset
+
+We then simulate the above integrals the same way as before.
+ Note that we multiply the end result by -1 to give positive price elasticities.
+\end_layout
+
+\begin_layout Subsection
+Attribute elasticities
+\end_layout
+
+\begin_layout Standard
+Consider an increase of 
+\begin_inset Formula $0.10$
+\end_inset
+
+ in product attribute 
+\begin_inset Formula $k$
+\end_inset
+
+.
+ From section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:mean_utility"
+
+\end_inset
+
+, the individual market share is entirely determined by mean utilities 
+\begin_inset Formula $\delta$
+\end_inset
+
+ and random utilities 
+\begin_inset Formula $\mu$
+\end_inset
+
+ in the following way: 
+\begin_inset Formula 
+\[
+f\left(v_{i},\delta_{tj},p_{tj},x_{tj};\theta\right)=\frac{e^{\delta_{tj}+\mu\left(x_{tj},p_{tj},v_{i};\theta\right)}}{1+\sum_{j=1}^{J}e^{\delta_{tj}+\mu\left(x_{tj},p_{tj},v_{i};\theta\right)}},
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $\delta_{tj}$
+\end_inset
+
+ is a function of the mean parameter 
+\begin_inset Formula $\beta$
+\end_inset
+
+: 
+\begin_inset Formula 
+\[
+\delta_{tj}=x_{tj}\beta+\xi_{tj}.
+\]
+
+\end_inset
+
+Thus, we only need the new values of 
+\begin_inset Formula $\delta$
+\end_inset
+
+ and 
+\begin_inset Formula $\mu$
+\end_inset
+
+ to obtain the associated new market shares.
+ To that end, we increase the mean utility 
+\begin_inset Formula $\delta$
+\end_inset
+
+ by 
+\begin_inset Formula $0.10\beta_{k}$
+\end_inset
+
+ and compute a new 
+\begin_inset Formula $\mu$
+\end_inset
+
+ after increasing 
+\begin_inset Formula $x_{k}$
+\end_inset
+
+ by 
+\begin_inset Formula $0.10$
+\end_inset
+
+ for every car.
+ We then compute the new market shares using the updated 
+\begin_inset Formula $\delta$
+\end_inset
+
+ and 
+\begin_inset Formula $\mu$
+\end_inset
+
+.
+ Then, the partial derivative of market shares with respect to characteristic
+ 
+\begin_inset Formula $k$
+\end_inset
+
+ is numerically estimated as 
+\begin_inset Formula 
+\[
+\frac{\partial s}{\partial x_{k}}=\frac{\mbox{new shares}-\mbox{old shares}}{0.10}.
+\]
+
+\end_inset
+
+The elasticity of demand with respect to characteristic 
+\begin_inset Formula $k$
+\end_inset
+
+ is then 
+\begin_inset Formula 
+\[
+\frac{x_{k}}{s}\frac{\partial s}{\partial x_{k}}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Sensitivity
+\end_layout
+
+\begin_layout Standard
+In this section, note that since in section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:iv-error-interaction"
+
+\end_inset
+
+ the distance vectors are means across 
+\emph on
+models
+\emph default
+ as opposed to individual 
+\emph on
+cars
+\emph default
+, we essentially have 
+\begin_inset Formula $n_{m}$
+\end_inset
+
+ as opposed to 
+\begin_inset Formula $n$
+\end_inset
+
+ observations.
+ As such, all of our computations and scalings use 
+\begin_inset Formula $n_{m}$
+\end_inset
+
+ instead of 
+\begin_inset Formula $n$
+\end_inset
+
+.
+ Note that with the exception of the final 
+\begin_inset Formula $1/n_{m}$
+\end_inset
+
+ scaling, using 
+\begin_inset Formula $1/n$
+\end_inset
+
+ would make no difference to the final standardized sensitivities as all
+ the scalings cancel out anyway.
+\end_layout
+
+\begin_layout Standard
+The Jacobian of the distance vectors with respect to the parameters, 
+\begin_inset Formula $\hat{G}$
+\end_inset
+
+, is computed in the 
+\noun on
+compute_jacobian
+\noun default
+ function in 
+\noun on
+Estimate.m
+\noun default
+ numerically using small perturbations to the parameters.
+ When computing the Jacobian for the random coefficient 
+\begin_inset Formula $(\alpha,\sigma)$
+\end_inset
+
+ parameters, the IV regression is re-estimated to obtain new error terms.
+ When computing the Jacobian for the mean 
+\begin_inset Formula $(\beta,\gamma)$
+\end_inset
+
+ parameters, the IV regression is skipped and the error terms are instead
+ computed with the perturbed mean parameters.
+ Note that since the GMM distance vector 
+\begin_inset Formula $g$
+\end_inset
+
+ is defined as the mean across models, naturally the Jacobian is in these
+ units as well.
+\end_layout
+
+\begin_layout Standard
+For the weight matrix, we use 
+\begin_inset Formula $\hat{W}_{g}=W_{\mbox{GMM2}}$
+\end_inset
+
+ (see section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:estimation"
+
+\end_inset
+
+).
+ The moment variance-covariance matrix, 
+\begin_inset Formula $\hat{\Omega}_{gg}$
+\end_inset
+
+, is just the sample variance-covariance matrix of 
+\begin_inset Formula $\hat{g}\left(\theta\right)$
+\end_inset
+
+ taken across models.
+ Note that each observation corresponds to a model rather an an individual
+ car.
+ This is computed in 
+\noun on
+compute_omega
+\noun default
+ function in 
+\noun on
+Estimate.m
+\noun default
+.
+\end_layout
+
+\begin_layout Standard
+Our sample sensitivity and standarized sample sensitivity computations use
+ the matrix 
+\begin_inset Formula $\hat{A}$
+\end_inset
+
+ in addition to these objects.
+ When computing the 
+\begin_inset Formula $p$
+\end_inset
+
+th column of 
+\begin_inset Formula $\hat{A}$
+\end_inset
+
+ as 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $\hat{G}_{p}'\hat{W}_{g}\hat{g}_{m}$
+\end_inset
+
+
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+, we determine each matrix 
+\begin_inset Formula $\hat{G}_{p}$
+\end_inset
+
+ numerically by calculating the change in 
+\begin_inset Formula $\hat{G}$
+\end_inset
+
+, the Jacobian as computed using the method described above, associated
+ with small perturbations to the estimated parameters.
+ We then compute the parameter variance-covariance matrix 
+\begin_inset Formula $\Sigma_{\theta\theta}$
+\end_inset
+
+ using theorem (13.1) in Greene (2012), where 
+\begin_inset Formula $\theta$
+\end_inset
+
+ contains both the random coefficient paramters 
+\begin_inset Formula $(\alpha,\sigma)$
+\end_inset
+
+ and the mean parameters 
+\begin_inset Formula $(\beta,\gamma)$
+\end_inset
+
+.
+ (Sample) sensitivity and standardized sensitivity are then computed using
+ these objects.
+\end_layout
+
+\end_body
+\end_document
