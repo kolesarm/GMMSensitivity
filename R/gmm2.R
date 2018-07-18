@@ -3,14 +3,15 @@
 #' @param eo object containig parameter estimates based on theta_init
 #' @param B matrix
 #' @param MM matrix \eqn{M'M}
-#' @param lam weight lambda on bias
+#' @param kap weight kappa on bias
 #' @param K diameter
 #' @param alpha for CI coverage
 #' @keywords internal
-l2sens <- function(eo, B, MM=diag(ncol(B)), lam, K, alpha=0.05) {
+l2sens <- function(eo, B, MM=diag(ncol(B)), kap, K, alpha=0.05) {
     ## Optimal inverse weight
-    BMMB <- B %*% solve(MM, t(B))
-    Wi <- eo$Sig + (lam*K^2)*BMMB
+    BMMB <- if (ncol(B)==0) matrix(0, nrow=nrow(eo$Sig), ncol=ncol(eo$Sig))
+            else B %*% solve(MM, t(B))
+    Wi <- (1-kap)*eo$Sig + kap*K^2*BMMB
 
     ## Worst-case bias and variance, and sensitivity
     GWG <- crossprod(eo$G, solve(Wi, eo$G))
@@ -81,21 +82,23 @@ l2opt <- function(eo, B, MM=diag(ncol(B)), K, alpha=0.05,
                   opt.criterion="FLCI") {
 
     if (opt.criterion=="MSE")
-        lam <- 1
+        kap <- 1/2
     else if (opt.criterion=="FLCI") {
-        crit <- function(lam) l2sens(eo, B, MM, lam, K, alpha)$hl
-        ## minimum should be near one
-        lam <- optimize(crit, c(0, 5), tol=1e-10)$minimum
+        crit <- function(kap) l2sens(eo, B, MM, kap, K, alpha)$hl
+        ## minimum should be near 1/2
+        kap <- optimize(crit, c(0, 1), tol=1e-12)$minimum
     } else {
-        lam <- 0
+        kap <- 0
     }
-    r <- l2sens(eo, B, MM, lam, K, alpha)
-
+    r <- l2sens(eo, B, MM, kap, K, alpha)
     k_opt <- r$k
-    h_opt <- eo$h_init + sum(k_opt * eo$g_init)
+    h_opt <- if (opt.criterion != "Valid")
+                 eo$h_init + sum(k_opt * eo$g_init)
+             else
+                 eo$h_init
 
     structure(list(k=k_opt, h=h_opt, hl=r$hl, bias=r$bias, se=r$se,
-                   opt.criterion=opt.criterion, alpha=alpha, lam=lam),
+                   opt.criterion=opt.criterion, alpha=alpha, kap=kap),
               class="GMMEstimate")
 }
 

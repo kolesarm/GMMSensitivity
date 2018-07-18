@@ -1,15 +1,4 @@
-## ## L_Infty penalized solution path for optimal sensitivities
-## set.seed(42)
-## dg <- 8
-## nv <- 1
-## I <- c(rep(TRUE, dg-nv), rep(FALSE, nv))
-## dt <- 3
-## G <- matrix(rnorm(dg*dt), nrow=dg)
-## Sig <- cov(matrix(rnorm(2*dg*dg), ncol=dg))
-## h <- c(1, rep(0, dt-1))
-
-## Homotopy solution
-l1h <- function(G, Sig, h, I) {
+l1h0 <- function(G, Sig, h, I) {
     dt <- ncol(G)
     dg <- nrow(G)
     res <- matrix(0, ncol=2*dg+1, nrow=1)
@@ -75,6 +64,18 @@ linfbrute <- function(G, Sig, h, B, I) {
     }
     cbind(B, ks)
 }
+
+
+## ## L_Infty penalized solution path for optimal sensitivities
+## set.seed(42)
+## dg <- 8
+## nv <- 1
+## I <- c(rep(TRUE, dg-nv), rep(FALSE, nv))
+## dt <- 3
+## G <- matrix(rnorm(dg*dt), nrow=dg)
+## Sig <- cov(matrix(rnorm(2*dg*dg), ncol=dg))
+## h <- c(1, rep(0, dt-1))
+
 
 ## res <- l1h(G, Sig, h, I)[, 1:(dg+1)]
 ## Bs <- res[, 1]
