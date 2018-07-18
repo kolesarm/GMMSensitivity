@@ -1,3 +1,6 @@
+#' Orthogonalized homotopy solution for l_1
+#' @param I vector of indicators which instruments are invalid
+#' @keywords internal
 l1h0 <- function(G, Sig, h, I) {
     dt <- ncol(G)
     dg <- nrow(G)
@@ -53,20 +56,20 @@ l1h0 <- function(G, Sig, h, I) {
     res
 }
 
-linfbrute <- function(G, Sig, h, B, I) {
-    ks <- matrix(NA, nrow=length(B), ncol=nrow(G))
-    k <- CVXR::Variable(nrow(G))
-    for (j in seq_len(length(B))) {
-        ob <- CVXR::Minimize(CVXR::p_norm(chol(Sig)%*%k)^2/2)
-        pr <- CVXR::Problem(ob, list(-h==t(G)%*%k,
-                                     CVXR::p_norm(k[I], p=Inf) <= B[j]))
-        ks[j, ] <- solve(pr)$getValue(k)
-    }
-    cbind(B, ks)
-}
+## l1brute <- function(G, Sig, h, B, I) {
+##     ks <- matrix(NA, nrow=length(B), ncol=nrow(G))
+##     k <- CVXR::Variable(nrow(G))
+##     for (j in seq_len(length(B))) {
+##         ob <- CVXR::Minimize(CVXR::p_norm(chol(Sig)%*%k)^2/2)
+##         pr <- CVXR::Problem(ob, list(-h==t(G)%*%k,
+##                                      CVXR::p_norm(k[I], p=Inf) <= B[j]))
+##         ks[j, ] <- solve(pr)$getValue(k)
+##     }
+##     cbind(B, ks)
+## }
 
 
-## ## L_Infty penalized solution path for optimal sensitivities
+## ## L_1 penalized solution path for optimal sensitivities
 ## set.seed(42)
 ## dg <- 8
 ## nv <- 1
@@ -79,7 +82,7 @@ linfbrute <- function(G, Sig, h, B, I) {
 
 ## res <- l1h(G, Sig, h, I)[, 1:(dg+1)]
 ## Bs <- res[, 1]
-## resb <- linfbrute(G, Sig, h, Bs, I)
+## resb <- l1brute(G, Sig, h, Bs, I)
 ## diff <- max(abs(res[, 1:(dg+1)]-resb))
 ## if(diff>1e-3) message("Big difference\n") else print(diff)
 

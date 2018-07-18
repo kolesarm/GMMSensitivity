@@ -6,36 +6,7 @@
 \usage{
 l2opt(eo, B, M = diag(ncol(B)), K, alpha = 0.05, opt.criterion = "FLCI")
 }
-\arguments{
-\item{eo}{estimation object. If there are p moments and \eqn{theta} has k
-    components, it is a list with following components:
-
-    \describe{
-
-    \item{Sig}{Estimate of variance of the moment condition, matrix of size p by p}
-    \item{G}{Estimate of defivative of the moment condition, matrix of size p by k}
-
-    }}
-
-\item{alpha}{determines confidence level, \code{1-alpha}, for
-constructing/optimizing confidence intervals.}
-
-\item{opt.criterion}{Optimality criterion for choosing optimal bias-variance
-    tradeoff. The options are:
-
-   \describe{
-
-   \item{\code{"MSE"}}{maximum MSE}
-
-   \item{\code{"FLCI"}}{Length of (fixed-length) two-sided
-       confidence intervals.}
-
-   \item{\code{"Valid"}}{Optimal estimator under valid moments. This returns
-   the original estimator, with confidence intervals adjusted for possible
-   misspecification}
-
-    }}
-}
 \description{
 One-step estimator based on optimal sensitivity under ell_2 constraints
 }
+\keyword{internal}

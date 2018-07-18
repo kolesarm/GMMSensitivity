@@ -3,25 +3,12 @@
 \name{l2sens}
 \alias{l2sens}
 \title{Construct optimal sensitivity and compute worst-case bias and sd for a given
-lambda}
+kappa}
 \usage{
-l2sens(eo, B, M = diag(ncol(B)), lam, K, alpha = 0.05)
-}
-\arguments{
-\item{eo}{object containig parameter estimates based on theta_init}
-
-\item{B}{matrix}
-
-\item{M}{matrix}
-
-\item{K}{diameter}
-
-\item{alpha}{for CI coverage}
-
-\item{lambda}{weight on bias}
+l2sens(eo, B, M = diag(ncol(B)), kap, K, alpha = 0.05)
 }
 \description{
 Construct optimal sensitivity and compute worst-case bias and sd for a given
-lambda
+kappa
 }
 \keyword{internal}

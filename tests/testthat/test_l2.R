@@ -32,8 +32,8 @@ test_that("Replicate initial analysis", {
         B <- (abs(blp$perturb) * blp$OmZZ)[, I, drop=FALSE]
         K <- sqrt(sum(I))
 
-        opt <- l2opt(eo, B, M=diag(ncol(B)), K, alpha=0.05,
-                     opt.criterion="FLCI")
+        opt <- OptEstimator(eo, B, M=diag(ncol(B)), K, p=2, alpha=0.05,
+                            opt.criterion="FLCI")
         res <- rbind(res, as.data.frame(opt[-1]))
     }
 
@@ -63,4 +63,6 @@ test_that("Replicate initial analysis", {
           0.997, 0.918, 0.973, 0.98, 0.91, 0.965, 0.347)
     expect_lt(max(abs(diffl)), 0.02)
 
+    ## TODO:
+    expect_equal(sum(eo$k_init*eo$g_init), 0)
 })
