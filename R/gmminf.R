@@ -11,8 +11,8 @@
 #' @export
 lph <- function(eo, B, M=diag(ncol(B)), p=Inf) {
     if (ncol(B)==0)
-        return(-eo$H %*% solve(crossprod(eo$G, solve(eo$Sig, eo$G)),
-                                    t(solve(eo$Sig, eo$G))))
+        return(cbind(0, -eo$H %*% solve(crossprod(eo$G, solve(eo$Sig, eo$G)),
+                                   t(solve(eo$Sig, eo$G)))))
 
     ## Get orthogonalized homotopy, first B_{\perp}
     Bp <- if (nrow(B)>ncol(B)) {

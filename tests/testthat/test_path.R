@@ -67,3 +67,33 @@ test_that("Check l_infty and l_1 solution paths using BLP data", {
     }
 
 })
+
+test_that("Check optimal path under no misspecification", {
+    I <- vector(mode="logical", length=31)
+    B <- (abs(blp$perturb) * blp$OmZZ)[, I, drop=FALSE]
+    W <- solve(blp$Sig)
+    k_opt <- -blp$H %*% solve(crossprod(blp$G, W %*% blp$G),
+                              crossprod(blp$G, W))
+    r2 <- OptEstimator(eo, B, K=1, p=2, alpha=0.05, opt.criterion="FLCI")
+    r1 <- OptEstimator(eo, B, K=2, p=1, alpha=0.05, opt.criterion="FLCI")
+    rI <- OptEstimator(eo, B, K=1, p=Inf, alpha=0.05, opt.criterion="MSE")
+    expect_equal(k_opt, r1$k)
+    expect_equal(k_opt, r2$k)
+    expect_equal(k_opt, rI$k)
+})
+
+test_that("Drop invalid instrument under large misspecification", {
+    B <- matrix(0, nrow=31)
+
+    B[6] <- 1
+    kI <- OptEstimator(eo, B, K=500, p=Inf, alpha=0.05, opt.criterion="FLCI")$k
+    k2 <- OptEstimator(eo, B, K=500, p=2, alpha=0.05, opt.criterion="MSE")$k
+    k1 <- OptEstimator(eo, B, K=500, p=1, alpha=0.05, opt.criterion="FLCI")$k
+
+    W <- solve(blp$Sig[-6, -6])
+    k_opt <- drop(-blp$H %*% solve(crossprod(blp$G[-6, ], W %*% blp$G[-6, ]),
+                     crossprod(blp$G[-6, ], W)))
+    expect_lt(max(abs(k_opt- kI[-6])), 1e-4)
+    expect_lt(max(abs(k_opt- k1[-6])), 1e-4)
+    expect_lt(max(abs(k_opt- k2[-6])), 1e-4)
+})

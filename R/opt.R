@@ -61,12 +61,12 @@ OptEstimator <- function(eo, B, M=diag(ncol(B)), K, p=2, spath=NULL, alpha=0.05,
         return(l2opt(eo, B, M, K, alpha, opt.criterion))
 
     if (is.null(spath))
-        sppath <- lph(eo, B, M, p)
-    spath <- spath[, -1]                # drop lambda/barB
+        spath <- lph(eo, B, M, p)
+    spath <- spath[, -1, drop=FALSE]    # drop lambda/barB
     ep <- BuildEstimator(spath, eo, B, M, K, p, alpha)
 
     ## Index of criterion to optimize
-    idx <- if (opt.criterion=="RMSE") {
+    idx <- if (opt.criterion=="MSE") {
                which.max(names(ep)=="rmse")
            } else if (opt.criterion=="FLCI") {
                which.max(names(ep)=="hl")
