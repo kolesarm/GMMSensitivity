@@ -32,13 +32,13 @@ moments, and d_g is the number of moments}
 \item{M}{invertible matrix \eqn{M} with dimensions d_gamma by d_gamma that
 determines the set \eqn{C}.}
 
-\item{p}{Parameter determining which ell_p norm to use, one of \code{1},
-\code{2}, or \code{Inf}.}
+\item{p}{Parameter determining which ell_p norm to use, one of \code{1}, or
+\code{Inf}.}
 }
 \description{
 Computes the vector of optimal sensitivities at each knot of the solution
 path that traces out the optimal bias-variance frontier when the set \eqn{C}
 takes the form \eqn{B*gamma}, with the ell_p norm of M*gamma bounded by a
 constant, for \eqn{p=1}, or \eqn{p=Inf}. This path is used as an input to
-\link{\code{OptEstimator}}.
+\code{\link{OptEstimator}}.
 }

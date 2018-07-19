@@ -4,7 +4,7 @@
 #' path that traces out the optimal bias-variance frontier when the set \eqn{C}
 #' takes the form \eqn{B*gamma}, with the ell_p norm of M*gamma bounded by a
 #' constant, for \eqn{p=1}, or \eqn{p=Inf}. This path is used as an input to
-#' \link{\code{OptEstimator}}.
+#' \code{\link{OptEstimator}}.
 #' @inheritParams OptEstimator
 #' @param p Parameter determining which ell_p norm to use, one of \code{1}, or
 #'     \code{Inf}.
@@ -50,7 +50,7 @@ linfstep <- function(s, G, Sig, H, I) {
 
     d <- min(d2, d1)
     if(d<0)
-        error("Taking a negative step")
+        stop("Taking a negative step")
     s$lam <- s$lam+d
     s$k <- s$k + d*s$k.d
     s$mu <- s$mu + d*s$mu.d

@@ -1,12 +1,14 @@
 Package: GMMSensitivity
-Title: What the Package Does (one line, title case)
-Version: 0.0.1
+Title: Confidence intervals for sensitivity analysis in GMM
+Version: 0.0.1.9001
 Authors@R: 'Michal Kolesar <kolesarmi@googlemail.com> [aut, cre]'
-Description: What the package does (one paragraph).
+Description: Implements optimal confidence intervals for sensitivity analysis in
+    generalized method of moments (GMM) models.
 Depends: R (>= 3.4.4)
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Suggests: testthat,
-    knitr
+    knitr,
+    CVXR
 RoxygenNote: 6.0.1
