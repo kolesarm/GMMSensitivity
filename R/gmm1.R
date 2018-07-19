@@ -4,9 +4,6 @@
 l1h0 <- function(G, Sig, h, I) {
     dt <- ncol(G)
     dg <- nrow(G)
-    res <- matrix(0, ncol=2*dg+1, nrow=1)
-    colnames(res) <- c("B", 1:dg, paste0("A", 1:dg))
-
     GSG <- function(A) crossprod(G[A, ], solve(Sig[A, A], G[A, ]))
 
     ## Initialize
@@ -15,7 +12,8 @@ l1h0 <- function(G, Sig, h, I) {
     B <- max(abs(k[I]))
     A <- rep(FALSE, dg)
     A[I] <- abs(k[I])==max(abs(k[I]))
-    res[1, ] <- c(B, k, A)
+    res <- matrix(c(B, k, A), nrow=1)
+    colnames(res) <- c("B", 1:dg, paste0("A", 1:dg))
     joined <- which.max(A)
 
     while (sum(A) < dg-dt+1 & B>0) {
@@ -47,7 +45,7 @@ l1h0 <- function(G, Sig, h, I) {
         k <- k-d*k.d
         mu <- mu-d*mu.d
 
-        if (min(d2)<min(d1)){
+        if (min(d2)<min(d1)) {
             joined <- which.min(d2)
             A[joined] <- TRUE
         } else {
@@ -58,40 +56,3 @@ l1h0 <- function(G, Sig, h, I) {
     }
     res
 }
-
-## l1brute <- function(G, Sig, h, B, I) {
-##     ks <- matrix(NA, nrow=length(B), ncol=nrow(G))
-##     k <- CVXR::Variable(nrow(G))
-##     for (j in seq_len(length(B))) {
-##         ob <- CVXR::Minimize(CVXR::p_norm(chol(Sig)%*%k)^2/2)
-##         pr <- CVXR::Problem(ob, list(-h==t(G)%*%k,
-##                                      CVXR::p_norm(k[I], p=Inf) <= B[j]))
-##         ks[j, ] <- solve(pr)$getValue(k)
-##     }
-##     cbind(B, ks)
-## }
-
-
-## ## L_1 penalized solution path for optimal sensitivities
-## set.seed(42)
-## dg <- 8
-## nv <- 1
-## I <- c(rep(TRUE, dg-nv), rep(FALSE, nv))
-## dt <- 3
-## G <- matrix(rnorm(dg*dt), nrow=dg)
-## Sig <- cov(matrix(rnorm(2*dg*dg), ncol=dg))
-## h <- c(1, rep(0, dt-1))
-
-
-## res <- l1h(G, Sig, h, I)[, 1:(dg+1)]
-## Bs <- res[, 1]
-## resb <- l1brute(G, Sig, h, Bs, I)
-## diff <- max(abs(res[, 1:(dg+1)]-resb))
-## if(diff>1e-3) message("Big difference\n") else print(diff)
-
-## df <- data.frame(B=rep(Bs, dg), k=as.vector(res[, 2:(dg+1)]),
-##                  what=rep(as.factor(1:dg), each=length(Bs)))
-## pl1 <- qplot(x=B, y=k, color=what, geom="line", data=df)
-## pdf("testlasso1.pdf", width=5, height=4)
-## print(directlabels::direct.label(pl1+theme_bw(), "last.qp"))
-## dev.off()

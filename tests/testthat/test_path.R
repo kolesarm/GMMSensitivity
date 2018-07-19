@@ -1,6 +1,6 @@
-context("Lp constraints")
+context("L1 and LInf constraints")
 
-test_that("Check l_infty solution path", {
+test_that("Check l_infty and l_1 solution paths using BLP data", {
 
     #' CVX minimization problem for l_infty
     linfbrute <- function(eo, B, lams) {
@@ -8,12 +8,28 @@ test_that("Check l_infty solution path", {
         k <- CVXR::Variable(nrow(eo$G))
         for (j in seq_len(length(lams))) {
             ob <- CVXR::Minimize(CVXR::p_norm(chol(eo$Sig)%*%k)^2/2 +
-                                 lams[j]*CVXR::p_norm( t(B) %*% k, p=1))
+                                 lams[j]*CVXR::p_norm(t(B) %*% k, p=1))
             pr <- CVXR::Problem(ob, list(-eo$H==t(eo$G)%*%k))
             ks[j, ] <- solve(pr)$getValue(k)
         }
         cbind(lams, ks)
     }
+
+    #' CVX minimization problem for l_1
+    #' @param Bbound bound on bias
+    l1brute <- function(eo, B, Bbound) {
+        ks <- matrix(NA, nrow=length(Bbound), ncol=nrow(eo$G))
+        k <- CVXR::Variable(nrow(eo$G))
+        for (j in seq_len(length(Bbound))) {
+            ob <- CVXR::Minimize(CVXR::p_norm(chol(eo$Sig)%*%k)^2/2)
+            pr <- CVXR::Problem(ob, list(-eo$H==t(eo$G)%*%k,
+                                         CVXR::p_norm(t(B) %*% k, p=Inf) <=
+                                         Bbound[j]))
+            ks[j, ] <- solve(pr)$getValue(k)
+        }
+        cbind(Bbound, ks)
+    }
+
 
     ## List of different specifications
     excluded <- c(6:13, 20:31)
@@ -41,18 +57,13 @@ test_that("Check l_infty solution path", {
         I[ivlist[[j]]] <- TRUE
         B <- (abs(blp$perturb) * blp$OmZZ)[, I, drop=FALSE]
         K <- sqrt(sum(I))
-        path <- lph(eo, B, p=Inf)
-        pathB <- linfbrute(eo, B, path[, 1])
-        expect_lt(max(abs(path-pathB)), 0.003)
+        pathIo <- lph(eo, B, p=Inf)
+        pathIb <- linfbrute(eo, B, pathIo[, 1])
+        path1o <- lph(eo, B, p=1)
+        path1b <- l1brute(eo, B, path1o[, 1])
+
+        expect_lt(max(abs(pathIo-pathIb)), 0.003)
+        expect_lt(max(abs(path1o-path1b)), 0.002)
     }
 
 })
-
-
-
-## df <- data.frame(lambda=rep(lams, dg), k=as.vector(res[, 2:(dg+1)]),
-##                  what=rep(as.factor(1:dg), each=length(lams)))
-## pl1 <- qplot(x=lambda, y=k, color=what, geom="line", data=df)
-## pdf("testlassoinf.pdf", width=5, height=4)
-## print(directlabels::direct.label(pl1+theme_bw(), "first.qp"))
-## dev.off()

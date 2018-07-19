@@ -36,5 +36,9 @@ determines the set \eqn{C}.}
 \code{2}, or \code{Inf}.}
 }
 \description{
-Compute solution path for l_infty or l_1 constraints
+Computes the vector of optimal sensitivities at each knot of the solution
+path that traces out the optimal bias-variance frontier when the set \eqn{C}
+takes the form \eqn{B*gamma}, with the ell_p norm of M*gamma bounded by a
+constant, for \eqn{p=1}, or \eqn{p=Inf}. This path is used as an input to
+\link{\code{OptEstimator}}.
 }

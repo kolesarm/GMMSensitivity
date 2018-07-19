@@ -29,7 +29,7 @@
 #' @param K diameter of set \eqn{C}
 #' @param p Parameter determining which ell_p norm to use, one of \code{1},
 #'     \code{2}, or \code{Inf}.
-#' @param res Optionally, the solution path, output of \code{lph} to speed up
+#' @param spath Optionally, the solution path, output of \code{lph} to speed up
 #'     computation. For \code{p==1} and \code{p==Inf} only.
 #' @param alpha determines confidence level, \code{1-alpha}, for
 #'     constructing/optimizing confidence intervals.
@@ -50,7 +50,7 @@
 #'     }
 #'
 #' @export
-OptEstimator <- function(eo, B, M=diag(ncol(B)), K, p=2, res=NULL, alpha=0.05,
+OptEstimator <- function(eo, B, M=diag(ncol(B)), K, p=2, spath=NULL, alpha=0.05,
                          opt.criterion="FLCI") {
     if (opt.criterion=="Valid") {
         r <- BuildEstimator(eo$k_init, eo, B, M, K, p, alpha)
@@ -60,10 +60,10 @@ OptEstimator <- function(eo, B, M=diag(ncol(B)), K, p=2, res=NULL, alpha=0.05,
     if (p==2)
         return(l2opt(eo, B, M, K, alpha, opt.criterion))
 
-    if (is.null(res))
-        res <- lph(eo, B, M, p)
-    res <- res[, -1]                    # drop lambda
-    ep <- BuildEstimator(res, eo, B, M, K, p, alpha)
+    if (is.null(spath))
+        sppath <- lph(eo, B, M, p)
+    spath <- spath[, -1]                # drop lambda/barB
+    ep <- BuildEstimator(spath, eo, B, M, K, p, alpha)
 
     ## Index of criterion to optimize
     idx <- if (opt.criterion=="RMSE") {
@@ -77,12 +77,13 @@ OptEstimator <- function(eo, B, M=diag(ncol(B)), K, p=2, res=NULL, alpha=0.05,
     ## take i+1 (but since which.min takes first minimum, we can always take
     ## i-1)
     ip <- i+1
-    while(ip<=nrow(res) && isTRUE(all.equal(res[i, ], res[ip, ])))
+    while(ip<=nrow(spath) && isTRUE(all.equal(spath[i, ], spath[ip, ])))
         ip <- ip+1
 
-    if (ip<=nrow(res)) {
+    if (ip<=nrow(spath)) {
         f1 <- function(w)
-            BuildEstimator((1-w)*res[i, ]+w*res[i+1, ], eo, B, M, K, alpha)[[idx]]
+            BuildEstimator((1-w)*spath[i, ]+w*spath[i+1, ], eo, B, M,
+                           K, alpha)[[idx]]
         opt1 <- stats::optimize(f1, interval=c(0, 1))
     } else {
         opt1 <- list(minimum=0, objective=min(ep[[idx]]))
@@ -90,20 +91,21 @@ OptEstimator <- function(eo, B, M=diag(ncol(B)), K, p=2, res=NULL, alpha=0.05,
 
     if (i>1) {
         f0 <- function(w)
-            BuildEstimator((1-w)*res[i-1, ]+w*res[i, ], eo, B, M, K, alpha)[[idx]]
+            BuildEstimator((1-w)*spath[i-1, ]+w*spath[i, ], eo, B, M,
+                           K, alpha)[[idx]]
         opt0 <- stats::optimize(f0, interval=c(0, 1))
     } else {
         opt0 <- list(minimum=1, objective=min(ep[[idx]]))
     }
 
-    if (opt1$objective < opt0$objective) {
-        resopt <- (1-opt1$minimum)*res[i, ] +
-            opt1$minimum*res[min(i+1, nrow(res)), ]
-    } else {
-        resopt <- (1-opt0$minimum)*res[max(i-1, 1), ]+opt0$minimum*res[i, ]
-    }
+    kopt <- if (opt1$objective < opt0$objective) {
+                (1-opt1$minimum)*spath[i, ] +
+                    opt1$minimum*spath[min(i+1, nrow(spath)), ]
+            } else {
+                (1-opt0$minimum)*spath[max(i-1, 1), ]+opt0$minimum*spath[i, ]
+            }
 
-    r <- BuildEstimator(resopt, eo, B, M, K, alpha)
+    r <- BuildEstimator(kopt, eo, B, M, K, alpha)
     r$opt.criterion <- opt.criterion
     r
 }
@@ -137,11 +139,8 @@ BuildEstimator <- function(k, eo, B, M, K, p=Inf, alpha=0.05) {
 
 #' Critical value
 #' @keywords internal
-cvb <- function(b, alpha=0.05) {
-    ## if (b>10) b + qnorm(1-alpha) else
+cvb <- function(b, alpha=0.05)
     sqrt(stats::qchisq(1-alpha, df = 1, ncp = b^2))
-}
-
 
 
 #' @export

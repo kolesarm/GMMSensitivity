@@ -4,7 +4,7 @@
 \alias{OptEstimator}
 \title{One-step estimator based on optimal sensitivity under ell_p constraints}
 \usage{
-OptEstimator(eo, B, M = diag(ncol(B)), K, p = 2, res = NULL,
+OptEstimator(eo, B, M = diag(ncol(B)), K, p = 2, spath = NULL,
   alpha = 0.05, opt.criterion = "FLCI")
 }
 \arguments{
@@ -38,7 +38,7 @@ determines the set \eqn{C}.}
 \item{p}{Parameter determining which ell_p norm to use, one of \code{1},
 \code{2}, or \code{Inf}.}
 
-\item{res}{Optionally, the solution path, output of \code{lph} to speed up
+\item{spath}{Optionally, the solution path, output of \code{lph} to speed up
 computation. For \code{p==1} and \code{p==Inf} only.}
 
 \item{alpha}{determines confidence level, \code{1-alpha}, for
