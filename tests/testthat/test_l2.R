@@ -63,6 +63,5 @@ test_that("Replicate initial analysis", {
           0.997, 0.918, 0.973, 0.98, 0.91, 0.965, 0.347)
     expect_lt(max(abs(diffl)), 0.02)
 
-    ## TODO:
     expect_equal(sum(eo$k_init*eo$g_init), 0)
 })

@@ -40,6 +40,9 @@ l1h0 <- function(G, Sig, h, I) {
         d2[A | !I] <- Inf
 
         d <- min(d2, d1)
+        if(d<0)
+            error("Taking a negative step")
+
         B <- B-d
         k <- k-d*k.d
         mu <- mu-d*mu.d

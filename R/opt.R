@@ -62,6 +62,7 @@ OptEstimator <- function(eo, B, M=diag(ncol(B)), K, p=2, res=NULL, alpha=0.05,
 
     if (is.null(res))
         res <- lph(eo, B, M, p)
+    res <- res[, -1]                    # drop lambda
     ep <- BuildEstimator(res, eo, B, M, K, p, alpha)
 
     ## Index of criterion to optimize
