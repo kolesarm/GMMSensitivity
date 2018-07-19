@@ -52,8 +52,9 @@
 #' @export
 OptEstimator <- function(eo, B, M=diag(ncol(B)), K, p=2, spath=NULL, alpha=0.05,
                          opt.criterion="FLCI") {
+    be <- function(k) BuildEstimator(k, eo, B, M, K, p, alpha)
     if (opt.criterion=="Valid") {
-        r <- BuildEstimator(eo$k_init, eo, B, M, K, p, alpha)
+        r <- be(eo$k_init)
         r$opt.criterion <- opt.criterion
         return(r)
     }
@@ -63,7 +64,7 @@ OptEstimator <- function(eo, B, M=diag(ncol(B)), K, p=2, spath=NULL, alpha=0.05,
     if (is.null(spath))
         spath <- lph(eo, B, M, p)
     spath <- spath[, -1, drop=FALSE]    # drop lambda/barB
-    ep <- BuildEstimator(spath, eo, B, M, K, p, alpha)
+    ep <- be(spath)
 
     ## Index of criterion to optimize
     idx <- if (opt.criterion=="MSE") {
@@ -82,8 +83,7 @@ OptEstimator <- function(eo, B, M=diag(ncol(B)), K, p=2, spath=NULL, alpha=0.05,
 
     if (ip<=nrow(spath)) {
         f1 <- function(w)
-            BuildEstimator((1-w)*spath[i, ]+w*spath[i+1, ], eo, B, M,
-                           K, alpha)[[idx]]
+            be((1-w)*spath[i, ]+w*spath[i+1, ])[[idx]]
         opt1 <- stats::optimize(f1, interval=c(0, 1))
     } else {
         opt1 <- list(minimum=0, objective=min(ep[[idx]]))
@@ -91,8 +91,7 @@ OptEstimator <- function(eo, B, M=diag(ncol(B)), K, p=2, spath=NULL, alpha=0.05,
 
     if (i>1) {
         f0 <- function(w)
-            BuildEstimator((1-w)*spath[i-1, ]+w*spath[i, ], eo, B, M,
-                           K, alpha)[[idx]]
+            be((1-w)*spath[i-1, ]+w*spath[i, ])[[idx]]
         opt0 <- stats::optimize(f0, interval=c(0, 1))
     } else {
         opt0 <- list(minimum=1, objective=min(ep[[idx]]))
@@ -104,8 +103,14 @@ OptEstimator <- function(eo, B, M=diag(ncol(B)), K, p=2, spath=NULL, alpha=0.05,
             } else {
                 (1-opt0$minimum)*spath[max(i-1, 1), ]+opt0$minimum*spath[i, ]
             }
+if (opt1$objective < opt0$objective) {
+    print(c(i, opt1$minimum))
+            } else {
+    print(c(i-1, opt0$minimum))
+            }
 
-    r <- BuildEstimator(kopt, eo, B, M, K, alpha)
+
+    r <- be(kopt)
     r$opt.criterion <- opt.criterion
     r
 }
