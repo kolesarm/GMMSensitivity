@@ -74,6 +74,13 @@ test_that("Check optimal path under no misspecification", {
     W <- solve(blp$Sig)
     k_opt <- -blp$H %*% solve(crossprod(blp$G, W %*% blp$G),
                               crossprod(blp$G, W))
+    eo <- list(H=blp$H,
+               G=blp$G,
+               Sig=blp$Sig,
+               n=blp$n,
+               g_init=blp$g_init,
+               h_init=blp$h_init)
+
     r2 <- OptEstimator(eo, B, K=1, p=2, alpha=0.05, opt.criterion="FLCI")
     r1 <- OptEstimator(eo, B, K=2, p=1, alpha=0.05, opt.criterion="FLCI")
     rI <- OptEstimator(eo, B, K=1, p=Inf, alpha=0.05, opt.criterion="MSE")
@@ -84,8 +91,14 @@ test_that("Check optimal path under no misspecification", {
 
 test_that("Drop invalid instrument under large misspecification", {
     B <- matrix(0, nrow=31)
-
     B[6] <- 1
+    eo <- list(H=blp$H,
+               G=blp$G,
+               Sig=blp$Sig,
+               n=blp$n,
+               g_init=blp$g_init,
+               h_init=blp$h_init)
+
     kI <- OptEstimator(eo, B, K=500, p=Inf, alpha=0.05, opt.criterion="FLCI")$k
     k2 <- OptEstimator(eo, B, K=500, p=2, alpha=0.05, opt.criterion="MSE")$k
     k1 <- OptEstimator(eo, B, K=500, p=1, alpha=0.05, opt.criterion="FLCI")$k
