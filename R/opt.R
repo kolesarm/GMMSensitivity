@@ -63,7 +63,9 @@ OptEstimator <- function(eo, B, M=diag(ncol(B)), K, p=2, spath=NULL, alpha=0.05,
 
     if (is.null(spath))
         spath <- lph(eo, B, M, p)
-    spath <- spath[, -1, drop=FALSE]    # drop lambda/barB
+    nd <- spath[, ncol(spath)]          # #dropped moments
+    ## drop lambda/barB and #dropped moments
+    spath <- spath[, -c(1, ncol(spath)), drop=FALSE]
     ep <- be(spath)
 
     ## Index of criterion to optimize
@@ -103,15 +105,10 @@ OptEstimator <- function(eo, B, M=diag(ncol(B)), K, p=2, spath=NULL, alpha=0.05,
             } else {
                 (1-opt0$minimum)*spath[max(i-1, 1), ]+opt0$minimum*spath[i, ]
             }
-if (opt1$objective < opt0$objective) {
-    print(c(i, opt1$minimum))
-            } else {
-    print(c(i-1, opt0$minimum))
-            }
-
-
     r <- be(kopt)
     r$opt.criterion <- opt.criterion
+    ## Return number of active moments
+    r$nd <- if (opt1$objective < opt0$objective) nd[i] else nd[max(i-1, 1)]
     r
 }
 

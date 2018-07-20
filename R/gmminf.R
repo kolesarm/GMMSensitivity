@@ -12,7 +12,7 @@
 lph <- function(eo, B, M=diag(ncol(B)), p=Inf) {
     if (ncol(B)==0)
         return(cbind(0, -eo$H %*% solve(crossprod(eo$G, solve(eo$Sig, eo$G)),
-                                   t(solve(eo$Sig, eo$G)))))
+                                   t(solve(eo$Sig, eo$G))), 0))
 
     ## Get orthogonalized homotopy, first B_{\perp}
     Bp <- if (nrow(B)>ncol(B)) {
@@ -29,7 +29,7 @@ lph <- function(eo, B, M=diag(ncol(B)), p=Inf) {
     else
         kts <- l1h0(T %*% eo$G, Sigt, eo$H, I)[, 1:(nrow(B)+1)]
     ## Return sensitivities at each step
-    cbind(kts[, 1], kts[, -1] %*% T)
+    cbind(kts[, 1], kts[, -1] %*% T, rowSums(kts[, -1]==0))
 }
 
 #' Next step in l_infty homotopy algorithm

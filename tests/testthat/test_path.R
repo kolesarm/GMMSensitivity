@@ -62,8 +62,8 @@ test_that("Check l_infty and l_1 solution paths using BLP data", {
         path1o <- lph(eo, B, p=1)
         path1b <- l1brute(eo, B, path1o[, 1])
 
-        expect_lt(max(abs(pathIo-pathIb)), 0.003)
-        expect_lt(max(abs(path1o-path1b)), 0.002)
+        expect_lt(max(abs(pathIo[, -ncol(pathIo)]-pathIb)), 0.003)
+        expect_lt(max(abs(path1o[, -ncol(path1o)]-path1b)), 0.002)
     }
 
 })
