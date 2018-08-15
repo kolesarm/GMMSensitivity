@@ -32,9 +32,9 @@ test_that("Replicate initial analysis", {
         B <- (abs(blp$perturb) * blp$OmZZ)[, I, drop=FALSE]
         K <- sqrt(sum(I))
 
-        opt <- OptEstimator(eo, B, M=diag(ncol(B)), K, p=2, alpha=0.05,
+        opt <- OptEstimator(eo, B, K, p=2, alpha=0.05,
                             opt.criterion="FLCI")
-        res <- rbind(res, as.data.frame(opt[-1]))
+        res <- rbind(res, cbind(as.data.frame(opt[-1]), K=K))
     }
 
 

@@ -4,7 +4,7 @@
 \alias{lph}
 \title{Compute solution path for l_infty or l_1 constraints}
 \usage{
-lph(eo, B, M = diag(ncol(B)), p = Inf)
+lph(eo, B, p = Inf)
 }
 \arguments{
 \item{eo}{List containing initial estimates with the following components:
@@ -29,16 +29,13 @@ lph(eo, B, M = diag(ncol(B)), p = Inf)
 determines the set \eqn{C}, where d_gamma is the number of invalid
 moments, and d_g is the number of moments}
 
-\item{M}{invertible matrix \eqn{M} with dimensions d_gamma by d_gamma that
-determines the set \eqn{C}.}
-
 \item{p}{Parameter determining which ell_p norm to use, one of \code{1}, or
 \code{Inf}.}
 }
 \description{
 Computes the vector of optimal sensitivities at each knot of the solution
 path that traces out the optimal bias-variance frontier when the set \eqn{C}
-takes the form \eqn{B*gamma}, with the ell_p norm of M*gamma bounded by a
+takes the form \eqn{B*gamma}, with the ell_p norm of gamma bounded by a
 constant, for \eqn{p=1}, or \eqn{p=Inf}. This path is used as an input to
 \code{\link{OptEstimator}}.
 }

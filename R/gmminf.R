@@ -2,14 +2,14 @@
 #'
 #' Computes the vector of optimal sensitivities at each knot of the solution
 #' path that traces out the optimal bias-variance frontier when the set \eqn{C}
-#' takes the form \eqn{B*gamma}, with the ell_p norm of M*gamma bounded by a
+#' takes the form \eqn{B*gamma}, with the ell_p norm of gamma bounded by a
 #' constant, for \eqn{p=1}, or \eqn{p=Inf}. This path is used as an input to
 #' \code{\link{OptEstimator}}.
 #' @inheritParams OptEstimator
 #' @param p Parameter determining which ell_p norm to use, one of \code{1}, or
 #'     \code{Inf}.
 #' @export
-lph <- function(eo, B, M=diag(ncol(B)), p=Inf) {
+lph <- function(eo, B, p=Inf) {
     if (ncol(B)==0)
         return(cbind(0, -eo$H %*% solve(crossprod(eo$G, solve(eo$Sig, eo$G)),
                                    t(solve(eo$Sig, eo$G))), 0))
@@ -21,7 +21,7 @@ lph <- function(eo, B, M=diag(ncol(B)), p=Inf) {
               matrix(ncol=0, nrow=nrow(B))
           }
     I <- rep(c(FALSE, TRUE), c(ncol(Bp), ncol(B)))
-    T <- rbind(t(Bp), M %*% solve(crossprod(B), t(B)))
+    T <- rbind(t(Bp), solve(crossprod(B), t(B)))
     Sigt <- T %*% eo$Sig %*% t(T)
     ## Get path of tilde{k}
     if (p==Inf)

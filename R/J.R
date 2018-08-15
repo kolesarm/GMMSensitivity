@@ -22,7 +22,7 @@ FindZero <- function(f, ival=1.1, negative=TRUE) {
 #'
 #' Computes J-test of overidentifying restrictions with critical value adjusted
 #' to allow for local misspecification, when the set \eqn{C} takes the form
-#' \eqn{B*gamma} where the ell_p norm of M*gamma is bounded by K. Assumes
+#' \eqn{B*gamma} where the ell_p norm of gamma is bounded by K. Assumes
 #' initial estimator in \code{eo} is optimal under correct specification.
 #' @inheritParams OptEstimator
 #' @return List with three elements:
@@ -33,14 +33,14 @@ FindZero <- function(f, ival=1.1, negative=TRUE) {
 #' \item{Kmin}{Minimum value of \code{K} for which the J-test would not reject}
 #' }
 #' @export
-Jtest <- function(eo, B, M=diag(ncol(B)), K, p=2, alpha=0.05) {
+Jtest <- function(eo, B, K, p=2, alpha=0.05) {
     J <- eo$n*drop(crossprod(eo$g_init, solve(eo$Sig, eo$g_init)))
     ## Sigma^{-1/2}
     e <- eigen(eo$Sig)
     Sig12 <- e$vectors %*% diag(1/sqrt(e$values)) %*% t(e$vectors)
     SG <- Sig12 %*% eo$G
     R <- diag(nrow(eo$G))-SG %*% solve(crossprod(SG), t(SG))
-    A <- (R %*% Sig12 %*% B %*% solve(M))
+    A <- R %*% Sig12 %*% B
 
     kbar <- if(p==2)
                 max(eigen(crossprod(A))$values)

@@ -3,4 +3,5 @@
 S3method(print,GMMEstimate)
 export(Jtest)
 export(OptEstimator)
+export(l2eff)
 export(lph)

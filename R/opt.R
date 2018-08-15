@@ -1,7 +1,7 @@
 #' One-step estimator based on optimal sensitivity under ell_p constraints
 #'
 #' Computes the optimal sensitivity and the optimal estimator when the set
-#' \eqn{C} takes the form \eqn{B*gamma} where the ell_p norm of M*gamma is
+#' \eqn{C} takes the form \eqn{B*gamma} where the ell_p norm of gamma is
 #' bounded by K.
 #'
 #' @param eo List containing initial estimates with the following components:
@@ -24,8 +24,6 @@
 #' @param B matrix \eqn{B} with full rank and dimension d_g by d_gamma that
 #'     determines the set \eqn{C}, where d_gamma is the number of invalid
 #'     moments, and d_g is the number of moments
-#' @param M invertible matrix \eqn{M} with dimensions d_gamma by d_gamma that
-#'     determines the set \eqn{C}.
 #' @param K diameter of set \eqn{C}
 #' @param p Parameter determining which ell_p norm to use, one of \code{1},
 #'     \code{2}, or \code{Inf}.
@@ -50,19 +48,19 @@
 #'     }
 #'
 #' @export
-OptEstimator <- function(eo, B, M=diag(ncol(B)), K, p=2, spath=NULL, alpha=0.05,
+OptEstimator <- function(eo, B, K, p=2, spath=NULL, alpha=0.05,
                          opt.criterion="FLCI") {
-    be <- function(k) BuildEstimator(k, eo, B, M, K, p, alpha)
+    be <- function(k) BuildEstimator(k, eo, B, K, p, alpha)
     if (opt.criterion=="Valid") {
         r <- be(eo$k_init)
         r$opt.criterion <- opt.criterion
         return(r)
     }
     if (p==2)
-        return(l2opt(eo, B, M, K, alpha, opt.criterion))
+        return(l2opt(eo, B, K, alpha, opt.criterion))
 
     if (is.null(spath))
-        spath <- lph(eo, B, M, p)
+        spath <- lph(eo, B, p)
     nd <- spath[, ncol(spath)]          # #dropped moments
     ## drop lambda/barB and #dropped moments
     spath <- spath[, -c(1, ncol(spath)), drop=FALSE]
@@ -86,7 +84,7 @@ OptEstimator <- function(eo, B, M=diag(ncol(B)), K, p=2, spath=NULL, alpha=0.05,
     if (ip<=nrow(spath)) {
         f1 <- function(w)
             be((1-w)*spath[i, ]+w*spath[i+1, ])[[idx]]
-        opt1 <- stats::optimize(f1, interval=c(0, 1))
+        opt1 <- stats::optimize(f1, interval=c(0, 1), tol = .Machine$double.eps^0.5)
     } else {
         opt1 <- list(minimum=0, objective=min(ep[[idx]]))
     }
@@ -94,7 +92,7 @@ OptEstimator <- function(eo, B, M=diag(ncol(B)), K, p=2, spath=NULL, alpha=0.05,
     if (i>1) {
         f0 <- function(w)
             be((1-w)*spath[i-1, ]+w*spath[i, ])[[idx]]
-        opt0 <- stats::optimize(f0, interval=c(0, 1))
+        opt0 <- stats::optimize(f0, interval=c(0, 1), tol = .Machine$double.eps^0.5)
     } else {
         opt0 <- list(minimum=1, objective=min(ep[[idx]]))
     }
@@ -117,16 +115,16 @@ OptEstimator <- function(eo, B, M=diag(ncol(B)), K, p=2, spath=NULL, alpha=0.05,
 #' @param k Sensitivity, or matrix of sensitivities
 #' @param p 1, 2, or Inf
 #' @keywords internal
-BuildEstimator <- function(k, eo, B, M, K, p=Inf, alpha=0.05) {
+BuildEstimator <- function(k, eo, B, K, p=Inf, alpha=0.05) {
     if (!is.matrix(k)) k <- matrix(k, nrow=1)
     hhat <- drop(eo$h_init + k %*% eo$g_init)
     bf <- function(k, p)
         if (p==Inf) {
-            sum(abs(solve(t(M), crossprod(B, k))))
+            sum(abs(crossprod(B, k)))
         } else if (p==1) {
-            max(abs(solve(t(M), crossprod(B, k))))
+            max(abs(crossprod(B, k)))
         } else {
-            sqrt(sum(solve(t(M), crossprod(B, k))^2))
+            sqrt(sum(crossprod(B, k)^2))
         }
     se <- sqrt(apply(k, 1, function(k)
         drop(crossprod(k, eo$Sig %*% k))) / eo$n)

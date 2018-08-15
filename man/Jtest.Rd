@@ -4,7 +4,7 @@
 \alias{Jtest}
 \title{J-test of overidentifying restrictions under local misspecification}
 \usage{
-Jtest(eo, B, M = diag(ncol(B)), K, p = 2, alpha = 0.05)
+Jtest(eo, B, K, p = 2, alpha = 0.05)
 }
 \arguments{
 \item{eo}{List containing initial estimates with the following components:
@@ -29,9 +29,6 @@ Jtest(eo, B, M = diag(ncol(B)), K, p = 2, alpha = 0.05)
 determines the set \eqn{C}, where d_gamma is the number of invalid
 moments, and d_g is the number of moments}
 
-\item{M}{invertible matrix \eqn{M} with dimensions d_gamma by d_gamma that
-determines the set \eqn{C}.}
-
 \item{K}{diameter of set \eqn{C}}
 
 \item{p}{Parameter determining which ell_p norm to use, one of \code{1},
@@ -52,6 +49,6 @@ List with three elements:
 \description{
 Computes J-test of overidentifying restrictions with critical value adjusted
 to allow for local misspecification, when the set \eqn{C} takes the form
-\eqn{B*gamma} where the ell_p norm of M*gamma is bounded by K. Assumes
+\eqn{B*gamma} where the ell_p norm of gamma is bounded by K. Assumes
 initial estimator in \code{eo} is optimal under correct specification.
 }

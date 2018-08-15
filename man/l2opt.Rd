@@ -4,7 +4,7 @@
 \alias{l2opt}
 \title{One-step estimator based on optimal sensitivity under ell_2 constraints}
 \usage{
-l2opt(eo, B, M = diag(ncol(B)), K, alpha = 0.05, opt.criterion = "FLCI")
+l2opt(eo, B, K, alpha = 0.05, opt.criterion = "FLCI")
 }
 \description{
 One-step estimator based on optimal sensitivity under ell_2 constraints
