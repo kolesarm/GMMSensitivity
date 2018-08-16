@@ -103,7 +103,8 @@ test_that("Check l_2 efficiency calculations using BLP data", {
         B <- (abs(blp$perturb) * blp$OmZZ)[, I, drop=FALSE]
         K <- sqrt(sum(I))
         eb <- unlist(EffBounds(eo, B, K, p=2, beta=0.5, alpha=0.05))
-        expect_lt(max(abs(unlist(l2eff(eo, B, K, beta=0.5, alpha=0.05))-
-                          eb)), 1e-5)
+        e2 <- unlist(l2eff(eo, B, K, beta=0.5, alpha=0.05))
+        print(max(abs(e2-eb)))
+        expect_lt(max(abs(e2-eb)), 1e-5)
     }
 })

@@ -59,9 +59,11 @@ modulus <- function(eo, B, K, p=2, spath=NULL, delta) {
     if (p==2 & min(eigen(GW2G(1))$values) <= 1e4*.Machine$double.eps)
         kapmax <- 1-1e-6
     ## delta needs to be decreasing in kappa
-    while (del(kp(kapmax)) > del(kp(kapmax-(1-1e-6))))
-        kapmax <- kapmax-(1-1e-6)
-
+    eps <- 1e-6
+    while (del(kp(kapmax)) > del(kp(kapmax-eps))) {
+        kapmax <- kapmax-eps
+        eps <- 2*eps
+    }
     if (delta < del(kp(kapmax))) {
         do <- sqrt(Vk(kp(kapmax)))
         return(list(omega=do*delta, domega=do, kappa=kapmax))
