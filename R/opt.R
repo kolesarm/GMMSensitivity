@@ -84,7 +84,7 @@ OptEstimator <- function(eo, B, K, p=2, spath=NULL, alpha=0.05,
     if (ip<=nrow(spath)) {
         f1 <- function(w)
             be((1-w)*spath[i, ]+w*spath[i+1, ])[[idx]]
-        opt1 <- stats::optimize(f1, interval=c(0, 1), tol = .Machine$double.eps^0.5)
+        opt1 <- stats::optimize(f1, interval=c(0, 1), tol=tol)
     } else {
         opt1 <- list(minimum=0, objective=min(ep[[idx]]))
     }
@@ -92,7 +92,7 @@ OptEstimator <- function(eo, B, K, p=2, spath=NULL, alpha=0.05,
     if (i>1) {
         f0 <- function(w)
             be((1-w)*spath[i-1, ]+w*spath[i, ])[[idx]]
-        opt0 <- stats::optimize(f0, interval=c(0, 1), tol = .Machine$double.eps^0.5)
+        opt0 <- stats::optimize(f0, interval=c(0, 1), tol=tol)
     } else {
         opt0 <- list(minimum=1, objective=min(ep[[idx]]))
     }

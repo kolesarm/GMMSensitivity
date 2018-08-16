@@ -22,7 +22,7 @@ l2opt <- function(eo, B, K, alpha=0.05,
     } else if (opt.criterion=="FLCI") {
         crit <- function(kap) l2sens(eo, B, kap, K, alpha)$hl
         ## minimum should be near 1/2
-        kap <- stats::optimize(crit, c(0, 1), tol=1e-12)$minimum
+        kap <- stats::optimize(crit, c(0, 1), tol=tol)$minimum
         r <- l2sens(eo, B, kap, K, alpha)
     }
     r$opt.criterion <- opt.criterion
@@ -63,7 +63,7 @@ l2mod <- function(eo, B, K, delta) {
         return(list(omega=sqrt(Vk(1))*delta, domega=sqrt(Vk(1)), kappa=1))
     } else {
         kap <- stats::uniroot(function(kap) del(kap)-delta,
-                              c(0, 1-1e-6), tol = .Machine$double.eps^0.5)$root
+                              c(0, 1-1e-6), tol=tol)$root
         return(list(omega=om(kap), domega=sqrt(Vk(kap)), kappa=kap))
     }
 }
@@ -83,18 +83,22 @@ l2mod <- function(eo, B, K, delta) {
 #'     optimize
 l2eff <- function(eo, B, K, beta=0.5, alpha=0.05) {
     ## One-sided
-    del <- stats::qnorm(1-alpha) + stats::qnorm(1-beta)
+    zal <- stats::qnorm(1-alpha)
+    del <- zal + stats::qnorm(1-beta)
     e1 <- l2mod(eo, B, K, del)
     effo <- l2mod(eo, B, K, 2*del)$omega/(e1$omega+del*e1$domega)
 
-    ## Two-sided
-    set.seed(42)
-    Z <- stats::rnorm(1000)
-    dels <- 2*(stats::qnorm(1-alpha)-Z[Z<stats::qnorm(1-alpha)]) # deltas
-    oms <- sapply(dels, function(del) l2mod(eo, B, K, del)$omega)
-    efft <- (1-alpha)*mean(oms)/ (2*OptEstimator(eo, B, K=K, 2,
-                                            alpha=alpha,
-                                            opt.criterion="FLCI")$hl*sqrt(eo$n))
+   integrand <- function(z)
+        sapply(z, function(z) l2mod(eo, B, K, 2*(zal-z))$omega *
+                                                        stats::dnorm(z))
+    lo <- -zal                          # lower endpoint
+    while(integrand(lo)>1e-10) lo <- 2*lo
 
-    list(onesisded=effo, twosided=efft)
+    den <- 2*OptEstimator(eo, B, K=K, 2, alpha=alpha,
+                          opt.criterion="FLCI")$hl*sqrt(eo$n)
+    eff2 <- stats::integrate(integrand, lo,
+                             zal, abs.tol=1e-6)$value / den
+
+
+    list(onesisded=effo, twosided=eff2)
 }
