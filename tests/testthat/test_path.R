@@ -61,9 +61,15 @@ test_that("Check l_infty and l_1 solution paths using BLP data", {
         pathIb <- linfbrute(eo, B, pathIo[, 1])
         path1o <- lph(eo, B, p=1)
         path1b <- l1brute(eo, B, path1o[, 1])
-
         expect_lt(max(abs(pathIo[, -ncol(pathIo)]-pathIb)), 0.003)
         expect_lt(max(abs(path1o[, -ncol(path1o)]-path1b)), 0.002)
+        ## check that relaxing constaint doesn't change solution. Cannot just
+        ## drop the constraint, since then the optimal sensitivity k is not in
+        ## general unique
+        expect_lt(max(abs(pathIo[nrow(pathIo), -c(1, ncol(pathIo))]-
+                          drop(linfbrute(eo, B, 100*pathIo[nrow(pathIo), 1])[-1]))), 1e-4)
+        expect_lt(max(abs(path1o[1, -c(1, ncol(path1o))]-
+                          drop(l1brute(eo, B, 100*path1o[1, 1])[-1]))), 2e-4)
     }
 
 })
