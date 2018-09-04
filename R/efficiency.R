@@ -1,5 +1,6 @@
 #' Modulus
-modulus <- function(eo, B, K, p=2, spath=NULL, delta) {
+#' @keywords internal
+modulus <- function(delta, eo, B, K, p=2, spath=NULL) {
     ## drop lambda/barB and #dropped moments
     if (p != 2) {
         if (is.null(spath))
@@ -11,18 +12,51 @@ modulus <- function(eo, B, K, p=2, spath=NULL, delta) {
     SG <- solve(eo$Sig, eo$G)       # Sigma^{-1} * G
     kv <- -drop(SG %*% solve(crossprod(eo$G, SG), eo$H))
 
-    ## c_delta
+    #' c_delta. If Bk=0, give c_delta that leads to largest possible delta.
     cd <- function(k) {
         Bk <- drop(crossprod(B, k))
-        if (p==Inf) {
-            -K*drop(B %*% sign(Bk))
-        } else if (p==1) {
-            j <- which.max(abs(Bk))
-            -sign(Bk[j]) *K*drop(B %*% (1:ncol(B)==j))
+        R <- crossprod(B, solve(eo$Sig, B)-SG %*%
+                            solve(crossprod(eo$G, SG), crossprod(SG, B)))
+        gam <- rep(NA, length=length(Bk))
+        if (rcond(R)>100*.Machine$double.eps) {
+            gam <- solve(R, drop(crossprod(B, k-kv)))
         } else {
-            -K*drop(B %*% Bk)/ sqrt(sum(Bk^2))
+            if (p==2) {
+                gam <- -Bk
+            } else if (p==Inf) {
+                A <- abs(Bk) >= 1e-8
+                gam[A] <- -K*sign(Bk[A])
+                if (sum(!A)>0) {
+                    den <- crossprod(gam[A], R[A, A, drop=FALSE] %*% gam[A]) -
+                        crossprod(R[!A, A, drop=FALSE] %*% gam[A],
+                                  solve(R[!A, !A, drop=FALSE],
+                                        R[!A, A, drop=FALSE] %*% gam[A]))
+                    Bkv <- drop(crossprod(B, kv))
+                    num <- Vk(k)-Vk(kv) -
+                        crossprod(Bkv[!A], solve(R[!A, !A, drop=FALSE],
+                                                 Bkv[!A]))
+                    lam <- sqrt(drop(num)/drop(den))
+                    gam[!A] <- -solve(R[!A, !A, drop=FALSE],
+                                      R[!A, A, drop=FALSE] %*% gam[A] +
+                                      Bkv[!A]/lam)
+                }
+            } else if (p==1) {
+                A <- (abs(Bk) < max(abs(Bk)) -1e-8)
+                gam[A] <- 0
+                gam[!A] <- solve(R[!A, !A], drop(crossprod(B, k-kv))[!A])
+            }
         }
+
+        den <- if (p==Inf) {
+                   max(abs(gam))
+               } else if (p==2) {
+                   sqrt(sum(gam^2))
+               } else if (p==1) {
+                   sum(abs(gam))
+               }
+        K * drop(B %*% gam) / den
     }
+
     del <- function(k) {
         Sc <- solve(eo$Sig, cd(k))
         GSc <- crossprod(eo$G, Sc)
@@ -37,7 +71,6 @@ modulus <- function(eo, B, K, p=2, spath=NULL, delta) {
     om <- function(k)
         Vk(kv)/sqrt(Vk(k)) * del(k) - 2*sum(kv*cd(k))
 
-
     ## W(kappa) * G for ell_2 constraints
     W2G <- function(kap)
         solve(eo$Sig, eo$G) - kap*solve(eo$Sig, B) %*%
@@ -51,25 +84,33 @@ modulus <- function(eo, B, K, p=2, spath=NULL, delta) {
         if (p==2)
             return(-drop(W2G(kap) %*% solve(GW2G(kap), eo$H)))
         ix <- 1+kap*(nrow(spath)-1)
-        (1-ix+floor(ix))*spath[floor(ix), ]+(ix-floor(ix))*spath[ceiling(ix), ]
+        (ix-floor(ix))*spath[ceiling(ix), ]+(1-ix+floor(ix))*spath[floor(ix), ]
     }
 
     kapmax <- 1
-    ## For p==2, if GW2G(1) is not invertible, set kappamax=1-1e-6
-    if (p==2 & min(eigen(GW2G(1))$values) <= 1e4*.Machine$double.eps)
-        kapmax <- 1-1e-6
-    ## delta needs to be decreasing in kappa
-    eps <- 1e-6
-    while (del(kp(kapmax)) > del(kp(kapmax-eps))) {
-        kapmax <- kapmax-eps
-        eps <- 2*eps
+    ## If GW2G(1) is not invertible, set kappamax=1-1e-6, the endpoint is never
+    ## reached, of for p\neq 2, the second-to-last step in the solution path
+    if (rcond(GW2G(1))< 100*.Machine$double.eps) {
+        if (p==2) {
+            kapmax <- 1-1e-6
+        } else {
+            kapmax <- (nrow(spath)-2)/(nrow(spath)-1)
+        }
     }
+
     if (delta < del(kp(kapmax))) {
-        do <- sqrt(Vk(kp(kapmax)))
-        return(list(omega=do*delta, domega=do, kappa=kapmax))
+        if (kapmax==1) {
+            do <- sqrt(Vk(kp(kapmax)))
+            return(list(omega=do*delta, domega=do, kappa=kapmax))
+        } else {
+            ## brute force
+            mb <- mod_cvx(delta, eo, B, K, p)
+            return(list(omega=mb$omega, domega=mb$domega, kappa=-1))
+        }
     } else {
         kap <- stats::uniroot(function(kap) del(kp(kap))-delta,
                               c(0, kapmax), tol=tol)$root
+
         return(list(omega=om(kp(kap)), domega=sqrt(Vk(kp(kap))), kappa=kap))
     }
 }
@@ -86,18 +127,23 @@ modulus <- function(eo, B, K, p=2, spath=NULL, delta) {
 #' @inheritParams OptEstimator
 #' @param beta Quantile of excess length of one-sided confidence interval to
 #'     optimize
+#' @param cvx Use cvx or homotopy solution?
 #' @export
-EffBounds <- function(eo, B, K, p=2, beta=0.5, alpha=0.05) {
+EffBounds <- function(eo, B, K, p=2, beta=0.5, alpha=0.05, cvx=FALSE) {
     ## One-sided
     zal <- stats::qnorm(1-alpha)
-    del0 <- zal + stats::qnorm(1-beta)
+    del0 <- zal + stats::qnorm(beta)
     spath <- if (p!=2) lph(eo, B, p) else NULL
-    e1 <- modulus(eo, B, K, p, spath, del0)
-    eff1 <- modulus(eo, B, K, p, spath, 2*del0)$omega/(e1$omega+del0*e1$domega)
+    if (cvx)
+        mo <- function(del) mod_cvx(del, eo, B, K, p)
+    else
+        mo <- function(del) modulus(del, eo, B, K, p, spath)
 
-   integrand <- function(z)
-       sapply(z, function(z) modulus(eo, B, K, p, spath,
-                                     2*(zal-z))$omega * stats::dnorm(z))
+    e1 <- mo(del0)
+    eff1 <- mo(2*del0)$omega/(e1$omega+del0*e1$domega)
+
+    integrand <- function(z)
+        sapply(z, function(z) mo(2*(zal-z))$omega * stats::dnorm(z))
     lo <- -zal                          # lower endpoint
     while(integrand(lo)>1e-10) lo <- 2*lo
 
@@ -107,4 +153,26 @@ EffBounds <- function(eo, B, K, p=2, beta=0.5, alpha=0.05) {
                              zal, abs.tol=1e-6)$value / den
 
     list(onesisded=eff1, twosided=eff2)
+}
+
+#' Modulus using CVX
+#' @keywords internal
+mod_cvx <- function(delta, eo, B, K, p) {
+    th <- CVXR::Variable(length(eo$H))
+    ga <- CVXR::Variable(ncol(B))
+    ob <- CVXR::Maximize(2*sum(eo$H*th))
+    con <- list(CVXR::p_norm(t(solve(chol(eo$Sig))) %*%
+                             (B%*%ga - eo$G%*%th))  <= delta/2,
+                CVXR::p_norm(ga, p=p)<=K)
+    pr <- solve(CVXR::Problem(ob, con))
+    th0 <- drop(pr$getValue(th))
+    ga0 <- drop(pr$getValue(ga))
+
+    ## k_{delta} up to scale: k_{delta}/lambda_1
+    k0 <- solve(eo$Sig, drop(B %*% ga0 - eo$G %*% th0))
+    ## Get scale
+    lam1 <- mean(eo$H[eo$H!=0]/drop(-crossprod(eo$G, k0))[eo$H!=0])
+    ## Alternative: domega=sqrt(drop(crossprod(k0, eo$Sig %*% k0)))*lam1
+
+    list(omega=pr$value, domega=delta*lam1/2)
 }

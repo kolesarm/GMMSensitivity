@@ -1,6 +1,6 @@
 Package: GMMSensitivity
 Title: Confidence intervals for sensitivity analysis in GMM
-Version: 0.0.1.9003
+Version: 0.0.2
 Authors@R: 'Michal Kolesar <kolesarmi@googlemail.com> [aut, cre]'
 Description: Implements optimal confidence intervals for sensitivity analysis in
     generalized method of moments (GMM) models.

@@ -2,10 +2,52 @@
 % Please edit documentation in R/efficiency.R
 \name{EffBounds}
 \alias{EffBounds}
-\title{Efficiency bounds}
+\title{Efficiency bounds under ell_p constraints}
 \usage{
-EffBounds(eo, B, K, p = 2, beta = 0.5, alpha = 0.05)
+EffBounds(eo, B, K, p = 2, beta = 0.5, alpha = 0.05, cvx = FALSE)
+}
+\arguments{
+\item{eo}{List containing initial estimates with the following components:
+
+    \describe{
+
+    \item{Sig}{Estimate of variance of the moment condition, matrix with dimension
+       d_g by d_g, where d_g is the number of moments}
+
+    \item{G}{Estimate of defivative of the moment condition, matrix with
+    dimension d_g by d_theta, where d_theta is the dimension of \eqn{theta}}
+
+    \item{H}{Estimate of defivative of \eqn{h(theta_{0})}. A vector of length d_theta}
+    \item{n}{sample size}
+    \item{h_init}{Estimate of \eqn{h(theta_0)}}
+    \item{k_init}{Initial sensitivity}
+    \item{g_init}{Moment condition evaluated at initial estimate}
+
+    }}
+
+\item{B}{matrix \eqn{B} with full rank and dimension d_g by d_gamma that
+determines the set \eqn{C}, where d_gamma is the number of invalid
+moments, and d_g is the number of moments}
+
+\item{K}{diameter of set \eqn{C}}
+
+\item{p}{Parameter determining which ell_p norm to use, one of \code{1},
+\code{2}, or \code{Inf}.}
+
+\item{beta}{Quantile of excess length of one-sided confidence interval to
+optimize}
+
+\item{alpha}{determines confidence level, \code{1-alpha}, for
+constructing/optimizing confidence intervals.}
+
+\item{cvx}{Use cvx or homotopy solution?}
 }
 \description{
-Efficiency bounds
+Computes the asymptotic efficiency of two-sided fixed-length confidence
+intervals, as well as the efficiency of one-sided confidence intervals that
+optimize a given \code{beta} quantile of excess length.
+}
+\details{
+The set \eqn{C} takes the form \eqn{B*gamma} where the ell_p norm of gamma is
+bounded by K.
 }

@@ -4,8 +4,20 @@
 \alias{modulus}
 \title{Modulus}
 \usage{
-modulus(eo, B, K, p = 2, spath = NULL, delta)
+modulus(delta, eo, B, K, p = 2, spath = NULL)
 }
 \description{
 Modulus
 }
+\keyword{Bk=0,}
+\keyword{If}
+\keyword{c_delta}
+\keyword{c_delta.}
+\keyword{delta.}
+\keyword{give}
+\keyword{internal}
+\keyword{largest}
+\keyword{leads}
+\keyword{possible}
+\keyword{that}
+\keyword{to}
