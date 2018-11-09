@@ -10,7 +10,7 @@ sdZ <- drop(d$sd.Z)
 ids <- list(iv=unname(unlist(d$names.iv)), th=unname(unlist(d$names.th)))
 
 blp <- list(G=d$G, H=H, W=d$W, g_init=g_init, h_init=h_init, names=ids,
-            OmZZ=d$Om.ZZ, Sig=d$Omega, sdZ=sdZ, perturb=perturb, n=drop(d$n))
+            ZZ=d$Om.ZZ, Sig=d$Omega, sdZ=sdZ, perturb=perturb, n=drop(d$n))
 devtools::use_data(blp, internal=FALSE, overwrite=TRUE)
 
 # Instruments, 13 demand (last 8 excluded) and 18 supply (last 12 excluded)

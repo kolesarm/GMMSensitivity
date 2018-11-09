@@ -126,8 +126,11 @@ modulus <- function(delta, eo, B, K, p=2, spath=NULL) {
 #' bounded by K.
 #' @inheritParams OptEstimator
 #' @param beta Quantile of excess length of one-sided confidence interval to
-#'     optimize
-#' @param cvx Use cvx or homotopy solution?
+#'     optimize (for one-sided confidence intervals)
+#' @param cvx By default, the efficiency is computed using the homotopy
+#'     algorithm for the modulus. If \eqn{cvx=TRUE} is specified, the modulus is
+#'     computed using the cvx convex optimizer. This option is included mostly
+#'     just to verify that the homotopy solution correct.
 #' @export
 EffBounds <- function(eo, B, K, p=2, beta=0.5, alpha=0.05, cvx=FALSE) {
     ## One-sided

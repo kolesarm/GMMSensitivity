@@ -1,0 +1,100 @@
+---
+title: "Sensitivty analaysis in moment condition models"
+author: "Michal Kolesár"
+date: "`r Sys.Date()`"
+
+bibliography: np-testing-library.bib
+output:
+  pdf_document:
+    toc: true
+    toc_depth: 1
+    includes:
+        in_header: vignette_head.tex
+vignette: >
+  %\VignetteIndexEntry{Sensitivity analysis in GMM}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include=FALSE, cache=FALSE}
+library("knitr")
+knitr::opts_knit$set(self.contained = FALSE)
+knitr::opts_chunk$set(tidy = TRUE, collapse=TRUE, comment = "#>",
+                      tidy.opts=list(blank=FALSE, width.cutoff=55))
+```
+
+# Introduction
+
+The package `GMMSensitivity` implements estimators and confidence interval for
+sensitivity analsysis in moment condition models considered in @ak18sensitivity.
+In this vignette, we demonstrate the implementation of these confidence
+intervals using the demand model for automobiles from  @blp95.
+
+The package includes the dataset `blp`, which contains estimates of the @blp95
+model, as implemented by @ags17. A description of the dataset can be obtained
+using the `help` function:
+
+```{r, echo=TRUE}
+library("GMMSensitivity")
+help("blp", type="text")
+```
+
+# Usage
+
+The package implements estimators, confidence intervals, and efficiency
+calculations for the model (in the notation of @ak18sensitivity)
+\begin{equation*}
+g(\theta_{0})=c,\quad c=B\gamma,\quad \norm{\gamma}_{p}\leq K.
+\end{equation*}
+
+For example, suppose that all excluded instruments may be invalid with
+$K=\sqrt{\# I}$, where $\#I$ is the numer of invalid instruments (using the
+scaling descibed in the paper). Then the confidence interval can be constructed
+as follows:
+
+```{r}
+## Construct estimate of initial sensitivity
+blp$k_init <- -drop(blp$H %*% solve(crossprod(blp$G, blp$W %*% blp$G),
+                                        crossprod(blp$G, blp$W)))
+
+eo <- list(H=blp$H, G=blp$G, Sig=blp$Sig, n=blp$n, g_init=blp$g_init,
+           k_init=blp$k_init, h_init= blp$h_init)
+
+## Rows corresponding to invalid instruments
+I <- vector(mode="logical", length=nrow(eo$G))
+I[c(6:13, 20:31)] <- TRUE
+
+## Matrix B, scaled as described in the paper
+B <- (abs(blp$perturb) * blp$OmZZ)[, I, drop=FALSE]
+
+## Value of K
+K0 <- sqrt(sum(I))
+
+OptEstimator(eo, B, K=K0, p=2, alpha=0.05, opt.criterion="FLCI")
+```
+The efficiency $\kappa^*$ for this confidence interval can be computed using the
+`EffBounds` function (which can also be used to compute efficiency of one-sided
+confidence intervals):
+
+```{r}
+EffBounds(eo, B, K=K0, p=2)$twosided
+```
+
+For comparison, using the initial estimator yields  the confidence interval:
+
+```{r}
+OptEstimator(eo, B, K=K0, p=2, alpha=0.05, opt.criterion="Valid")
+```
+
+Finally a specification test for whether the value $K=K0$ is too low, that is a
+test of the hypothesis $H_0\colon: K\leq K0$:
+
+```{r}
+Jtest(eo, B, K=K0, p=2, alpha=0.05)
+```
+
+Here `J` is the $J$-statistic, `p0` is the p-value of the usual $J$-test (that
+assumes $K=0$ under the null), `pC` is the $p$-value of the test, and `Kmin` is
+the smallest value of $K$ that is not rejected.
+
+# References

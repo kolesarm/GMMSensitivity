@@ -35,12 +35,15 @@ moments, and d_g is the number of moments}
 \code{2}, or \code{Inf}.}
 
 \item{beta}{Quantile of excess length of one-sided confidence interval to
-optimize}
+optimize (for one-sided confidence intervals)}
 
 \item{alpha}{determines confidence level, \code{1-alpha}, for
 constructing/optimizing confidence intervals.}
 
-\item{cvx}{Use cvx or homotopy solution?}
+\item{cvx}{By default, the efficiency is computed using the homotopy
+algorithm for the modulus. If \eqn{cvx=TRUE} is specified, the modulus is
+computed using the cvx convex optimizer. This option is included mostly
+just to verify that the homotopy solution correct.}
 }
 \description{
 Computes the asymptotic efficiency of two-sided fixed-length confidence

@@ -1,3 +1,5 @@
+% Run this by typing get_ags into matlab's REPL
+
 % 0. Unzip
 % https://dataverse.harvard.edu/file.xhtml?persistentId=doi:10.7910/DVN/LLARSN/2KFPRA&version=1.1
 % into ags/ directory (the files not needed for code below to execute were deleted)
@@ -40,9 +42,8 @@ sd_Z = sqrt(var([demand_iv_var, supply_iv_var]));
 % to calculate perturbation scaling from
 [avg_price, avg_mc] = est.GetAvgPriceMC(data);
 k_xi                = est.GetWTPDerivative(data);
-delta          = 0.01;
-demand_perturb =  delta .* avg_price ./ k_xi;
-supply_perturb = -delta .* avg_price ./ avg_mc;
+demand_perturb =  0.01 .* avg_price ./ k_xi;
+supply_perturb = -0.01 .* avg_price ./ avg_mc;
 
 n = est.nmodels;
 
@@ -51,6 +52,9 @@ save('agm_data', 'Om_ZZ', 'sd_Z', 'W', 'H', 'G', 'Omega', 'demand_perturb', ...
 
 % Print thattheta (se)
 [[est.param; est.beta], sqrt(diag(get_vcov(est.gjacobian, est.Omega, est.wmatrix))/n)]
+% Print estimate normalized in terms of % willingness to pay for 1sd increase
+(est.beta'./[demand_perturb./sd_Z(1:5), supply_perturb./sd_Z(14:19)])'
+
 % Markup
 [h_init, sqrt(H * get_vcov(est.gjacobian, est.Omega, est.wmatrix) * H' ./n)]
 

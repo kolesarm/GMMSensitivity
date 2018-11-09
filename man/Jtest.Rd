@@ -38,17 +38,19 @@ moments, and d_g is the number of moments}
 constructing/optimizing confidence intervals.}
 }
 \value{
-List with three elements:
-\describe{
+List with three elements: \describe{
 
-\item{p0}{P-value of usual J-test}
-\item{pC}{P-value for J-test that allows for local misspecification}
-\item{Kmin}{Minimum value of \code{K} for which the J-test would not reject}
-}
+\item{p0}{Value of J statistic}
+
+\item{p0}{P-value of usual J test}
+
+\item{pC}{P-value for J-test that  allows for local misspecification}
+
+\item{Kmin}{Minimum value of \code{K} for which the J-test would not reject} }
 }
 \description{
 Computes J-test of overidentifying restrictions with critical value adjusted
-to allow for local misspecification, when the set \eqn{C} takes the form
-\eqn{B*gamma} where the ell_p norm of gamma is bounded by K. Assumes
+to allow for local misspecification, when the parameter \eqn{c} takes the
+form \eqn{c=B*gamma} with the ell_p norm of gamma is bounded by K. Assumes
 initial estimator in \code{eo} is optimal under correct specification.
 }
