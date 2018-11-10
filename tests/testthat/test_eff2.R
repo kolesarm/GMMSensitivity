@@ -90,7 +90,7 @@ test_that("Check l_2 efficiency calculations using BLP data", {
     for (j in 11:length(ivlist)) {
         I <- vector(mode="logical", length=31)
         I[ivlist[[j]]] <- TRUE
-        B <- (abs(blp$perturb) * blp$OmZZ)[, I, drop=FALSE]
+        B <- (abs(blp$perturb) * blp$ZZ)[, I, drop=FALSE]
         K <- sqrt(sum(I))
         eb <- unlist(EffBounds(eo, B, K, p=2, beta=0.5, alpha=0.05))
         e2 <- unlist(l2eff(eo, B, K, beta=0.5, alpha=0.05))

@@ -25,7 +25,7 @@ test_that("Check l_1, l_2, l_inf efficiency agree with one invalid moment", {
     for (j in 1:10) {
         I <- vector(mode="logical", length=31)
         I[ivlist[[j]]] <- TRUE
-        B <- (abs(blp$perturb) * blp$OmZZ)[, I, drop=FALSE]
+        B <- (abs(blp$perturb) * blp$ZZ)[, I, drop=FALSE]
         e1 <- unlist(EffBounds(eo, B, 1, p=1, beta=0.8, alpha=0.05))
         e2 <- unlist(EffBounds(eo, B, 1, p=2, beta=0.8, alpha=0.05))
         eI <- unlist(EffBounds(eo, B, 1, p=Inf, beta=0.8, alpha=0.05))
@@ -63,7 +63,7 @@ test_that("Check modulus solution against brute force", {
         for (j in c(11, 21:27)) {
             I <- vector(mode="logical", length=31)
             I[ivlist[[j]]] <- TRUE
-            B <- (abs(blp$perturb) * blp$OmZZ)[, I, drop=FALSE]
+            B <- (abs(blp$perturb) * blp$ZZ)[, I, drop=FALSE]
             K <- if (p==2) sqrt(sum(I)) else if (p==Inf) 1 else sum(I)
             mb <- sapply(dels, function(d) mod_cvx(d, eo, B, K, p)$omega)
             mo <- sapply(dels, function(d) modulus(d, eo, B, K, p)$omega)

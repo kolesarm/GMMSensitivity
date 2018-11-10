@@ -1,6 +1,6 @@
 context("L2 constraints")
 
-test_that("Replicate initial analysis", {
+test_that("Replicate initial analysis by Soonwoo", {
 
     ## Soonwoo's analysis with Omega=W^{-1}
     ## List of different specifications
@@ -29,7 +29,7 @@ test_that("Replicate initial analysis", {
     for (j in 1:length(ivlist)) {
         I <- vector(mode="logical", length=31)
         I[ivlist[[j]]] <- TRUE
-        B <- (abs(blp$perturb) * blp$OmZZ)[, I, drop=FALSE]
+        B <- (abs(blp$perturb) * blp$ZZ)[, I, drop=FALSE]
         K <- sqrt(sum(I))
 
         opt <- OptEstimator(eo, B, K, p=2, alpha=0.05,

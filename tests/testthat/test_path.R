@@ -55,7 +55,7 @@ test_that("Check l_infty and l_1 solution paths using BLP data", {
     for (j in 1:length(ivlist)) {
         I <- vector(mode="logical", length=31)
         I[ivlist[[j]]] <- TRUE
-        B <- (abs(blp$perturb) * blp$OmZZ)[, I, drop=FALSE]
+        B <- (abs(blp$perturb) * blp$ZZ)[, I, drop=FALSE]
         K <- sqrt(sum(I))
         pathIo <- lph(eo, B, p=Inf)
         pathIb <- linfbrute(eo, B, pathIo[, 1])
@@ -77,7 +77,7 @@ test_that("Check l_infty and l_1 solution paths using BLP data", {
 
 test_that("Check optimal path under no misspecification", {
     I <- vector(mode="logical", length=31)
-    B <- (abs(blp$perturb) * blp$OmZZ)[, I, drop=FALSE]
+    B <- (abs(blp$perturb) * blp$ZZ)[, I, drop=FALSE]
     W <- solve(blp$Sig)
     k_opt <- -blp$H %*% solve(crossprod(blp$G, W %*% blp$G),
                               crossprod(blp$G, W))
