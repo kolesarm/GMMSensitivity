@@ -30,11 +30,11 @@ test_that("Replicate initial analysis by Soonwoo", {
         I <- vector(mode="logical", length=31)
         I[ivlist[[j]]] <- TRUE
         B <- (abs(blp$perturb) * blp$ZZ)[, I, drop=FALSE]
-        K <- sqrt(sum(I))
+        M <- sqrt(sum(I))
 
-        opt <- OptEstimator(eo, B, K, p=2, alpha=0.05,
+        opt <- OptEstimator(eo, B, M, p=2, alpha=0.05,
                             opt.criterion="FLCI")
-        res <- rbind(res, cbind(as.data.frame(opt[-1]), K=K))
+        res <- rbind(res, cbind(as.data.frame(opt[-1]), M=M))
     }
 
 

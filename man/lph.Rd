@@ -2,7 +2,7 @@
 % Please edit documentation in R/gmminf.R
 \name{lph}
 \alias{lph}
-\title{Compute solution path for l_infty or l_1 constraints}
+\title{Compute solution path for \eqn{\ell_\infty}{l_infinity} or \eqn{\ell_1}{l1} constraints}
 \usage{
 lph(eo, B, p = Inf)
 }
@@ -12,22 +12,29 @@ lph(eo, B, p = Inf)
     \describe{
 
     \item{Sig}{Estimate of variance of the moment condition, matrix with dimension
-       d_g by d_g, where d_g is the number of moments}
+       \eqn{d_g} by \eqn{d_g}, where \eqn{d_g} is the number of moments}
 
-    \item{G}{Estimate of defivative of the moment condition, matrix with
-    dimension d_g by d_theta, where d_theta is the dimension of \eqn{theta}}
+    \item{G}{Estimate of derivative of the moment condition, matrix with
+    dimension \eqn{d_g} by \eqn{d_\theta}{d_theta}, where
+    \eqn{d_\theta}{d_theta} is the dimension of \eqn{\theta}{theta}}
 
-    \item{H}{Estimate of defivative of \eqn{h(theta_{0})}. A vector of length d_theta}
+    \item{H}{Estimate of defivative of \eqn{h(\theta)}{h(theta)}. A vector of
+    length \eqn{d_\theta}{d_theta}}
+
     \item{n}{sample size}
-    \item{h_init}{Estimate of \eqn{h(theta_0)}}
+
+    \item{h_init}{Estimate of \eqn{h(\theta)}{h(theta)}}
+
     \item{k_init}{Initial sensitivity}
+
     \item{g_init}{Moment condition evaluated at initial estimate}
 
     }}
 
-\item{B}{matrix \eqn{B} with full rank and dimension d_g by d_gamma that
-determines the set \eqn{C}, where d_gamma is the number of invalid
-moments, and d_g is the number of moments}
+\item{B}{matrix \eqn{B} with full rank and dimension \eqn{d_g} by
+\eqn{d_\gamma}{d_gamma} that determines the set \eqn{C}, where
+\eqn{d_\gamma}{d_gamma} is the number of invalid moments, and \eqn{d_g}
+is the number of moments}
 
 \item{p}{Parameter determining which ell_p norm to use, one of \code{1}, or
 \code{Inf}.}
@@ -35,7 +42,14 @@ moments, and d_g is the number of moments}
 \description{
 Computes the vector of optimal sensitivities at each knot of the solution
 path that traces out the optimal bias-variance frontier when the set \eqn{C}
-takes the form \eqn{B*gamma}, with the ell_p norm of gamma bounded by a
-constant, for \eqn{p=1}, or \eqn{p=Inf}. This path is used as an input to
-\code{\link{OptEstimator}}.
+takes the form \eqn{c=B\gamma}{c=B*gamma} with the \eqn{\ell_p}{lp} norm of
+\eqn{\gamma}{gamma} is bounded by a constant, for \eqn{p=1}, or \eqn{p=Inf}.
+This path is used as an input to \code{\link{OptEstimator}}.
+}
+\details{
+The algorightm is described in Appendix A of Armstrong and Kolesár (2018)
+}
+\references{
+Armstrong, T. B., and M. Kolesár (2018): Sensitivity Analysis
+    Using Approximate Moment Condition Models, Unpublished manuscript
 }

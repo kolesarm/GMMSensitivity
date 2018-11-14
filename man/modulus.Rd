@@ -4,7 +4,7 @@
 \alias{modulus}
 \title{Modulus}
 \usage{
-modulus(delta, eo, B, K, p = 2, spath = NULL)
+modulus(delta, eo, B, M, p = 2, spath = NULL)
 }
 \description{
 Modulus

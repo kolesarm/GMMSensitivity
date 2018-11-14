@@ -8,26 +8,35 @@
 
 \describe{
 
-\item{G}{Matrix with 31 rows and 17 columns, estimate of derivative of the moment condition.}
+\item{G}{Matrix with 31 rows and 17 columns, estimate of derivative of the
+         moment condition evaluated at initial esitmate of theta from Berry,
+         Levinsohn, and Pakes (1995), \eqn{\hat{\theta}}{thetahat}.}
 
 \item{H}{Vector of length 17, estimate of derivative of average markup
-  \eqn{h(theta)} with respect to model parameters theta.}
+  \eqn{h(\theta)}{h(theta)} with respect to model parameters
+  \eqn{\theta}{theta}, evaluated at \eqn{\hat{\theta}}{thetahat}.}
 
-\item{W}{Weight matrix used to obtain the estimate of theta.}
+\item{W}{Weight matrix used to obtain the estimate
+         \eqn{\hat{\theta}}{thetahat}.}
 
-\item{g_init}{Average moment condition, evaluated at estimate \eqn{theta_init} of theta}
+\item{g_init}{Average moment condition, evaluated at
+              \eqn{\hat{\theta}}{thetahat}.}
 
-\item{h_init}{Estimate of the average markup, \eqn{h(theta_init)}}
+\item{h_init}{Estimate of the average markup, \eqn{h(\hat{\theta})}{h(thetahat)}.}
 
-\item{names}{Two lists, one for names of the moment conditions, and one for elements of theta}
+\item{names}{Two lists, one for names of the moment conditions, and one for
+             elements of \eqn{\theta}{theta}.}
 
-\item{OmZZ}{Gram matrix of the instruments, used to specify the set script C.}
+\item{ZZ}{Gram matrix \eqn{Z'Z} of the instruments, used to specify the
+misspecification set \eqn{C}.}
 
-\item{Sig}{Variance of moment condition}
+\item{Sig}{Estimate of variance of moment condition.}
 
-\item{sdZ}{vector of standard deviations of the instruments}
+\item{sdZ}{Vector of standard deviations of the instruments.}
 
-\item{perturb}{vector of perturbations \eqn{delta} used to specify the set script C.}
+\item{perturb}{scaling parameters to give intepretable meaning to violations
+of supply-side conditions. See vignette \code{vignette("GMMSensitivity",
+package="GMMSensitivity")} for details.}
 
 \item{n}{Sample size, number of model/years.}
 }
@@ -42,23 +51,14 @@ blp
 }
 \description{
 This dataset contains estimates of the model in Berry, Levinsohn, and Pakes
-(1995), as implemented by Andrews, Gentzkow, and Shapiro (2017), and it is used
-to illustrate the confidence intervals implemented in this package.
+(1995), as implemented by Andrews, Gentzkow, and Shapiro (2017), and it is
+used to illustrate the confidence intervals implemented in this package.
 }
 \references{
-{
+Andrews, I., M. Gentzkow, and J. M. Shapiro (2017): Measuring the Sensitivity of Parameter Estimates to Sample Statistics, Quarterly Journal of Economics, 132, 1553–1592.
 
-\cite{Andrews, I., M. Gentzkow, and J. M. Shapiro (2017): "Measuring the
-Sensitivity of Parameter Estimates to Sample Statistics," Quarterly Journal
-of Economics, 132, 1553–1592.}
+Armstrong, T. B., and M. Kolesár (2018): Sensitivity Analysis Using Approximate Moment Condition Models, Unpublished manuscript
 
-\cite{Armstrong, T. B., and M. Kolesár (2018):
-"Sensitivity Analysis Using Approximate Moment Condition Models," Unpublished manuscript}
-
-\cite{Berry, S. T., J. Levinsohn, and A. Pakes (1995): "Automobile Prices in
-Market Equilibrium," Econometrica, 63, 841–890.}
-
-
-}
+Berry, S. T., J. Levinsohn, and A. Pakes (1995): Automobile Prices in Market Equilibrium, Econometrica, 63, 841–890.
 }
 \keyword{datasets}

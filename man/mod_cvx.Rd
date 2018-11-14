@@ -4,7 +4,7 @@
 \alias{mod_cvx}
 \title{Modulus using CVX}
 \usage{
-mod_cvx(delta, eo, B, K, p)
+mod_cvx(delta, eo, B, M, p)
 }
 \description{
 Modulus using CVX

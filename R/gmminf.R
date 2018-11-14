@@ -1,13 +1,17 @@
-#' Compute solution path for l_infty or l_1 constraints
+#' Compute solution path for \eqn{\ell_\infty}{l_infinity} or \eqn{\ell_1}{l1} constraints
 #'
 #' Computes the vector of optimal sensitivities at each knot of the solution
 #' path that traces out the optimal bias-variance frontier when the set \eqn{C}
-#' takes the form \eqn{B*gamma}, with the ell_p norm of gamma bounded by a
-#' constant, for \eqn{p=1}, or \eqn{p=Inf}. This path is used as an input to
-#' \code{\link{OptEstimator}}.
+#' takes the form \eqn{c=B\gamma}{c=B*gamma} with the \eqn{\ell_p}{lp} norm of
+#' \eqn{\gamma}{gamma} is bounded by a constant, for \eqn{p=1}, or \eqn{p=Inf}.
+#' This path is used as an input to \code{\link{OptEstimator}}.
+#'
+#' The algorightm is described in Appendix A of Armstrong and Kolesár (2018)
 #' @inheritParams OptEstimator
 #' @param p Parameter determining which ell_p norm to use, one of \code{1}, or
 #'     \code{Inf}.
+#' @references Armstrong, T. B., and M. Kolesár (2018): Sensitivity Analysis
+#'     Using Approximate Moment Condition Models, Unpublished manuscript
 #' @export
 lph <- function(eo, B, p=Inf) {
     if (ncol(B)==0)

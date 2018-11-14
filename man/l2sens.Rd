@@ -5,7 +5,7 @@
 \title{Construct optimal sensitivity and compute worst-case bias and sd for a given
 kappa}
 \usage{
-l2sens(eo, B, kap, K, alpha = 0.05)
+l2sens(eo, B, kap, M, alpha = 0.05)
 }
 \description{
 Construct optimal sensitivity and compute worst-case bias and sd for a given

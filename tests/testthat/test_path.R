@@ -56,7 +56,7 @@ test_that("Check l_infty and l_1 solution paths using BLP data", {
         I <- vector(mode="logical", length=31)
         I[ivlist[[j]]] <- TRUE
         B <- (abs(blp$perturb) * blp$ZZ)[, I, drop=FALSE]
-        K <- sqrt(sum(I))
+        M <- sqrt(sum(I))
         pathIo <- lph(eo, B, p=Inf)
         pathIb <- linfbrute(eo, B, pathIo[, 1])
         path1o <- lph(eo, B, p=1)
@@ -88,9 +88,9 @@ test_that("Check optimal path under no misspecification", {
                g_init=blp$g_init,
                h_init=blp$h_init)
 
-    r2 <- OptEstimator(eo, B, K=1, p=2, alpha=0.05, opt.criterion="FLCI")
-    r1 <- OptEstimator(eo, B, K=2, p=1, alpha=0.05, opt.criterion="FLCI")
-    rI <- OptEstimator(eo, B, K=1, p=Inf, alpha=0.05, opt.criterion="MSE")
+    r2 <- OptEstimator(eo, B, M=1, p=2, alpha=0.05, opt.criterion="FLCI")
+    r1 <- OptEstimator(eo, B, M=2, p=1, alpha=0.05, opt.criterion="FLCI")
+    rI <- OptEstimator(eo, B, M=1, p=Inf, alpha=0.05, opt.criterion="MSE")
     expect_equal(k_opt, r1$k)
     expect_equal(k_opt, r2$k)
     expect_equal(k_opt, rI$k)
@@ -106,9 +106,9 @@ test_that("Drop invalid instrument under large misspecification", {
                g_init=blp$g_init,
                h_init=blp$h_init)
 
-    kI <- OptEstimator(eo, B, K=500, p=Inf, alpha=0.05, opt.criterion="FLCI")$k
-    k2 <- OptEstimator(eo, B, K=500, p=2, alpha=0.05, opt.criterion="MSE")$k
-    k1 <- OptEstimator(eo, B, K=500, p=1, alpha=0.05, opt.criterion="FLCI")$k
+    kI <- OptEstimator(eo, B, M=500, p=Inf, alpha=0.05, opt.criterion="FLCI")$k
+    k2 <- OptEstimator(eo, B, M=500, p=2, alpha=0.05, opt.criterion="MSE")$k
+    k1 <- OptEstimator(eo, B, M=500, p=1, alpha=0.05, opt.criterion="FLCI")$k
 
     W <- solve(blp$Sig[-6, -6])
     k_opt <- drop(-blp$H %*% solve(crossprod(blp$G[-6, ], W %*% blp$G[-6, ]),

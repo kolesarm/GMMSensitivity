@@ -1,32 +1,40 @@
-#' One-step estimator based on optimal sensitivity under ell_p constraints
+#' One-step estimator based on optimal sensitivity under \eqn{\ell_p}{lp}
+#' constraints
 #'
 #' Computes the optimal sensitivity and the optimal estimator when the set
-#' \eqn{C} takes the form \eqn{B*gamma} where the ell_p norm of gamma is
-#' bounded by K.
+#' \eqn{C} takes the form \eqn{c=B\gamma}{c=B*gamma} with the \eqn{\ell_p}{lp}
+#' norm of \eqn{\gamma}{gamma} bounded by \eqn{M}.
 #'
 #' @param eo List containing initial estimates with the following components:
 #'
 #'     \describe{
 #'
 #'     \item{Sig}{Estimate of variance of the moment condition, matrix with dimension
-#'        d_g by d_g, where d_g is the number of moments}
+#'        \eqn{d_g} by \eqn{d_g}, where \eqn{d_g} is the number of moments}
 #'
-#'     \item{G}{Estimate of defivative of the moment condition, matrix with
-#'     dimension d_g by d_theta, where d_theta is the dimension of \eqn{theta}}
+#'     \item{G}{Estimate of derivative of the moment condition, matrix with
+#'     dimension \eqn{d_g} by \eqn{d_\theta}{d_theta}, where
+#'     \eqn{d_\theta}{d_theta} is the dimension of \eqn{\theta}{theta}}
 #'
-#'     \item{H}{Estimate of defivative of \eqn{h(theta_{0})}. A vector of length d_theta}
+#'     \item{H}{Estimate of defivative of \eqn{h(\theta)}{h(theta)}. A vector of
+#'     length \eqn{d_\theta}{d_theta}}
+#'
 #'     \item{n}{sample size}
-#'     \item{h_init}{Estimate of \eqn{h(theta_0)}}
+#'
+#'     \item{h_init}{Estimate of \eqn{h(\theta)}{h(theta)}}
+#'
 #'     \item{k_init}{Initial sensitivity}
+#'
 #'     \item{g_init}{Moment condition evaluated at initial estimate}
 #'
 #'     }
-#' @param B matrix \eqn{B} with full rank and dimension d_g by d_gamma that
-#'     determines the set \eqn{C}, where d_gamma is the number of invalid
-#'     moments, and d_g is the number of moments
-#' @param K diameter of set \eqn{C}
-#' @param p Parameter determining which ell_p norm to use, one of \code{1},
-#'     \code{2}, or \code{Inf}.
+#' @param B matrix \eqn{B} with full rank and dimension \eqn{d_g} by
+#'     \eqn{d_\gamma}{d_gamma} that determines the set \eqn{C}, where
+#'     \eqn{d_\gamma}{d_gamma} is the number of invalid moments, and \eqn{d_g}
+#'     is the number of moments
+#' @param M Bound on the norm of \eqn{\gamma}{gamma}
+#' @param p Parameter determining which \eqn{\ell_p}{lp} norm to use, must equal
+#'     \code{1}, \code{2}, or \code{Inf}.
 #' @param spath Optionally, the solution path, output of \code{lph} to speed up
 #'     computation. For \code{p==1} and \code{p==Inf} only.
 #' @param alpha determines confidence level, \code{1-alpha}, for
@@ -36,7 +44,7 @@
 #'
 #'    \describe{
 #'
-#'    \item{\code{"MSE"}}{Mean squared errror}
+#'    \item{\code{"MSE"}}{Minimize worst-case mean squared error of the estimator.}
 #'
 #'    \item{\code{"FLCI"}}{Length of (fixed-length) two-sided
 #'        confidence intervals.}
@@ -48,16 +56,16 @@
 #'     }
 #'
 #' @export
-OptEstimator <- function(eo, B, K, p=2, spath=NULL, alpha=0.05,
+OptEstimator <- function(eo, B, M, p=2, spath=NULL, alpha=0.05,
                          opt.criterion="FLCI") {
-    be <- function(k) BuildEstimator(k, eo, B, K, p, alpha)
+    be <- function(k) BuildEstimator(k, eo, B, M, p, alpha)
     if (opt.criterion=="Valid") {
         r <- be(eo$k_init)
         r$opt.criterion <- opt.criterion
         return(r)
     }
     if (p==2)
-        return(l2opt(eo, B, K, alpha, opt.criterion))
+        return(l2opt(eo, B, M, alpha, opt.criterion))
 
     if (is.null(spath))
         spath <- lph(eo, B, p)
@@ -115,7 +123,7 @@ OptEstimator <- function(eo, B, K, p=2, spath=NULL, alpha=0.05,
 #' @param k Sensitivity, or matrix of sensitivities
 #' @param p 1, 2, or Inf
 #' @keywords internal
-BuildEstimator <- function(k, eo, B, K, p=Inf, alpha=0.05) {
+BuildEstimator <- function(k, eo, B, M, p=Inf, alpha=0.05) {
     if (!is.matrix(k)) k <- matrix(k, nrow=1)
     hhat <- drop(eo$h_init + k %*% eo$g_init)
     bf <- function(k, p)
@@ -128,7 +136,7 @@ BuildEstimator <- function(k, eo, B, K, p=Inf, alpha=0.05) {
         }
     se <- sqrt(apply(k, 1, function(k)
         drop(crossprod(k, eo$Sig %*% k))) / eo$n)
-    bias <- if (ncol(B)==0) 0*se else K * apply(k, 1, bf, p) / sqrt(eo$n)
+    bias <- if (ncol(B)==0) 0*se else M * apply(k, 1, bf, p) / sqrt(eo$n)
     hl <- cvb(bias/se, alpha) * se
 
     structure(list(k=k, h=hhat, bias=bias, se=se, hl=hl, alpha=alpha,

@@ -4,7 +4,7 @@
 \alias{EffBounds}
 \title{Efficiency bounds under ell_p constraints}
 \usage{
-EffBounds(eo, B, K, p = 2, beta = 0.5, alpha = 0.05, cvx = FALSE)
+EffBounds(eo, B, M, p = 2, beta = 0.5, alpha = 0.05, cvx = FALSE)
 }
 \arguments{
 \item{eo}{List containing initial estimates with the following components:
@@ -12,45 +12,57 @@ EffBounds(eo, B, K, p = 2, beta = 0.5, alpha = 0.05, cvx = FALSE)
     \describe{
 
     \item{Sig}{Estimate of variance of the moment condition, matrix with dimension
-       d_g by d_g, where d_g is the number of moments}
+       \eqn{d_g} by \eqn{d_g}, where \eqn{d_g} is the number of moments}
 
-    \item{G}{Estimate of defivative of the moment condition, matrix with
-    dimension d_g by d_theta, where d_theta is the dimension of \eqn{theta}}
+    \item{G}{Estimate of derivative of the moment condition, matrix with
+    dimension \eqn{d_g} by \eqn{d_\theta}{d_theta}, where
+    \eqn{d_\theta}{d_theta} is the dimension of \eqn{\theta}{theta}}
 
-    \item{H}{Estimate of defivative of \eqn{h(theta_{0})}. A vector of length d_theta}
+    \item{H}{Estimate of defivative of \eqn{h(\theta)}{h(theta)}. A vector of
+    length \eqn{d_\theta}{d_theta}}
+
     \item{n}{sample size}
-    \item{h_init}{Estimate of \eqn{h(theta_0)}}
+
+    \item{h_init}{Estimate of \eqn{h(\theta)}{h(theta)}}
+
     \item{k_init}{Initial sensitivity}
+
     \item{g_init}{Moment condition evaluated at initial estimate}
 
     }}
 
-\item{B}{matrix \eqn{B} with full rank and dimension d_g by d_gamma that
-determines the set \eqn{C}, where d_gamma is the number of invalid
-moments, and d_g is the number of moments}
+\item{B}{matrix \eqn{B} with full rank and dimension \eqn{d_g} by
+\eqn{d_\gamma}{d_gamma} that determines the set \eqn{C}, where
+\eqn{d_\gamma}{d_gamma} is the number of invalid moments, and \eqn{d_g}
+is the number of moments}
 
-\item{K}{diameter of set \eqn{C}}
+\item{M}{Bound on the norm of \eqn{\gamma}{gamma}}
 
-\item{p}{Parameter determining which ell_p norm to use, one of \code{1},
-\code{2}, or \code{Inf}.}
+\item{p}{Parameter determining which \eqn{\ell_p}{lp} norm to use, must equal
+\code{1}, \code{2}, or \code{Inf}.}
 
-\item{beta}{Quantile of excess length of one-sided confidence interval to
-optimize (for one-sided confidence intervals)}
+\item{beta}{Quantile of excess length that a one-sided confidence interval is
+optimizing.}
 
 \item{alpha}{determines confidence level, \code{1-alpha}, for
 constructing/optimizing confidence intervals.}
 
-\item{cvx}{By default, the efficiency is computed using the homotopy
-algorithm for the modulus. If \eqn{cvx=TRUE} is specified, the modulus is
-computed using the cvx convex optimizer. This option is included mostly
-just to verify that the homotopy solution correct.}
+\item{cvx}{By default, the efficiency for \code{p=1} and for \code{p=1} is
+computed using the homotopy algorithm described in Appendix A of
+Armstrong and Kolesár (2018). If \code{cvx=TRUE} is specified, the
+modulus is computed using the cvx convex optimizer. This option is
+included mostly just to verify that the homotopy solution correct.}
 }
 \description{
 Computes the asymptotic efficiency of two-sided fixed-length confidence
-intervals, as well as the efficiency of one-sided confidence intervals that
-optimize a given \code{beta} quantile of excess length.
+intervals at \eqn{c=0}, as well as the efficiency of one-sided confidence
+intervals that optimize a given \code{beta} quantile of excess length.
 }
 \details{
-The set \eqn{C} takes the form \eqn{B*gamma} where the ell_p norm of gamma is
-bounded by K.
+The set \eqn{C} takes the form \eqn{B\gamma}{B*gamma} where the
+\eqn{\ell_p}{lp} norm of gamma is bounded by \eqn{M}.
+}
+\references{
+Armstrong, T. B., and M. Kolesár (2018): Sensitivity Analysis
+    Using Approximate Moment Condition Models, Unpublished manuscript
 }

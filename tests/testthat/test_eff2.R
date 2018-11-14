@@ -6,7 +6,7 @@ test_that("Check l_2 efficiency calculations using BLP data", {
 
     #' Modulus under l2 constraints
     #' @keywords internal
-    l2mod <- function(eo, B, K, delta) {
+    l2mod <- function(eo, B, M, delta) {
         ## Calculate deltabar
         ## B' Sigma^-1 B
         BSB <- crossprod(B, solve(eo$Sig, B))
@@ -24,11 +24,11 @@ test_that("Check l_2 efficiency calculations using BLP data", {
         } else {
             den <- solve(BSB, crossprod(B, solve(eo$Sig, eo$G))) %*%
                 solve(GWG(1), eo$H)
-            deltabar <- sqrt(4*K^2*Vk(1)/sum(den^2))
+            deltabar <- sqrt(4*M^2*Vk(1)/sum(den^2))
         }
 
         del2 <- function(kap)
-            2*(1-kap)*K / kap * sqrt(Vk(kap)/sum(drop(crossprod(B, k(kap)))^2))
+            2*(1-kap)*M / kap * sqrt(Vk(kap)/sum(drop(crossprod(B, k(kap)))^2))
 
         om2 <- function(kap)
             del2(kap)*drop(crossprod(eo$H, solve(GWG(kap), eo$H)))/sqrt(Vk(kap))
@@ -44,20 +44,20 @@ test_that("Check l_2 efficiency calculations using BLP data", {
 
 
     #' Efficiency bounds under ell_2 constraints
-    l2eff <- function(eo, B, K, beta=0.5, alpha=0.05) {
+    l2eff <- function(eo, B, M, beta=0.5, alpha=0.05) {
         ## One-sided
         zal <- stats::qnorm(1-alpha)
         del <- zal + stats::qnorm(beta)
-        e1 <- l2mod(eo, B, K, del)
-        effo <- l2mod(eo, B, K, 2*del)$omega/(e1$omega+del*e1$domega)
+        e1 <- l2mod(eo, B, M, del)
+        effo <- l2mod(eo, B, M, 2*del)$omega/(e1$omega+del*e1$domega)
 
         integrand <- function(z)
-            sapply(z, function(z) l2mod(eo, B, K, 2*(zal-z))$omega *
+            sapply(z, function(z) l2mod(eo, B, M, 2*(zal-z))$omega *
                                                             stats::dnorm(z))
         lo <- -zal                          # lower endpoint
         while(integrand(lo)>1e-10) lo <- 2*lo
 
-        den <- 2*OptEstimator(eo, B, K=K, 2, alpha=alpha,
+        den <- 2*OptEstimator(eo, B, M=M, 2, alpha=alpha,
                               opt.criterion="FLCI")$hl*sqrt(eo$n)
         eff2 <- stats::integrate(integrand, lo,
                                  zal, abs.tol=1e-6)$value / den
@@ -91,9 +91,9 @@ test_that("Check l_2 efficiency calculations using BLP data", {
         I <- vector(mode="logical", length=31)
         I[ivlist[[j]]] <- TRUE
         B <- (abs(blp$perturb) * blp$ZZ)[, I, drop=FALSE]
-        K <- sqrt(sum(I))
-        eb <- unlist(EffBounds(eo, B, K, p=2, beta=0.5, alpha=0.05))
-        e2 <- unlist(l2eff(eo, B, K, beta=0.5, alpha=0.05))
+        M <- sqrt(sum(I))
+        eb <- unlist(EffBounds(eo, B, M, p=2, beta=0.5, alpha=0.05))
+        e2 <- unlist(l2eff(eo, B, M, beta=0.5, alpha=0.05))
         expect_lt(max(abs(e2-eb)), 1e-5)
     }
 })

@@ -4,7 +4,7 @@
 \alias{Jtest}
 \title{J-test of overidentifying restrictions under local misspecification}
 \usage{
-Jtest(eo, B, K, p = 2, alpha = 0.05)
+Jtest(eo, B, M, p = 2, alpha = 0.05)
 }
 \arguments{
 \item{eo}{List containing initial estimates with the following components:
@@ -12,27 +12,34 @@ Jtest(eo, B, K, p = 2, alpha = 0.05)
     \describe{
 
     \item{Sig}{Estimate of variance of the moment condition, matrix with dimension
-       d_g by d_g, where d_g is the number of moments}
+       \eqn{d_g} by \eqn{d_g}, where \eqn{d_g} is the number of moments}
 
-    \item{G}{Estimate of defivative of the moment condition, matrix with
-    dimension d_g by d_theta, where d_theta is the dimension of \eqn{theta}}
+    \item{G}{Estimate of derivative of the moment condition, matrix with
+    dimension \eqn{d_g} by \eqn{d_\theta}{d_theta}, where
+    \eqn{d_\theta}{d_theta} is the dimension of \eqn{\theta}{theta}}
 
-    \item{H}{Estimate of defivative of \eqn{h(theta_{0})}. A vector of length d_theta}
+    \item{H}{Estimate of defivative of \eqn{h(\theta)}{h(theta)}. A vector of
+    length \eqn{d_\theta}{d_theta}}
+
     \item{n}{sample size}
-    \item{h_init}{Estimate of \eqn{h(theta_0)}}
+
+    \item{h_init}{Estimate of \eqn{h(\theta)}{h(theta)}}
+
     \item{k_init}{Initial sensitivity}
+
     \item{g_init}{Moment condition evaluated at initial estimate}
 
     }}
 
-\item{B}{matrix \eqn{B} with full rank and dimension d_g by d_gamma that
-determines the set \eqn{C}, where d_gamma is the number of invalid
-moments, and d_g is the number of moments}
+\item{B}{matrix \eqn{B} with full rank and dimension \eqn{d_g} by
+\eqn{d_\gamma}{d_gamma} that determines the set \eqn{C}, where
+\eqn{d_\gamma}{d_gamma} is the number of invalid moments, and \eqn{d_g}
+is the number of moments}
 
-\item{K}{diameter of set \eqn{C}}
+\item{M}{Bound on the norm of \eqn{\gamma}{gamma}}
 
-\item{p}{Parameter determining which ell_p norm to use, one of \code{1},
-\code{2}, or \code{Inf}.}
+\item{p}{Parameter determining which \eqn{\ell_p}{lp} norm to use, must equal
+\code{1}, \code{2}, or \code{Inf}.}
 
 \item{alpha}{determines confidence level, \code{1-alpha}, for
 constructing/optimizing confidence intervals.}
@@ -40,17 +47,18 @@ constructing/optimizing confidence intervals.}
 \value{
 List with three elements: \describe{
 
-\item{p0}{Value of J statistic}
+\item{J}{Value of J statistic}
 
 \item{p0}{P-value of usual J test}
 
 \item{pC}{P-value for J-test that  allows for local misspecification}
 
-\item{Kmin}{Minimum value of \code{K} for which the J-test would not reject} }
+\item{Mmin}{Minimum value of \eqn{M} for which the J-test would not reject} }
 }
 \description{
 Computes J-test of overidentifying restrictions with critical value adjusted
 to allow for local misspecification, when the parameter \eqn{c} takes the
-form \eqn{c=B*gamma} with the ell_p norm of gamma is bounded by K. Assumes
-initial estimator in \code{eo} is optimal under correct specification.
+form \eqn{c=B\gamma}{c=B*gamma} with the \eqn{\ell_p}{lp} norm of
+\eqn{\gamma}{gamma} bounded by \eqn{M}. Assumes initial estimator in
+\code{eo} is optimal under correct specification.
 }

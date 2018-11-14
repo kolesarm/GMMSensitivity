@@ -1,20 +1,29 @@
 ---
-title: "Sensitivty analaysis in moment condition models"
-author: "Michal Kolesár"
-date: "`r Sys.Date()`"
-
-bibliography: np-testing-library.bib
 output:
   pdf_document:
+    citation_package: natbib
+    latex_engine: pdflatex
+    template: mk_Rpackage_template.tex
     toc: true
     toc_depth: 1
     includes:
         in_header: vignette_head.tex
+title: "Sensitivity analysis in moment condition models"
+author: "Michal Kolesár"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+geometry: margin=1in
+fontfamily: mathpazo
+fontsize: 11pt
+bibliography: np-testing-library.bib
 vignette: >
   %\VignetteIndexEntry{Sensitivity analysis in GMM}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+
+<!-- Other pdf_document options: keep_tex: true -->
+
+
 
 ```{r, include=FALSE, cache=FALSE}
 library("knitr")
@@ -25,18 +34,53 @@ knitr::opts_chunk$set(tidy = TRUE, collapse=TRUE, comment = "#>",
 
 # Introduction
 
+
 The package `GMMSensitivity` implements estimators and confidence interval for
-sensitivity analsysis in moment condition models considered in @ak18sensitivity.
+sensitivity analysis in moment condition models considered in @ak18sensitivity.
 In this vignette, we demonstrate the implementation of these confidence
 intervals using the demand model for automobiles from  @blp95.
 
 The package includes the dataset `blp`, which contains estimates of the @blp95
-model, as implemented by @ags17. A description of the dataset can be obtained
-using the `help` function:
+ model, as implemented by @ags17. A description of the dataset can be obtained via the documentation in R, using `?blp`. For convenience, we give the description here:
 
-```{r, echo=TRUE}
+`G`
+: Matrix with 31 rows and 17 columns, estimate of derivative of the moment condition $G$
+
+`H`
+: Vector of length 17, estimate of derivative of average markup $h(\theta)$.
+
+`W`
+: Weight matrix used to obtain the estimate of theta.
+
+`g_init`
+: Average moment condition, evaluated at estimate $\hat{\theta}$ of $\theta$
+ from @blp95.
+
+`h_init`
+: Estimate of the average markup, $h(\hat{\theta})$.
+
+`names`
+: Two lists, one for names of the moment conditions, and one for elements of theta
+
+`ZZ`
+: Gram matrix of the instruments, used to specify the set $\mathcal{C}$
+
+`Sig`
+: Variance of moment condition, estimate of $\Sigma$.
+
+`sdZ`
+: vector of standard deviations of the instruments
+
+`perturb`
+: scaling parameter to give intepretable meaning to violations of moment
+ conditions. For demand-side moments, it corresponds to an estimate of $\delta_{d}=0.01\overline{p}/(\overline{y}/\alpha)$, and for supply-side moments, it corresponds to an estimate of $\delta_{s}=-0.01\overline{p}/\overline{mc}$, where $\overline{p}$ is average price, $\overline{y}$ is average income, $\overline{mc}$ is average marginal cost, and $\alpha$ is a parameter in the utility function. With this scaling, if a given demand-side instrument enters the utility function with coefficient $\delta_{d}$, a consumer is willing to pay 1\% of the average car price for a unit increase in the instrument. If a given supply-side instrument enters the cost function with coefficient $\delta_s$, increasing the instrument by one unit decreases the marginal cost by 1\% of the average car price.
+
+`n`
+: Sample size, number of model/years.
+
+
+```{r, echo=FALSE}
 library("GMMSensitivity")
-help("blp", type="text")
 ```
 
 # Usage
@@ -44,19 +88,27 @@ help("blp", type="text")
 The package implements estimators, confidence intervals, and efficiency
 calculations for the model (in the notation of @ak18sensitivity)
 \begin{equation*}
-g(\theta_{0})=c,\quad c=B\gamma,\quad \norm{\gamma}_{p}\leq K.
+g(\theta_{0})=c,\quad c=B\gamma,\quad \norm{\gamma}_{p}\leq M.
 \end{equation*}
 
-For example, suppose that all excluded instruments may be invalid with
-$K=\sqrt{\# I}$, where $\#I$ is the numer of invalid instruments (using the
-scaling descibed in the paper). Then the confidence interval can be constructed
-as follows:
+Suppose that we want to allow all excluded instruments in the @blp95 application
+ to be potentially invalid. Fix $B$ to a scaling matrix so that if the $j$th
+ supply-side instrument is invalid with $\gamma_{sj}=1$, this means that
+ changing the instrument by one standard deviation changes the marginal cost by
+ $\gamma_{sj}$\% of the average car price, and if the $j$ the demand-side
+ instrument is invalid with $\gamma_{dj}=1$, then the consumer
+ willingness to pay for one standard deviation change in the instrument
+ is $\gamma_{dj}\%$ of the average 1980 car price. Let $p=2$, and $M=\sqrt{\# I}$,
+ where $\#I$ is the number of invalid instruments so that $\gamma=1$ is included
+ in the set (this is the same scaling as described in @ak18sensitivity in the
+ paper). Then the confidence interval can be constructed as follows:
 
 ```{r}
 ## Construct estimate of initial sensitivity
 blp$k_init <- -drop(blp$H %*% solve(crossprod(blp$G, blp$W %*% blp$G),
                                         crossprod(blp$G, blp$W)))
-
+## list collecting initial estimates of H, G, Sigma, n, g(thetahat), initial
+## sensitivity k, and initial estimate of average markup h(thetahat)
 eo <- list(H=blp$H, G=blp$G, Sig=blp$Sig, n=blp$n, g_init=blp$g_init,
            k_init=blp$k_init, h_init= blp$h_init)
 
@@ -65,36 +117,51 @@ I <- vector(mode="logical", length=nrow(eo$G))
 I[c(6:13, 20:31)] <- TRUE
 
 ## Matrix B, scaled as described in the paper
-B <- (abs(blp$perturb) * blp$OmZZ)[, I, drop=FALSE]
+B0 <- blp$ZZ %*% diag(sqrt(blp$n)*abs(blp$perturb)/blp$sdZ)
 
-## Value of K
-K0 <- sqrt(sum(I))
+## Value of M
+M0 <- sqrt(sum(I))
 
-OptEstimator(eo, B, K=K0, p=2, alpha=0.05, opt.criterion="FLCI")
+## Select columns of B0 corresponding to invalid instruments
+OptEstimator(eo, B0[, I], M=M0, p=2, alpha=0.05, opt.criterion="FLCI")
 ```
-The efficiency $\kappa^*$ for this confidence interval can be computed using the
+
+The efficiency $\kappa_{*}$ for this confidence interval can be computed using the
 `EffBounds` function (which can also be used to compute efficiency of one-sided
 confidence intervals):
 
 ```{r}
-EffBounds(eo, B, K=K0, p=2)$twosided
+EffBounds(eo, B, M=M0, p=2)$twosided
 ```
 
-For comparison, using the initial estimator yields  the confidence interval:
-
+In contrast the CI based on the initial estimate is much wider:
 ```{r}
-OptEstimator(eo, B, K=K0, p=2, alpha=0.05, opt.criterion="Valid")
+OptEstimator(eo, B0[, I], M=M0, p=2, alpha=0.05, opt.criterion="Valid")
 ```
 
-Finally a specification test for whether the value $K=K0$ is too low, that is a
-test of the hypothesis $H_0\colon: K\leq K0$:
+A specification test for whether the value $M=M0$ is too low, that is a test of
+the hypothesis $H_0\colon M\leq M0$, can be conducted using the `Jtest`
+function:
 
 ```{r}
-Jtest(eo, B, K=K0, p=2, alpha=0.05)
+Jtest(eo, B, M=M0, p=2, alpha=0.05)
 ```
 
 Here `J` is the $J$-statistic, `p0` is the p-value of the usual $J$-test (that
-assumes $K=0$ under the null), `pC` is the $p$-value of the test, and `Kmin` is
-the smallest value of $K$ that is not rejected.
+assumes $M=0$ under the null), `pC` is the $p$-value of the test, and `Mmin` is
+the smallest value of $M$ that is not rejected.
+
+If were only concerned about the validity of the demand-side instrument
+`"demand_firm_const"` (number of cars produced by the same firm), then since
+this is the sixth instrument, an analogous analysis could be conducted as:
+
+```{r}
+I <- vector(mode="logical", length=nrow(eo$G))
+I[6] <- TRUE
+OptEstimator(eo, B0[, I, drop=FALSE], M=1, p=2, alpha=0.05, opt.criterion="FLCI")
+EffBounds(eo, B, M=1, p=2)$twosided
+OptEstimator(eo, B0[, I, drop=FALSE], M=1, p=2, alpha=0.05, opt.criterion="Valid")
+Jtest(eo, B, M=1, p=2, alpha=0.05)
+```
 
 # References

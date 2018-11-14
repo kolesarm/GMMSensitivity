@@ -4,7 +4,7 @@
 \alias{BuildEstimator}
 \title{Build estimator given sensitivity}
 \usage{
-BuildEstimator(k, eo, B, K, p = Inf, alpha = 0.05)
+BuildEstimator(k, eo, B, M, p = Inf, alpha = 0.05)
 }
 \arguments{
 \item{k}{Sensitivity, or matrix of sensitivities}

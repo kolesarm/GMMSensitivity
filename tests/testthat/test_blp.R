@@ -19,9 +19,13 @@ test_that("Check we match AGS results and modulus matches brute force", {
         for (j in c(1, 10, 16, 2, 6)) {
             I <- vector(mode="logical", length=nrow(eo$G))
             I[ivlist[[j]]] <- TRUE
-            oe <- function(oc)
-                as.data.frame(OptEstimator(eo, B1[, I, drop=FALSE], 1,
-                                           2, alpha=0.05, opt.criterion=oc)[-1])
+            oe <- function(oc) {
+                r <- data.frame(OptEstimator(eo, B1[, I, drop=FALSE], 1, 2,
+                                             alpha=0.05, opt.criterion=oc)[-1])
+                ## Convert to %
+                r[c(1:4, 6)] <- 100*r[c(1:4, 6)]
+                r
+            }
             t2i <- rbind(t2i, oe("Valid"))
             t2o <- rbind(t2o, oe("FLCI"))
         }
@@ -34,7 +38,7 @@ test_that("Check we match AGS results and modulus matches brute force", {
     }
     ## Let's back out the biases instead from Figure IV
 
-    ## 1. K=1, graphs, adaptation, Figure IV in AGS ################
+    ## 1. M=1, graphs, adaptation, Figure IV in AGS ################
     romI <- rom1 <- rom2 <- rofI <- rof1 <- rof2 <- rinI <- rin1 <- rin2 <-
         effh <- effc <- data.frame()
 
@@ -45,10 +49,10 @@ test_that("Check we match AGS results and modulus matches brute force", {
     for (j in seq_along(ivlist)) {
         I <- vector(mode="logical", length=nrow(eo$G))
         I[ivlist[[j]]] <- TRUE
-        Kp <- function(p)
+        Mp <- function(p)
             if (p==Inf) 1 else if (p==1) sum(I) else if (p==2) sqrt(sum(I))
         oe <- function(p, oc)
-            as.data.frame(OptEstimator(eo, B0[, I, drop=FALSE], K=Kp(p), p,
+            as.data.frame(OptEstimator(eo, B0[, I, drop=FALSE], M=Mp(p), p,
                                        alpha=0.05, opt.criterion=oc)[-1])
         romI <- rbind(romI, oe(Inf, "MSE"))
         rofI <- rbind(rofI, oe(Inf, "FLCI"))
@@ -62,7 +66,7 @@ test_that("Check we match AGS results and modulus matches brute force", {
 
         ## Efficiency of adaptation
         if (j>15) {
-            eb <- function(p, cvx) EffBounds(eo, B0[, I, drop=FALSE], Kp(p), p,
+            eb <- function(p, cvx) EffBounds(eo, B0[, I, drop=FALSE], Mp(p), p,
                                              beta=0.8, alpha=0.05, cvx=cvx)
             effc <- rbind(effc, data.frame(eb(1, TRUE), eb(2, TRUE),
                                            eb(Inf, TRUE)))

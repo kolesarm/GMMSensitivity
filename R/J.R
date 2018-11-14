@@ -22,20 +22,21 @@ FindZero <- function(f, ival=1.1, negative=TRUE) {
 #'
 #' Computes J-test of overidentifying restrictions with critical value adjusted
 #' to allow for local misspecification, when the parameter \eqn{c} takes the
-#' form \eqn{c=B*gamma} with the ell_p norm of gamma is bounded by K. Assumes
-#' initial estimator in \code{eo} is optimal under correct specification.
+#' form \eqn{c=B\gamma}{c=B*gamma} with the \eqn{\ell_p}{lp} norm of
+#' \eqn{\gamma}{gamma} bounded by \eqn{M}. Assumes initial estimator in
+#' \code{eo} is optimal under correct specification.
 #' @inheritParams OptEstimator
 #' @return List with three elements: \describe{
 #'
-#' \item{p0}{Value of J statistic}
+#' \item{J}{Value of J statistic}
 #'
 #' \item{p0}{P-value of usual J test}
 #'
 #' \item{pC}{P-value for J-test that  allows for local misspecification}
 #'
-#' \item{Kmin}{Minimum value of \code{K} for which the J-test would not reject} }
+#' \item{Mmin}{Minimum value of \eqn{M} for which the J-test would not reject} }
 #' @export
-Jtest <- function(eo, B, K, p=2, alpha=0.05) {
+Jtest <- function(eo, B, M, p=2, alpha=0.05) {
     J <- eo$n*drop(crossprod(eo$g_init, solve(eo$Sig, eo$g_init)))
     ## Sigma^{-1/2}
     e <- eigen(eo$Sig)
@@ -55,17 +56,17 @@ Jtest <- function(eo, B, K, p=2, alpha=0.05) {
     ## p-value under correct specification
     p0 <- 1-stats::pchisq(q=J, df=nrow(eo$G)-ncol(eo$G), ncp=0)
 
-    ## Value of K for which p-value is 0.05
-    K0 <- if (p0<=alpha) {
-              FindZero(function(K)
+    ## Value of M for which p-value is 0.05
+    M0 <- if (p0<=alpha) {
+              FindZero(function(M)
                   0.95-stats::pchisq(q=J, df=nrow(eo$G)-ncol(eo$G),
-                                     ncp=K^2*kbar),
+                                     ncp=M^2*kbar),
                   ival=2, negative=FALSE)
           } else {
               0
           }
 
     list(J=J, p0=p0,
-         pC=1-stats::pchisq(q=J, df=nrow(eo$G)-ncol(eo$G), ncp=K^2*kbar),
-         Kmin=K0)
+         pC=1-stats::pchisq(q=J, df=nrow(eo$G)-ncol(eo$G), ncp=M^2*kbar),
+         Mmin=M0)
 }
