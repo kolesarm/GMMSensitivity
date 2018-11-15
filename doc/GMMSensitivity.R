@@ -30,19 +30,19 @@ M0 <- sqrt(sum(I))
 OptEstimator(eo, B0[, I], M=M0, p=2, alpha=0.05, opt.criterion="FLCI")
 
 ## ------------------------------------------------------------------------
-EffBounds(eo, B, M=M0, p=2)$twosided
+EffBounds(eo, B0[, I], M=M0, p=2)$twosided
 
 ## ------------------------------------------------------------------------
 OptEstimator(eo, B0[, I], M=M0, p=2, alpha=0.05, opt.criterion="Valid")
 
 ## ------------------------------------------------------------------------
-Jtest(eo, B, M=M0, p=2, alpha=0.05)
+Jtest(eo, B0[, I], M=M0, p=2, alpha=0.05)
 
 ## ------------------------------------------------------------------------
 I <- vector(mode="logical", length=nrow(eo$G))
 I[6] <- TRUE
 OptEstimator(eo, B0[, I, drop=FALSE], M=1, p=2, alpha=0.05, opt.criterion="FLCI")
-EffBounds(eo, B, M=1, p=2)$twosided
+EffBounds(eo, B0[, I, drop=FALSE], M=1, p=2)$twosided
 OptEstimator(eo, B0[, I, drop=FALSE], M=1, p=2, alpha=0.05, opt.criterion="Valid")
-Jtest(eo, B, M=1, p=2, alpha=0.05)
+Jtest(eo, B0[, I, drop=FALSE], M=1, p=2, alpha=0.05)
 
