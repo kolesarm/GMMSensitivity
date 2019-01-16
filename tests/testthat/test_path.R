@@ -96,6 +96,12 @@ test_that("Check optimal path under no misspecification", {
     expect_equal(k_opt, rI$k)
 
     ## Check output format
+    o2 <- utils::capture.output(print(r2, digits=6))
+    e2 <- c("", "",
+            "|Estimate |Max. bias |SE        |CI                   |",
+            "|:--------|:---------|:---------|:--------------------|",
+            "|0.335274 |0         |0.0181124 |(0.299774, 0.370774) |", "")
+    expect_equal(o2, e2)
 })
 
 test_that("Drop invalid instrument under large misspecification", {
