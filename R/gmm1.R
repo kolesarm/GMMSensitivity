@@ -1,6 +1,5 @@
-#' Orthogonalized homotopy solution for l_1
-#' @param I vector of indicators which instruments are invalid
-#' @keywords internal
+## Orthogonalized homotopy solution for l_1
+## @param I vector of indicators which instruments are invalid
 l1h0 <- function(G, Sig, h, I) {
     dt <- ncol(G)
     dg <- nrow(G)
@@ -19,7 +18,7 @@ l1h0 <- function(G, Sig, h, I) {
     while (sum(A) < dg-dt+1 & B>0) {
         ## directions
         SS <- solve(Sig[!A, !A], Sig[!A, A, drop=FALSE])
-        mu.d <- drop(solve(GSG(!A), t(G[A,, drop=FALSE]) -
+        mu.d <- drop(solve(GSG(!A), t(G[A,, drop=FALSE]) - # nolint
                                crossprod(G[!A, ], SS)) %*% sign(k[A]))
         k.d <- sign(k)
         k.d[!A] <- -solve(Sig[!A, !A], G[!A, ] %*% mu.d) - SS %*% sign(k[A])

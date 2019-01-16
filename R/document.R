@@ -8,7 +8,7 @@
 #' \describe{
 #'
 #' \item{G}{Matrix with 31 rows and 17 columns, estimate of derivative of the
-#'          moment condition evaluated at initial esitmate of theta from Berry,
+#'          moment condition evaluated at initial estimate of \eqn{\theta} from Berry,
 #'          Levinsohn, and Pakes (1995), \eqn{\hat{\theta}}{thetahat}.}
 #'
 #' \item{H}{Vector of length 17, estimate of derivative of average markup
@@ -33,7 +33,7 @@
 #'
 #' \item{sdZ}{Vector of standard deviations of the instruments.}
 #'
-#' \item{perturb}{scaling parameters to give intepretable meaning to violations
+#' \item{perturb}{scaling parameters to give interpretable meaning to violations
 #' of supply-side conditions. See vignette \code{vignette("GMMSensitivity",
 #' package="GMMSensitivity")} for details.}
 #'
@@ -45,9 +45,16 @@
 #'
 #' @source Replication files for Andrews, Gentzkow, and Shapiro (2017), available at
 #' \url{https://dataverse.harvard.edu/file.xhtml?persistentId=doi:10.7910/DVN/LLARSN/2KFPRA&version=1.1}
-#' @references Andrews, I., M. Gentzkow, and J. M. Shapiro (2017): Measuring the Sensitivity of Parameter Estimates to Sample Statistics, Quarterly Journal of Economics, 132, 1553–1592.
+#' @references{
 #'
-#' Armstrong, T. B., and M. Kolesár (2018): Sensitivity Analysis Using Approximate Moment Condition Models, Unpublished manuscript
+#' \cite{Andrews, I., M. Gentzkow, and J. M. Shapiro (2017): Measuring the
+#' Sensitivity of Parameter Estimates to Sample Statistics, Quarterly Journal of
+#' Economics, 132, 1553–1592.}
 #'
-#' Berry, S. T., J. Levinsohn, and A. Pakes (1995): Automobile Prices in Market Equilibrium, Econometrica, 63, 841–890.
+#' \cite{Armstrong, T. B., and M. Kolesár (2018): Sensitivity Analysis Using
+#' Approximate Moment Condition Models, Unpublished manuscript}
+#'
+#' \cite{Berry, S. T., J. Levinsohn, and A. Pakes (1995): Automobile Prices in
+#' Market Equilibrium, Econometrica, 63, 841–890.}
+#' }
 "blp"

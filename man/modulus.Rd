@@ -2,22 +2,10 @@
 % Please edit documentation in R/efficiency.R
 \name{modulus}
 \alias{modulus}
-\title{Modulus}
+\title{c_delta. If Bk=0, give c_delta that leads to largest possible delta.}
 \usage{
 modulus(delta, eo, B, M, p = 2, spath = NULL)
 }
 \description{
-Modulus
+c_delta. If Bk=0, give c_delta that leads to largest possible delta.
 }
-\keyword{Bk=0,}
-\keyword{If}
-\keyword{c_delta}
-\keyword{c_delta.}
-\keyword{delta.}
-\keyword{give}
-\keyword{internal}
-\keyword{largest}
-\keyword{leads}
-\keyword{possible}
-\keyword{that}
-\keyword{to}

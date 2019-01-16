@@ -1,10 +1,12 @@
+[![Travis build status](https://travis-ci.org/kolesarm/GMMSensitivity.svg?branch=master)](https://travis-ci.org/kolesarm/GMMSensitivity)
+
 # GMMSensitivity
 
 Estimators and confidence intervals for sensitivity analysis in moment condition
 models using procedures from [Armstrong and Kolesár
 (2018)](https://arxiv.org/abs/1808.07387).
 
-See vignette `GMMSensitivity.pdf` (stored under `inst/doc/`) for description of
+See vignette `GMMSensitivityExample.pdf` (stored under `doc/`) for description of
 the package.
 
 This software package is based upon work supported by the National Science

@@ -2,7 +2,7 @@
 % Please edit documentation in R/efficiency.R
 \name{EffBounds}
 \alias{EffBounds}
-\title{Efficiency bounds under ell_p constraints}
+\title{Efficiency bounds under \eqn{\ell_p}{ell_p} constraints}
 \usage{
 EffBounds(eo, B, M, p = 2, beta = 0.5, alpha = 0.05, cvx = FALSE)
 }
@@ -18,7 +18,7 @@ EffBounds(eo, B, M, p = 2, beta = 0.5, alpha = 0.05, cvx = FALSE)
     dimension \eqn{d_g} by \eqn{d_\theta}{d_theta}, where
     \eqn{d_\theta}{d_theta} is the dimension of \eqn{\theta}{theta}}
 
-    \item{H}{Estimate of defivative of \eqn{h(\theta)}{h(theta)}. A vector of
+    \item{H}{Estimate of derivative of \eqn{h(\theta)}{h(theta)}. A vector of
     length \eqn{d_\theta}{d_theta}}
 
     \item{n}{sample size}
@@ -47,22 +47,26 @@ optimizing.}
 \item{alpha}{determines confidence level, \code{1-alpha}, for
 constructing/optimizing confidence intervals.}
 
-\item{cvx}{By default, the efficiency for \code{p=1} and for \code{p=1} is
+\item{cvx}{By default, the efficiency for \code{p=1} and for \code{p=Inf} is
 computed using the homotopy algorithm described in Appendix A of
 Armstrong and Kolesár (2018). If \code{cvx=TRUE} is specified, the
-modulus is computed using the cvx convex optimizer. This option is
+modulus is computed using the CVX convex optimizer. This option is
 included mostly just to verify that the homotopy solution correct.}
 }
 \description{
 Computes the asymptotic efficiency of two-sided fixed-length confidence
 intervals at \eqn{c=0}, as well as the efficiency of one-sided confidence
-intervals that optimize a given \code{beta} quantile of excess length.
+intervals that optimize a given \code{beta} quantile of excess length, when
+the set \eqn{C} is characterized by \eqn{\ell_p} constraints.
 }
 \details{
 The set \eqn{C} takes the form \eqn{B\gamma}{B*gamma} where the
-\eqn{\ell_p}{lp} norm of gamma is bounded by \eqn{M}.
+\eqn{\ell_p}{lp} norm of \eqn{\gamma}{gamma} is bounded by \eqn{M}.
 }
 \references{
-Armstrong, T. B., and M. Kolesár (2018): Sensitivity Analysis
-    Using Approximate Moment Condition Models, Unpublished manuscript
+{
+
+\cite{Armstrong, T. B., and M. Kolesár (2018): Sensitivity Analysis
+    Using Approximate Moment Condition Models, Unpublished manuscript}
+}
 }

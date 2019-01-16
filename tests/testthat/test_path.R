@@ -52,7 +52,7 @@ test_that("Check l_infty and l_1 solution paths using BLP data", {
                h_init=blp$h_init)
 
     res <- data.frame()
-    for (j in 1:length(ivlist)) {
+    for (j in seq_len(ivlist)) {
         I <- vector(mode="logical", length=31)
         I[ivlist[[j]]] <- TRUE
         B <- (abs(blp$perturb) * blp$ZZ)[, I, drop=FALSE]

@@ -3,15 +3,19 @@
 #' Computes the vector of optimal sensitivities at each knot of the solution
 #' path that traces out the optimal bias-variance frontier when the set \eqn{C}
 #' takes the form \eqn{c=B\gamma}{c=B*gamma} with the \eqn{\ell_p}{lp} norm of
-#' \eqn{\gamma}{gamma} is bounded by a constant, for \eqn{p=1}, or \eqn{p=Inf}.
-#' This path is used as an input to \code{\link{OptEstimator}}.
+#' \eqn{\gamma}{gamma} is bounded by a constant, for \eqn{p=1}, or
+#' \eqn{p=\infty}{p=Inf}. This path is used as an input to
+#' \code{\link{OptEstimator}}.
 #'
-#' The algorightm is described in Appendix A of Armstrong and Kolesár (2018)
+#' The algorithm is described in Appendix A of Armstrong and Kolesár (2018)
 #' @inheritParams OptEstimator
 #' @param p Parameter determining which ell_p norm to use, one of \code{1}, or
 #'     \code{Inf}.
-#' @references Armstrong, T. B., and M. Kolesár (2018): Sensitivity Analysis
-#'     Using Approximate Moment Condition Models, Unpublished manuscript
+#' @references{
+#'
+#' \cite{Armstrong, T. B., and M. Kolesár (2018): Sensitivity Analysis
+#'     Using Approximate Moment Condition Models, Unpublished manuscript}
+#' }
 #' @export
 lph <- function(eo, B, p=Inf) {
     if (ncol(B)==0)
@@ -25,19 +29,18 @@ lph <- function(eo, B, p=Inf) {
               matrix(ncol=0, nrow=nrow(B))
           }
     I <- rep(c(FALSE, TRUE), c(ncol(Bp), ncol(B)))
-    T <- rbind(t(Bp), solve(crossprod(B), t(B)))
-    Sigt <- T %*% eo$Sig %*% t(T)
+    Tm <- rbind(t(Bp), solve(crossprod(B), t(B)))
+    Sigt <- Tm %*% eo$Sig %*% t(Tm)
     ## Get path of tilde{k}
     if (p==Inf)
-        kts <- linfh0(T %*% eo$G, Sigt, eo$H, I)[, 1:(nrow(B)+1)]
+        kts <- linfh0(Tm %*% eo$G, Sigt, eo$H, I)[, 1:(nrow(B)+1)]
     else
-        kts <- l1h0(T %*% eo$G, Sigt, eo$H, I)[, 1:(nrow(B)+1)]
+        kts <- l1h0(Tm %*% eo$G, Sigt, eo$H, I)[, 1:(nrow(B)+1)]
     ## Return sensitivities at each step
-    cbind(kts[, 1], kts[, -1] %*% T, rowSums(kts[, -1]==0))
+    cbind(kts[, 1], kts[, -1] %*% Tm, rowSums(kts[, -1]==0))
 }
 
-#' Next step in l_infty homotopy algorithm
-#' @keywords internal
+## Next step in l_infty homotopy algorithm
 linfstep <- function(s, G, Sig, H, I) {
     d1 <- -s$k/s$k.d
     d1[!s$A | d1<0 | !I] <- Inf
@@ -76,9 +79,8 @@ linfstep <- function(s, G, Sig, H, I) {
     s
 }
 
-#' Orthogonalized homotopy solution for l_infty
-#' @param I vector of indicators which instruments are invalid
-#' @keywords internal
+## Orthogonalized homotopy solution for l_infty
+## @param I vector of indicators which instruments are invalid
 linfh0 <- function(G, Sig, H, I) {
     dg <- nrow(G)
     ## Initialize

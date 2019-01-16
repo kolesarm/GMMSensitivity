@@ -1,5 +1,4 @@
-#' Modulus
-#' @keywords internal
+## Modulus
 modulus <- function(delta, eo, B, M, p=2, spath=NULL) {
     ## drop lambda/barB and #dropped moments
     if (p != 2) {
@@ -116,24 +115,28 @@ modulus <- function(delta, eo, B, M, p=2, spath=NULL) {
 }
 
 
-#' Efficiency bounds under ell_p constraints
+#' Efficiency bounds under \eqn{\ell_p}{ell_p} constraints
 #'
 #' Computes the asymptotic efficiency of two-sided fixed-length confidence
 #' intervals at \eqn{c=0}, as well as the efficiency of one-sided confidence
-#' intervals that optimize a given \code{beta} quantile of excess length.
+#' intervals that optimize a given \code{beta} quantile of excess length, when
+#' the set \eqn{C} is characterized by \eqn{\ell_p} constraints.
 #'
 #' The set \eqn{C} takes the form \eqn{B\gamma}{B*gamma} where the
-#' \eqn{\ell_p}{lp} norm of gamma is bounded by \eqn{M}.
+#' \eqn{\ell_p}{lp} norm of \eqn{\gamma}{gamma} is bounded by \eqn{M}.
 #' @inheritParams OptEstimator
 #' @param beta Quantile of excess length that a one-sided confidence interval is
 #'     optimizing.
-#' @param cvx By default, the efficiency for \code{p=1} and for \code{p=1} is
+#' @param cvx By default, the efficiency for \code{p=1} and for \code{p=Inf} is
 #'     computed using the homotopy algorithm described in Appendix A of
 #'     Armstrong and Kolesár (2018). If \code{cvx=TRUE} is specified, the
-#'     modulus is computed using the cvx convex optimizer. This option is
+#'     modulus is computed using the CVX convex optimizer. This option is
 #'     included mostly just to verify that the homotopy solution correct.
-#' @references Armstrong, T. B., and M. Kolesár (2018): Sensitivity Analysis
-#'     Using Approximate Moment Condition Models, Unpublished manuscript
+#' @references{
+#'
+#' \cite{Armstrong, T. B., and M. Kolesár (2018): Sensitivity Analysis
+#'     Using Approximate Moment Condition Models, Unpublished manuscript}
+#' }
 #' @export
 EffBounds <- function(eo, B, M, p=2, beta=0.5, alpha=0.05, cvx=FALSE) {
     ## One-sided
@@ -149,7 +152,8 @@ EffBounds <- function(eo, B, M, p=2, beta=0.5, alpha=0.05, cvx=FALSE) {
     eff1 <- mo(2*del0)$omega/(e1$omega+del0*e1$domega)
 
     integrand <- function(z)
-        sapply(z, function(z) mo(2*(zal-z))$omega * stats::dnorm(z))
+        vapply(z, function(z) mo(2*(zal-z))$omega * stats::dnorm(z),
+               numeric(1))
     lo <- -zal                          # lower endpoint
     while(integrand(lo)>1e-10) lo <- lo-2
 
@@ -161,8 +165,7 @@ EffBounds <- function(eo, B, M, p=2, beta=0.5, alpha=0.05, cvx=FALSE) {
     list(onesisded=eff1, twosided=eff2)
 }
 
-#' Modulus using CVX
-#' @keywords internal
+## Modulus using CVX
 mod_cvx <- function(delta, eo, B, M, p) {
     th <- CVXR::Variable(length(eo$H))
     ga <- CVXR::Variable(ncol(B))

@@ -18,7 +18,7 @@ lph(eo, B, p = Inf)
     dimension \eqn{d_g} by \eqn{d_\theta}{d_theta}, where
     \eqn{d_\theta}{d_theta} is the dimension of \eqn{\theta}{theta}}
 
-    \item{H}{Estimate of defivative of \eqn{h(\theta)}{h(theta)}. A vector of
+    \item{H}{Estimate of derivative of \eqn{h(\theta)}{h(theta)}. A vector of
     length \eqn{d_\theta}{d_theta}}
 
     \item{n}{sample size}
@@ -43,13 +43,17 @@ is the number of moments}
 Computes the vector of optimal sensitivities at each knot of the solution
 path that traces out the optimal bias-variance frontier when the set \eqn{C}
 takes the form \eqn{c=B\gamma}{c=B*gamma} with the \eqn{\ell_p}{lp} norm of
-\eqn{\gamma}{gamma} is bounded by a constant, for \eqn{p=1}, or \eqn{p=Inf}.
-This path is used as an input to \code{\link{OptEstimator}}.
+\eqn{\gamma}{gamma} is bounded by a constant, for \eqn{p=1}, or
+\eqn{p=\infty}{p=Inf}. This path is used as an input to
+\code{\link{OptEstimator}}.
 }
 \details{
-The algorightm is described in Appendix A of Armstrong and Kolesár (2018)
+The algorithm is described in Appendix A of Armstrong and Kolesár (2018)
 }
 \references{
-Armstrong, T. B., and M. Kolesár (2018): Sensitivity Analysis
-    Using Approximate Moment Condition Models, Unpublished manuscript
+{
+
+\cite{Armstrong, T. B., and M. Kolesár (2018): Sensitivity Analysis
+    Using Approximate Moment Condition Models, Unpublished manuscript}
+}
 }

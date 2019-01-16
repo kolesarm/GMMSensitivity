@@ -65,8 +65,10 @@ test_that("Check modulus solution against brute force", {
             I[ivlist[[j]]] <- TRUE
             B <- (abs(blp$perturb) * blp$ZZ)[, I, drop=FALSE]
             M <- if (p==2) sqrt(sum(I)) else if (p==Inf) 1 else sum(I)
-            mb <- sapply(dels, function(d) mod_cvx(d, eo, B, M, p)$omega)
-            mo <- sapply(dels, function(d) modulus(d, eo, B, M, p)$omega)
+            mb <- vapply(dels, function(d) mod_cvx(d, eo, B, M, p)$omega,
+                         numeric(1))
+            mo <- vapply(dels, function(d) modulus(d, eo, B, M, p)$omega,
+                         numeric(1))
             expect_lt(max(abs(mb-mo)), 1e-6)
         }
     }

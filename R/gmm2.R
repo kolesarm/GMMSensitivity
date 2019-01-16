@@ -1,6 +1,5 @@
-#' Construct optimal sensitivity and compute worst-case bias and sd for a given
-#' kappa
-#' @keywords internal
+## Construct optimal sensitivity and compute worst-case bias and sd for a given
+## kappa
 l2sens <- function(eo, B, kap, M, alpha=0.05) {
     ## Optimal inverse weight
     BB <- if (ncol(B)==0) 0 else tcrossprod(B)
@@ -11,8 +10,7 @@ l2sens <- function(eo, B, kap, M, alpha=0.05) {
 }
 
 
-#' One-step estimator based on optimal sensitivity under ell_2 constraints
-#' @keywords internal
+## One-step estimator based on optimal sensitivity under ell_2 constraints
 l2opt <- function(eo, B, M, alpha=0.05,
                   opt.criterion="FLCI") {
 

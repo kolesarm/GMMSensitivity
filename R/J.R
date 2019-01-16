@@ -1,15 +1,12 @@
 tol <- .Machine$double.eps^0.75
 
-#' Find interval containing zero of a function, then find the zero
-#'
-#' Same function as in NPRHonest
-#'
-#' Given function \code{f} find \code{x0} such that \code{f(x0)==0}
-#' @param f function whose root we're looking for
-#' @param ival upper endpoint of initial interval in which to search
-#' @param negative logical: should the lower endpoint be \code{1/ival} (if the
-#'     root is guaranteed to be positive), or \code{-ival}?
-#' @keywords internal
+## Find interval containing zero of a function, then find the zero
+##
+## Given function \code{f} find \code{x0} such that \code{f(x0)==0}
+## @param f function whose root we're looking for
+## @param ival upper endpoint of initial interval in which to search
+## @param negative logical: should the lower endpoint be \code{1/ival} (if the
+##     root is guaranteed to be positive), or \code{-ival}?
 FindZero <- function(f, ival=1.1, negative=TRUE) {
     minval <- function(ival) if (negative==TRUE) -ival else min(1/ival, 1e-3)
 

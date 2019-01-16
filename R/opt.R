@@ -16,7 +16,7 @@
 #'     dimension \eqn{d_g} by \eqn{d_\theta}{d_theta}, where
 #'     \eqn{d_\theta}{d_theta} is the dimension of \eqn{\theta}{theta}}
 #'
-#'     \item{H}{Estimate of defivative of \eqn{h(\theta)}{h(theta)}. A vector of
+#'     \item{H}{Estimate of derivative of \eqn{h(\theta)}{h(theta)}. A vector of
 #'     length \eqn{d_\theta}{d_theta}}
 #'
 #'     \item{n}{sample size}
@@ -119,10 +119,9 @@ OptEstimator <- function(eo, B, M, p=2, spath=NULL, alpha=0.05,
 }
 
 
-#' Build estimator given sensitivity
-#' @param k Sensitivity, or matrix of sensitivities
-#' @param p 1, 2, or Inf
-#' @keywords internal
+## Build estimator given sensitivity
+## @param k Sensitivity, or matrix of sensitivities
+## @param p 1, 2, or Inf
 BuildEstimator <- function(k, eo, B, M, p=Inf, alpha=0.05) {
     if (!is.matrix(k)) k <- matrix(k, nrow=1)
     hhat <- drop(eo$h_init + k %*% eo$g_init)
@@ -145,8 +144,7 @@ BuildEstimator <- function(k, eo, B, M, p=Inf, alpha=0.05) {
 }
 
 
-#' Critical value
-#' @keywords internal
+## Critical value
 cvb <- function(b, alpha=0.05)
     sqrt(stats::qchisq(1-alpha, df = 1, ncp = b^2))
 

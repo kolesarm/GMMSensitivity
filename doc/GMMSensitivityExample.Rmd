@@ -73,7 +73,17 @@ The package includes the dataset `blp`, which contains estimates of the @blp95
 
 `perturb`
 : scaling parameter to give interpretable meaning to violations of moment
- conditions. For demand-side moments, it corresponds to an estimate of $\delta_{d}=0.01\overline{p}/(\overline{y}/\alpha)$, and for supply-side moments, it corresponds to an estimate of $\delta_{s}=-0.01\overline{p}/\overline{mc}$, where $\overline{p}$ is average price, $\overline{y}$ is average income, $\overline{mc}$ is average marginal cost, and $\alpha$ is a parameter in the utility function. With this scaling, if a given demand-side instrument enters the utility function with coefficient $\delta_{d}$, a consumer is willing to pay 1\% of the average car price for a unit increase in the instrument. If a given supply-side instrument enters the cost function with coefficient $\delta_s$, increasing the instrument by one unit decreases the marginal cost by 1\% of the average car price.
+ conditions. For demand-side moments, it corresponds to an estimate of
+ $\delta_{d}=0.01\overline{p}/(\overline{y}/\alpha)$, and for supply-side
+ moments, it corresponds to an estimate of
+ $\delta_{s}=-0.01\overline{p}/\overline{m c}$, where $\overline{p}$ is average
+ price, $\overline{y}$ is average income, $\overline{m c}$ is average marginal
+ cost, and $\alpha$ is a parameter in the utility function. With this scaling,
+ if a given demand-side instrument enters the utility function with coefficient
+ $\delta_{d}$, a consumer is willing to pay 1\% of the average car price for a
+ unit increase in the instrument. If a given supply-side instrument enters the
+ cost function with coefficient $\delta_s$, increasing the instrument by one
+ unit decreases the marginal cost by 1\% of the average car price.
 
 `n`
 : Sample size, number of model/years.
@@ -93,12 +103,12 @@ g(\theta_{0})=c,\quad c=B\gamma,\quad \norm{\gamma}_{p}\leq M.
 
 Suppose that we want to allow all excluded instruments in the @blp95 application
  to be potentially invalid. Fix $B$ to a scaling matrix so that if the $j$th
- supply-side instrument is invalid with $\gamma_{sj}=1$, this means that
+ supply-side instrument is invalid with $\gamma_{s j}=1$, this means that
  changing the instrument by one standard deviation changes the marginal cost by
- $\gamma_{sj}$\% of the average car price, and if the $j$ the demand-side
- instrument is invalid with $\gamma_{dj}=1$, then the consumer
+ $\gamma_{s j}$\% of the average car price, and if the $j$ the demand-side
+ instrument is invalid with $\gamma_{d j}=1$, then the consumer
  willingness to pay for one standard deviation change in the instrument
- is $\gamma_{dj}\%$ of the average 1980 car price. Let $p=2$, and $M=\sqrt{\# I}$,
+ is $\gamma_{d j}\%$ of the average 1980 car price. Let $p=2$, and $M=\sqrt{\# I}$,
  where $\#I$ is the number of invalid instruments so that $\gamma=1$ is included
  in the set (this is the same scaling as described in @ak18sensitivity in the
  paper). Then the confidence interval can be constructed as follows:

@@ -18,7 +18,7 @@ Jtest(eo, B, M, p = 2, alpha = 0.05)
     dimension \eqn{d_g} by \eqn{d_\theta}{d_theta}, where
     \eqn{d_\theta}{d_theta} is the dimension of \eqn{\theta}{theta}}
 
-    \item{H}{Estimate of defivative of \eqn{h(\theta)}{h(theta)}. A vector of
+    \item{H}{Estimate of derivative of \eqn{h(\theta)}{h(theta)}. A vector of
     length \eqn{d_\theta}{d_theta}}
 
     \item{n}{sample size}
