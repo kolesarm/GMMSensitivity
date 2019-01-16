@@ -1,3 +1,54 @@
+#' Efficiency bounds under \eqn{\ell_p}{ell_p} constraints
+#'
+#' Computes the asymptotic efficiency of two-sided fixed-length confidence
+#' intervals at \eqn{c=0}, as well as the efficiency of one-sided confidence
+#' intervals that optimize a given \code{beta} quantile of excess length, when
+#' the set \eqn{C} is characterized by \eqn{\ell_p} constraints.
+#'
+#' The set \eqn{C} takes the form \eqn{B\gamma}{B*gamma} where the
+#' \eqn{\ell_p}{lp} norm of \eqn{\gamma}{gamma} is bounded by \eqn{M}.
+#' @inheritParams OptEstimator
+#' @param beta Quantile of excess length that a one-sided confidence interval is
+#'     optimizing.
+#' @param cvx By default, the efficiency for \code{p=1} and for \code{p=Inf} is
+#'     computed using the homotopy algorithm described in Appendix A of
+#'     Armstrong and Kolesár (2018). If \code{cvx=TRUE} is specified, the
+#'     modulus is computed using the CVX convex optimizer. This option is
+#'     included mostly just to verify that the homotopy solution correct.
+#' @references{
+#'
+#' \cite{Armstrong, T. B., and M. Kolesár (2018): Sensitivity Analysis
+#'     Using Approximate Moment Condition Models, Unpublished manuscript}
+#' }
+#' @export
+EffBounds <- function(eo, B, M, p=2, beta=0.5, alpha=0.05, cvx=FALSE) {
+    ## One-sided
+    zal <- stats::qnorm(1-alpha)
+    del0 <- zal + stats::qnorm(beta)
+    spath <- if (p!=2) lph(eo, B, p) else NULL
+    if (cvx)
+        mo <- function(del) mod_cvx(del, eo, B, M, p)
+    else
+        mo <- function(del) modulus(del, eo, B, M, p, spath)
+
+    e1 <- mo(del0)
+    eff1 <- mo(2*del0)$omega/(e1$omega+del0*e1$domega)
+
+    integrand <- function(z)
+        vapply(z, function(z) mo(2*(zal-z))$omega * stats::dnorm(z),
+               numeric(1))
+    lo <- -zal                          # lower endpoint
+    while(integrand(lo)>1e-10) lo <- lo-2
+
+    den <- 2*OptEstimator(eo, B, M=M, p, alpha=alpha,
+                          opt.criterion="FLCI")$hl*sqrt(eo$n)
+    eff2 <- stats::integrate(integrand, lo,
+                             zal, abs.tol=1e-6)$value / den
+
+    list(onesisded=eff1, twosided=eff2)
+}
+
+
 ## Modulus
 modulus <- function(delta, eo, B, M, p=2, spath=NULL) {
     ## drop lambda/barB and #dropped moments
@@ -11,7 +62,7 @@ modulus <- function(delta, eo, B, M, p=2, spath=NULL) {
     SG <- solve(eo$Sig, eo$G)       # Sigma^{-1} * G
     kv <- -drop(SG %*% solve(crossprod(eo$G, SG), eo$H))
 
-    #' c_delta. If Bk=0, give c_delta that leads to largest possible delta.
+    ## c_delta. If Bk=0, give c_delta that leads to largest possible delta.
     cd <- function(k) {
         Bk <- drop(crossprod(B, k))
         R <- crossprod(B, solve(eo$Sig, B)-SG %*%
@@ -114,56 +165,6 @@ modulus <- function(delta, eo, B, M, p=2, spath=NULL) {
     }
 }
 
-
-#' Efficiency bounds under \eqn{\ell_p}{ell_p} constraints
-#'
-#' Computes the asymptotic efficiency of two-sided fixed-length confidence
-#' intervals at \eqn{c=0}, as well as the efficiency of one-sided confidence
-#' intervals that optimize a given \code{beta} quantile of excess length, when
-#' the set \eqn{C} is characterized by \eqn{\ell_p} constraints.
-#'
-#' The set \eqn{C} takes the form \eqn{B\gamma}{B*gamma} where the
-#' \eqn{\ell_p}{lp} norm of \eqn{\gamma}{gamma} is bounded by \eqn{M}.
-#' @inheritParams OptEstimator
-#' @param beta Quantile of excess length that a one-sided confidence interval is
-#'     optimizing.
-#' @param cvx By default, the efficiency for \code{p=1} and for \code{p=Inf} is
-#'     computed using the homotopy algorithm described in Appendix A of
-#'     Armstrong and Kolesár (2018). If \code{cvx=TRUE} is specified, the
-#'     modulus is computed using the CVX convex optimizer. This option is
-#'     included mostly just to verify that the homotopy solution correct.
-#' @references{
-#'
-#' \cite{Armstrong, T. B., and M. Kolesár (2018): Sensitivity Analysis
-#'     Using Approximate Moment Condition Models, Unpublished manuscript}
-#' }
-#' @export
-EffBounds <- function(eo, B, M, p=2, beta=0.5, alpha=0.05, cvx=FALSE) {
-    ## One-sided
-    zal <- stats::qnorm(1-alpha)
-    del0 <- zal + stats::qnorm(beta)
-    spath <- if (p!=2) lph(eo, B, p) else NULL
-    if (cvx)
-        mo <- function(del) mod_cvx(del, eo, B, M, p)
-    else
-        mo <- function(del) modulus(del, eo, B, M, p, spath)
-
-    e1 <- mo(del0)
-    eff1 <- mo(2*del0)$omega/(e1$omega+del0*e1$domega)
-
-    integrand <- function(z)
-        vapply(z, function(z) mo(2*(zal-z))$omega * stats::dnorm(z),
-               numeric(1))
-    lo <- -zal                          # lower endpoint
-    while(integrand(lo)>1e-10) lo <- lo-2
-
-    den <- 2*OptEstimator(eo, B, M=M, p, alpha=alpha,
-                          opt.criterion="FLCI")$hl*sqrt(eo$n)
-    eff2 <- stats::integrate(integrand, lo,
-                             zal, abs.tol=1e-6)$value / den
-
-    list(onesisded=eff1, twosided=eff2)
-}
 
 ## Modulus using CVX
 mod_cvx <- function(delta, eo, B, M, p) {

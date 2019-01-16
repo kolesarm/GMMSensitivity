@@ -94,6 +94,8 @@ test_that("Check optimal path under no misspecification", {
     expect_equal(k_opt, r1$k)
     expect_equal(k_opt, r2$k)
     expect_equal(k_opt, rI$k)
+
+    ## Check output format
 })
 
 test_that("Drop invalid instrument under large misspecification", {

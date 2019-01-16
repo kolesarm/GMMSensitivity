@@ -52,8 +52,9 @@ test_that("Check l_2 efficiency calculations using BLP data", {
         effo <- l2mod(eo, B, M, 2*del)$omega/(e1$omega+del*e1$domega)
 
         integrand <- function(z)
-            sapply(z, function(z) l2mod(eo, B, M, 2*(zal-z))$omega *
-                                                            stats::dnorm(z))
+            vapply(z, function(z) l2mod(eo, B, M, 2*(zal-z))$omega *
+                                                            stats::dnorm(z),
+                   numeric(1))
         lo <- -zal                          # lower endpoint
         while(integrand(lo)>1e-10) lo <- 2*lo
 
