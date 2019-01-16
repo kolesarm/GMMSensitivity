@@ -6,7 +6,7 @@ test_that("Check l_infty and l_1 solution paths using BLP data", {
     linfbrute <- function(eo, B, lams) {
         ks <- matrix(NA, nrow=length(lams), ncol=nrow(eo$G))
         k <- CVXR::Variable(nrow(eo$G))
-        for (j in seq_len(length(lams))) {
+        for (j in seq_along(lams)) {
             ob <- CVXR::Minimize(CVXR::p_norm(chol(eo$Sig)%*%k)^2/2 +
                                  lams[j]*CVXR::p_norm(t(B) %*% k, p=1))
             pr <- CVXR::Problem(ob, list(-eo$H==t(eo$G)%*%k))
@@ -20,7 +20,7 @@ test_that("Check l_infty and l_1 solution paths using BLP data", {
     l1brute <- function(eo, B, Bbound) {
         ks <- matrix(NA, nrow=length(Bbound), ncol=nrow(eo$G))
         k <- CVXR::Variable(nrow(eo$G))
-        for (j in seq_len(length(Bbound))) {
+        for (j in seq_along(Bbound)) {
             ob <- CVXR::Minimize(CVXR::p_norm(chol(eo$Sig)%*%k)^2/2)
             pr <- CVXR::Problem(ob, list(-eo$H==t(eo$G)%*%k,
                                          CVXR::p_norm(t(B) %*% k, p=Inf) <=
@@ -52,7 +52,7 @@ test_that("Check l_infty and l_1 solution paths using BLP data", {
                h_init=blp$h_init)
 
     res <- data.frame()
-    for (j in seq_len(ivlist)) {
+    for (j in seq_along(ivlist)) {
         I <- vector(mode="logical", length=31)
         I[ivlist[[j]]] <- TRUE
         B <- (abs(blp$perturb) * blp$ZZ)[, I, drop=FALSE]
