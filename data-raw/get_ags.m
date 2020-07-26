@@ -1,7 +1,6 @@
 % Run this by typing get_ags into matlab's REPL
 
-% 0. Unzip
-% https://dataverse.harvard.edu/file.xhtml?persistentId=doi:10.7910/DVN/LLARSN/2KFPRA&version=1.1
+% 0. Unzip https://doi.org/10.7910/DVN/LLARSN/2KFPRA
 % into ags/ directory (the files not needed for code below to execute were deleted)
 
 % 1. Run sections of
@@ -16,7 +15,7 @@ load 'ags/analysis/Transparent Identification (BLP Visualization)/external/data/
 data = BlpData('blp_1999_data.csv', 'meanincome.csv', 'sdincome.csv');
 data = data.LoadUnobservablesFromEstimate(est);
 
-m_fun_param       = @(param) get_mean_markup(est,     data,    param);
+m_fun_param       = @(param) get_mean_markup(est, data, param);
 mjacobian_param   = NumJacob(m_fun_param, est.param, 10^-4);
 H                 = [mjacobian_param, zeros(1, length(est.beta))];
 h_init            = est.GetMeanMarkup(data); % estimate of markup
