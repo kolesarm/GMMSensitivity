@@ -2,7 +2,8 @@
 % Please edit documentation in R/gmminf.R
 \name{lph}
 \alias{lph}
-\title{Compute solution path for \eqn{\ell_\infty}{l_infinity} or \eqn{\ell_1}{l1} constraints}
+\title{Compute solution path for \eqn{\ell_\infty}{l_infinity} or \eqn{\ell_1}{l1}
+constraints}
 \usage{
 lph(eo, B, p = Inf)
 }
@@ -11,8 +12,9 @@ lph(eo, B, p = Inf)
 
     \describe{
 
-    \item{Sig}{Estimate of variance of the moment condition, matrix with dimension
-       \eqn{d_g} by \eqn{d_g}, where \eqn{d_g} is the number of moments}
+    \item{Sig}{Estimate of variance of the moment condition, matrix with
+       dimension \eqn{d_g} by \eqn{d_g}, where \eqn{d_g} is the number of
+       moments}
 
     \item{G}{Estimate of derivative of the moment condition, matrix with
     dimension \eqn{d_g} by \eqn{d_\theta}{d_theta}, where

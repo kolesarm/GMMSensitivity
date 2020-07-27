@@ -5,16 +5,24 @@
 \title{One-step estimator based on optimal sensitivity under \eqn{\ell_p}{lp}
 constraints}
 \usage{
-OptEstimator(eo, B, M, p = 2, spath = NULL, alpha = 0.05,
-  opt.criterion = "FLCI")
+OptEstimator(
+  eo,
+  B,
+  M,
+  p = 2,
+  spath = NULL,
+  alpha = 0.05,
+  opt.criterion = "FLCI"
+)
 }
 \arguments{
 \item{eo}{List containing initial estimates with the following components:
 
     \describe{
 
-    \item{Sig}{Estimate of variance of the moment condition, matrix with dimension
-       \eqn{d_g} by \eqn{d_g}, where \eqn{d_g} is the number of moments}
+    \item{Sig}{Estimate of variance of the moment condition, matrix with
+       dimension \eqn{d_g} by \eqn{d_g}, where \eqn{d_g} is the number of
+       moments}
 
     \item{G}{Estimate of derivative of the moment condition, matrix with
     dimension \eqn{d_g} by \eqn{d_\theta}{d_theta}, where
@@ -54,10 +62,11 @@ constructing/optimizing confidence intervals.}
 
    \describe{
 
-   \item{\code{"MSE"}}{Minimize worst-case mean squared error of the estimator.}
+   \item{\code{"MSE"}}{Minimize worst-case mean squared error of the
+   estimator.}
 
-   \item{\code{"FLCI"}}{Length of (fixed-length) two-sided
-       confidence intervals.}
+   \item{\code{"FLCI"}}{Length of (fixed-length) two-sided confidence
+       intervals.}
 
    \item{\code{"Valid"}}{Optimal estimator under valid moments. This returns
    the original estimator, with confidence intervals adjusted for possible

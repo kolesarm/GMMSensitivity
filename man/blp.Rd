@@ -4,13 +4,14 @@
 \name{blp}
 \alias{blp}
 \title{Estimates from Berry, Levinsohn, and Pakes (1995)}
-\format{A list, consisting 11 objects:
+\format{
+A list, consisting 11 objects:
 
 \describe{
 
 \item{G}{Matrix with 31 rows and 17 columns, estimate of derivative of the
-         moment condition evaluated at initial estimate of \eqn{\theta} from Berry,
-         Levinsohn, and Pakes (1995), \eqn{\hat{\theta}}{thetahat}.}
+         moment condition evaluated at initial estimate of \eqn{\theta} from
+         Berry, Levinsohn, and Pakes (1995), \eqn{\hat{\theta}}{thetahat}.}
 
 \item{H}{Vector of length 17, estimate of derivative of average markup
   \eqn{h(\theta)}{h(theta)} with respect to model parameters
@@ -22,7 +23,8 @@
 \item{g_init}{Average moment condition, evaluated at
               \eqn{\hat{\theta}}{thetahat}.}
 
-\item{h_init}{Estimate of the average markup, \eqn{h(\hat{\theta})}{h(thetahat)}.}
+\item{h_init}{Estimate of the average markup,
+              \eqn{h(\hat{\theta})}{h(thetahat)}.}
 
 \item{names}{Two lists, one for names of the moment conditions, and one for
              elements of \eqn{\theta}{theta}.}
@@ -41,10 +43,11 @@ package="GMMSensitivity")} for details.}
 \item{n}{Sample size, number of model/years.}
 }
 
-See Armstrong and Kolesár (2018) for a detailed description of these objects.}
+See Armstrong and Kolesár (2018) for a detailed description of these objects.
+}
 \source{
-Replication files for Andrews, Gentzkow, and Shapiro (2017), available at
-\url{https://dataverse.harvard.edu/file.xhtml?persistentId=doi:10.7910/DVN/LLARSN/2KFPRA&version=1.1}
+Replication files for Andrews, Gentzkow, and Shapiro (2017),
+    available at \url{https://doi.org/10.7910/DVN/LLARSN}
 }
 \usage{
 blp
@@ -65,7 +68,6 @@ Economics, 132, 1553–1592.}
 Approximate Moment Condition Models, Unpublished manuscript}
 
 \cite{Berry, S. T., J. Levinsohn, and A. Pakes (1995): Automobile Prices in
-Market Equilibrium, Econometrica, 63, 841–890.}
-}
+Market Equilibrium, Econometrica, 63, 841–890.} }
 }
 \keyword{datasets}

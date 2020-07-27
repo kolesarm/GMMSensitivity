@@ -25,7 +25,7 @@ test_that("Check l_infty and l_1 solution paths using BLP data", {
             pr <- CVXR::Problem(ob, list(-eo$H==t(eo$G)%*%k,
                                          CVXR::p_norm(t(B) %*% k, p=Inf) <=
                                          Bbound[j]))
-            ks[j, ] <- solve(pr)$getValue(k)
+            ks[j, ] <- CVXR::solve(pr)$getValue(k)
         }
         cbind(Bbound, ks)
     }

@@ -11,8 +11,9 @@ EffBounds(eo, B, M, p = 2, beta = 0.5, alpha = 0.05, cvx = FALSE)
 
     \describe{
 
-    \item{Sig}{Estimate of variance of the moment condition, matrix with dimension
-       \eqn{d_g} by \eqn{d_g}, where \eqn{d_g} is the number of moments}
+    \item{Sig}{Estimate of variance of the moment condition, matrix with
+       dimension \eqn{d_g} by \eqn{d_g}, where \eqn{d_g} is the number of
+       moments}
 
     \item{G}{Estimate of derivative of the moment condition, matrix with
     dimension \eqn{d_g} by \eqn{d_\theta}{d_theta}, where

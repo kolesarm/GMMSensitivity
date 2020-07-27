@@ -1,24 +1,31 @@
 Package: GMMSensitivity
 Title: Confidence intervals for sensitivity analysis in GMM
 Version: 0.1.1
-Authors@R: person(given = "Michal",
+Authors@R: c(person(given = "Michal",
                   family = "Kolesár",
                   role = c("aut", "cre"),
-                  email = "kolesarmi@googlemail.com")
-Description: Implements optimal confidence intervals for sensitivity analysis in
-    generalized method of moments (GMM) models.
-Depends: R (>= 3.4.0)
+                  email = "kolesarmi@googlemail.com",
+                  comment = c(ORCID = "0000-0002-2482-7796")),
+             person(given = "Tim",
+                  family = "Armstrong",
+                  role = "ctb",
+                  email = "tim.b.armstrong@gmail.com"))
+Description: Construct confidence intervals in generalized method of moments
+    (GMM) models that are valid under local misspecification.
+Depends: R (>= 4.0.0)
 License: GPL-3
 Encoding: UTF-8
-LazyData: true
 Suggests:
     spelling,
     testthat,
     knitr,
     CVXR,
     rmarkdown
-RoxygenNote: 6.1.1
+Imports:
+    stats
+RoxygenNote: 7.1.1
 VignetteBuilder: knitr
+LazyData: true
 Language: en-US
 URL: https://github.com/kolesarm/GMMSensitivity/
 BugReports: https://github.com/kolesarm/GMMSensitivity/issues
