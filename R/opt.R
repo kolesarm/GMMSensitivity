@@ -9,8 +9,9 @@
 #'
 #'     \describe{
 #'
-#'     \item{Sig}{Estimate of variance of the moment condition, matrix with dimension
-#'        \eqn{d_g} by \eqn{d_g}, where \eqn{d_g} is the number of moments}
+#'     \item{Sig}{Estimate of variance of the moment condition, matrix with
+#'        dimension \eqn{d_g} by \eqn{d_g}, where \eqn{d_g} is the number of
+#'        moments}
 #'
 #'     \item{G}{Estimate of derivative of the moment condition, matrix with
 #'     dimension \eqn{d_g} by \eqn{d_\theta}{d_theta}, where
@@ -44,10 +45,11 @@
 #'
 #'    \describe{
 #'
-#'    \item{\code{"MSE"}}{Minimize worst-case mean squared error of the estimator.}
+#'    \item{\code{"MSE"}}{Minimize worst-case mean squared error of the
+#'    estimator.}
 #'
-#'    \item{\code{"FLCI"}}{Length of (fixed-length) two-sided
-#'        confidence intervals.}
+#'    \item{\code{"FLCI"}}{Length of (fixed-length) two-sided confidence
+#'        intervals.}
 #'
 #'    \item{\code{"Valid"}}{Optimal estimator under valid moments. This returns
 #'    the original estimator, with confidence intervals adjusted for possible
@@ -75,11 +77,8 @@ OptEstimator <- function(eo, B, M, p=2, spath=NULL, alpha=0.05,
     ep <- be(spath)
 
     ## Index of criterion to optimize
-    idx <- if (opt.criterion=="MSE") {
-               which.max(names(ep)=="rmse")
-           } else if (opt.criterion=="FLCI") {
-               which.max(names(ep)=="hl")
-           }
+    idx <- which.max(names(ep)==switch(opt.criterion, MSE = "rmse",
+                                       FLCI = "hl"))
     i <- which.min(ep[[idx]])
     ## Assume minimum is either in [i, i+1] or [i-1, i], which is true if
     ## criterion is convex. Sometimes solution can be stuck, so not enough to

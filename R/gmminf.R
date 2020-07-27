@@ -1,4 +1,5 @@
-#' Compute solution path for \eqn{\ell_\infty}{l_infinity} or \eqn{\ell_1}{l1} constraints
+#' Compute solution path for \eqn{\ell_\infty}{l_infinity} or \eqn{\ell_1}{l1}
+#' constraints
 #'
 #' Computes the vector of optimal sensitivities at each knot of the solution
 #' path that traces out the optimal bias-variance frontier when the set \eqn{C}
@@ -62,7 +63,7 @@ linfstep <- function(s, G, Sig, H, I) {
     s$k <- s$k + d*s$k.d
     s$mu <- s$mu + d*s$mu.d
 
-    if (min(d2)<min(d1)){
+    if (min(d2)<min(d1)) {
         s$joined <- which(d2<=min(d2))
         s$A[s$joined] <- TRUE
     } else {

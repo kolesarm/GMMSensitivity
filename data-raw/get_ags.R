@@ -1,5 +1,6 @@
 ## Load data from AGS replication
 d <- R.matlab::readMat("agm_data.mat")
+
 H <- drop(d$H)                          # \partial h(hattheta)
 
 g_init <- drop(d$g.init)                # hatg(hattheta)

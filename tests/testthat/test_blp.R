@@ -92,6 +92,6 @@ test_that("Check we match AGS results and modulus matches brute force", {
     expect_lt(sum(rin2[2:5, "bias"]), rin2[22, "bias"])
 
     ## Adaptation Efficiency
-    expect_lt(max(abs(effh-effc)), 1e-5)
+    expect_lt(max(abs(effh-effc)), 4e-5)
 
 })

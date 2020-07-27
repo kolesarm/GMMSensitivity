@@ -140,7 +140,7 @@ modulus <- function(delta, eo, B, M, p=2, spath=NULL) {
     kapmax <- 1
     ## If GW2G(1) is not invertible, set kappamax=1-1e-6, the endpoint is never
     ## reached, of for p\neq 2, the second-to-last step in the solution path
-    if (rcond(GW2G(1))< 100*.Machine$double.eps) {
+    if (rcond(GW2G(1)) < 100*.Machine$double.eps) {
         if (p==2) {
             kapmax <- 1-1e-6
         } else {
@@ -174,7 +174,7 @@ mod_cvx <- function(delta, eo, B, M, p) {
     con <- list(CVXR::p_norm(t(solve(chol(eo$Sig))) %*%
                              (B%*%ga - eo$G%*%th))  <= delta/2,
                 CVXR::p_norm(ga, p=p)<=M)
-    pr <- solve(CVXR::Problem(ob, con))
+    pr <- CVXR::solve(CVXR::Problem(ob, con))
     th0 <- drop(pr$getValue(th))
     ga0 <- drop(pr$getValue(ga))
 

@@ -57,7 +57,6 @@ test_that("Check modulus solution against brute force", {
                g_init=blp$g_init,
                h_init=blp$h_init)
 
-
     dels <- c(seq(0, 2, by=0.1), 4, 6)
     for(p in c(1, 2, Inf)) {
         for (j in c(11, 21:27)) {
@@ -69,11 +68,9 @@ test_that("Check modulus solution against brute force", {
                          numeric(1))
             mo <- vapply(dels, function(d) modulus(d, eo, B, M, p)$omega,
                          numeric(1))
-            expect_lt(max(abs(mb-mo)), 1e-6)
+            expect_lt(max(abs(mb-mo)), 5e-6)
         }
     }
-
-
 })
 
 ## Modulus at zero:

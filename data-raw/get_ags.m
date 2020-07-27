@@ -9,8 +9,10 @@
 %
 % to retrieve H, G, W, Omega, h_init
 
-addpath(genpath('ags/analysis/Transparent Identification (BLP Visualization)/external'))
-load 'ags/analysis/Transparent Identification (BLP Visualization)/external/data/blp_estimation'
+% Move the data needed to data/ and the functions to functions/
+addpath(genpath('ags/functions'))
+addpath('ags/data')
+load 'ags/data/blp_estimation'
 
 data = BlpData('blp_1999_data.csv', 'meanincome.csv', 'sdincome.csv');
 data = data.LoadUnobservablesFromEstimate(est);
@@ -57,13 +59,13 @@ save('agm_data', 'Om_ZZ', 'sd_Z', 'W', 'H', 'G', 'Omega', 'demand_perturb', ...
 % Markup
 [h_init, sqrt(H * get_vcov(est.gjacobian, est.Omega, est.wmatrix) * H' ./n)]
 
-% Copied from "sensitivity_to_moments.m"
-function mean_markup = get_mean_markup(est, data, param)
-    price = data.GetArray(data.varlist.price);
-    [~, mc] = est.model.ComputeModelOutputs(data, param);
-    markup = (price - mc) ./ price;
-    mean_markup = mean(markup);
-end
+% % Copied from "sensitivity_to_moments.m"
+% function mean_markup = get_mean_markup(est, data, param)
+%     price = data.GetArray(data.varlist.price);
+%     [~, mc] = est.model.ComputeModelOutputs(data, param);
+%     markup = (price - mc) ./ price;
+%     mean_markup = mean(markup);
+% end
 
 % Relative to Soonwoo's data directory:
 % Z.csv -> sdZ = sd_Z
