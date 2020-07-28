@@ -75,11 +75,11 @@ test_that("Check l_2 efficiency calculations using BLP data", {
     ivlist$demand_firm <- 6:9
     ivlist$demand_rival <- 10:13
     ivlist$demand <- c(ivlist$demand_firm, ivlist$demand_rival)
-    ivlist$all <- excluded
+    ## ivlist$all <- excluded
 
     eo <- list(H=blp$H, G=blp$G, Sig=blp$Sig, n=blp$n, g_init=blp$g_init,
                h_init=blp$h_init)
-    ivlist[1:17] <- NULL
+    ivlist[1:18] <- NULL
     for (j in seq_along(ivlist)) {
         I <- vector(mode="logical", length=31)
         I[ivlist[[j]]] <- TRUE

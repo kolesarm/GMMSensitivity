@@ -21,10 +21,6 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-<!-- Other pdf_document options: keep_tex: true -->
-
-
-
 ```{r, include=FALSE, cache=FALSE}
 library("knitr")
 knitr::opts_knit$set(self.contained = FALSE)
@@ -41,10 +37,13 @@ In this vignette, we demonstrate the implementation of these confidence
 intervals using the demand model for automobiles from  @blp95.
 
 The package includes the dataset `blp`, which contains estimates of the @blp95
- model, as implemented by @ags17. A description of the dataset can be obtained via the documentation in R, using `?blp`. For convenience, we give the description here:
+model, as implemented by @ags17. A description of the dataset can be obtained
+via the documentation in R, using `?blp`. For convenience, we give the
+description here:
 
 `G`
-: Matrix with 31 rows and 17 columns, estimate of derivative of the moment condition $G$
+: Matrix with 31 rows and 17 columns, estimate of derivative of the moment
+  condition $G$
 
 `H`
 : Vector of length 17, estimate of derivative of average markup $h(\theta)$.

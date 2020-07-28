@@ -42,13 +42,13 @@ is the number of moments}
 \code{1}, or \code{Inf}.}
 }
 \value{
-Matrix of optimal sensitivites. Each row corresponds to the vector of
-    optimal sensitivity at each step in the solution path.
+Optimal sensitivity matrix. Each row corresponds optimal sensitivity
+    vector at each step in the solution path.
 }
 \description{
-Computes the vector of optimal sensitivities at each knot of the solution
-path that traces out the optimal bias-variance frontier when the set \eqn{C}
-takes the form \eqn{c=B\gamma}{c=B*gamma} with the \eqn{\ell_p}{lp} norm of
+Computes the optimal sensitivity vector at each knot of the solution path
+that traces out the optimal bias-variance frontier when the set \eqn{C} takes
+the form \eqn{c=B\gamma}{c=B*gamma} with the \eqn{\ell_p}{lp} norm of
 \eqn{\gamma}{gamma} is bounded by a constant, for \eqn{p=1}, or
 \eqn{p=\infty}{p=Inf}. This path is used as an input to
 \code{\link{OptEstimator}}.

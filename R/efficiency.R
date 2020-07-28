@@ -14,8 +14,10 @@
 #'     one-sided CIs and \code{"twosided"} for efficiency of two-sided CIs
 #' @references{
 #'
-#' \cite{Armstrong, T. B., and M. Kolesár (2018): Sensitivity Analysis
-#'     Using Approximate Moment Condition Models, Unpublished manuscript}
+#' \cite{Armstrong, T. B., and M. Kolesár (2020): Sensitivity Analysis Using
+#' Approximate Moment Condition Models,
+#' \url{https://arxiv.org/abs/1808.07387}}
+#'
 #' }
 #' @export
 EffBounds <- function(eo, B, M, p=2, beta=0.5, alpha=0.05) {

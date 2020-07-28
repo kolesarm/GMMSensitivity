@@ -38,8 +38,8 @@ misspecification set \eqn{\mathcal{C}}.}
 \item{sdZ}{Vector of standard deviations of the instruments.}
 
 \item{perturb}{scaling parameters to give interpretable meaning to violations
-of supply-side conditions. See vignette \code{vignette("GMMSensitivity",
-package="GMMSensitivity")} for details.}
+of supply-side conditions. See vignette \code{vignette("GMMSensitivity")} for
+details.}
 
 \item{n}{Sample size, number of car models.}
 

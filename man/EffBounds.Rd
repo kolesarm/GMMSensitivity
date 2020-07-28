@@ -65,7 +65,9 @@ The set \eqn{\mathcal{C}} takes the form \eqn{B\gamma}{B*gamma} where the
 \references{
 {
 
-\cite{Armstrong, T. B., and M. Kolesár (2018): Sensitivity Analysis
-    Using Approximate Moment Condition Models, Unpublished manuscript}
+\cite{Armstrong, T. B., and M. Kolesár (2020): Sensitivity Analysis Using
+Approximate Moment Condition Models,
+\url{https://arxiv.org/abs/1808.07387}}
+
 }
 }

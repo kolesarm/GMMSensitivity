@@ -1,9 +1,9 @@
 #' Compute solution path for \eqn{\ell_\infty}{l_infinity} or \eqn{\ell_1}{l1}
 #' constraints
 #'
-#' Computes the vector of optimal sensitivities at each knot of the solution
-#' path that traces out the optimal bias-variance frontier when the set \eqn{C}
-#' takes the form \eqn{c=B\gamma}{c=B*gamma} with the \eqn{\ell_p}{lp} norm of
+#' Computes the optimal sensitivity vector at each knot of the solution path
+#' that traces out the optimal bias-variance frontier when the set \eqn{C} takes
+#' the form \eqn{c=B\gamma}{c=B*gamma} with the \eqn{\ell_p}{lp} norm of
 #' \eqn{\gamma}{gamma} is bounded by a constant, for \eqn{p=1}, or
 #' \eqn{p=\infty}{p=Inf}. This path is used as an input to
 #' \code{\link{OptEstimator}}.
@@ -12,8 +12,8 @@
 #' @inheritParams OptEstimator
 #' @param p Parameter determining which \eqn{\ell_p}{lp} norm to use, one of
 #'     \code{1}, or \code{Inf}.
-#' @return Matrix of optimal sensitivites. Each row corresponds to the vector of
-#'     optimal sensitivity at each step in the solution path.
+#' @return Optimal sensitivity matrix. Each row corresponds optimal sensitivity
+#'     vector at each step in the solution path.
 #' @references{
 #'
 #' \cite{Armstrong, T. B., and M. Kolesár (2020): Sensitivity Analysis Using
