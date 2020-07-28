@@ -33,7 +33,7 @@ Jtest(eo, B, M, p = 2, alpha = 0.05)
     }}
 
 \item{B}{matrix \eqn{B} with full rank and dimension \eqn{d_g} by
-\eqn{d_\gamma}{d_gamma} that determines the set \eqn{C}, where
+\eqn{d_\gamma}{d_gamma} that determines the set \eqn{\mathcal{C}}, where
 \eqn{d_\gamma}{d_gamma} is the number of invalid moments, and \eqn{d_g}
 is the number of moments}
 
@@ -54,7 +54,7 @@ List with three elements: \describe{
 
 \item{pC}{P-value for J-test that  allows for local misspecification}
 
-\item{Mmin}{Minimum value of \eqn{M} for which the J-test would not reject} }
+\item{Mmin}{Minimum value of \eqn{M} for which the J-test does not reject} }
 }
 \description{
 Computes J-test of overidentifying restrictions with critical value adjusted

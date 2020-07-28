@@ -18,7 +18,8 @@ A list, consisting 11 objects:
   \eqn{\theta}{theta}, evaluated at \eqn{\hat{\theta}}{thetahat}.}
 
 \item{W}{Weight matrix used to obtain the estimate
-         \eqn{\hat{\theta}}{thetahat}.}
+         \eqn{\hat{\theta}}{thetahat}, preliminary estimate of variance of
+         moment conditions.}
 
 \item{g_init}{Average moment condition, evaluated at
               \eqn{\hat{\theta}}{thetahat}.}
@@ -30,7 +31,7 @@ A list, consisting 11 objects:
              elements of \eqn{\theta}{theta}.}
 
 \item{ZZ}{Gram matrix \eqn{Z'Z} of the instruments, used to specify the
-misspecification set \eqn{C}.}
+misspecification set \eqn{\mathcal{C}}.}
 
 \item{Sig}{Estimate of variance of moment condition.}
 
@@ -40,10 +41,11 @@ misspecification set \eqn{C}.}
 of supply-side conditions. See vignette \code{vignette("GMMSensitivity",
 package="GMMSensitivity")} for details.}
 
-\item{n}{Sample size, number of model/years.}
+\item{n}{Sample size, number of car models.}
+
 }
 
-See Armstrong and Kolesár (2018) for a detailed description of these objects.
+See Armstrong and Kolesár (2020) for a detailed description of these objects.
 }
 \source{
 Replication files for Andrews, Gentzkow, and Shapiro (2017),
@@ -54,8 +56,8 @@ blp
 }
 \description{
 This dataset contains estimates of the model in Berry, Levinsohn, and Pakes
-(1995), as implemented by Andrews, Gentzkow, and Shapiro (2017), and it is
-used to illustrate the confidence intervals implemented in this package.
+(1995), as implemented by Andrews, Gentzkow, and Shapiro (2017). It is used
+to illustrate the confidence intervals implemented in this package.
 }
 \references{
 {
@@ -64,10 +66,12 @@ used to illustrate the confidence intervals implemented in this package.
 Sensitivity of Parameter Estimates to Sample Statistics, Quarterly Journal of
 Economics, 132, 1553–1592.}
 
-\cite{Armstrong, T. B., and M. Kolesár (2018): Sensitivity Analysis Using
-Approximate Moment Condition Models, Unpublished manuscript}
+\cite{Armstrong, T. B., and M. Kolesár (2020): Sensitivity Analysis Using
+Approximate Moment Condition Models, \url{https://arxiv.org/abs/1808.07387}}
 
 \cite{Berry, S. T., J. Levinsohn, and A. Pakes (1995): Automobile Prices in
-Market Equilibrium, Econometrica, 63, 841–890.} }
+Market Equilibrium, Econometrica, 63, 841–890.}
+
+}
 }
 \keyword{datasets}

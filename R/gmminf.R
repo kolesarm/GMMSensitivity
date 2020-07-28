@@ -13,7 +13,7 @@
 #' @param p Parameter determining which \eqn{\ell_p}{lp} norm to use, one of
 #'     \code{1}, or \code{Inf}.
 #' @return Matrix of optimal sensitivites. Each row corresponds to the vector of
-#'     optimal sensitivities at each step in the solution path.
+#'     optimal sensitivity at each step in the solution path.
 #' @references{
 #'
 #' \cite{Armstrong, T. B., and M. Kolesár (2020): Sensitivity Analysis Using
@@ -41,7 +41,7 @@ lph <- function(eo, B, p=Inf) {
         kts <- linfh0(Tm %*% eo$G, Sigt, eo$H, I)[, 1:(nrow(B)+1)]
     else
         kts <- l1h0(Tm %*% eo$G, Sigt, eo$H, I)[, 1:(nrow(B)+1)]
-    ## Return sensitivities at each step. Drop lambda
+    ## Return sensitivity at each step. Drop lambda
     kts[, -1] %*% Tm
 }
 

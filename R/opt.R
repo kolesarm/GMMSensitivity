@@ -2,8 +2,8 @@
 #' constraints
 #'
 #' Computes the optimal sensitivity and the optimal estimator when the set
-#' \eqn{C} takes the form \eqn{c=B\gamma}{c=B*gamma} with the \eqn{\ell_p}{lp}
-#' norm of \eqn{\gamma}{gamma} bounded by \eqn{M}.
+#' \eqn{\mathcal{C}} takes the form \eqn{c=B\gamma}{c=B*gamma} with the
+#' \eqn{\ell_p}{lp} norm of \eqn{\gamma}{gamma} bounded by \eqn{M}.
 #'
 #' @param eo List containing initial estimates with the following components:
 #'
@@ -30,7 +30,7 @@
 #'
 #'     }
 #' @param B matrix \eqn{B} with full rank and dimension \eqn{d_g} by
-#'     \eqn{d_\gamma}{d_gamma} that determines the set \eqn{C}, where
+#'     \eqn{d_\gamma}{d_gamma} that determines the set \eqn{\mathcal{C}}, where
 #'     \eqn{d_\gamma}{d_gamma} is the number of invalid moments, and \eqn{d_g}
 #'     is the number of moments
 #' @param M Bound on the norm of \eqn{\gamma}{gamma}
@@ -57,7 +57,7 @@
 #'
 #'     }
 #' @return Object of class \code{"GMMEstimate"}, which is a list with at least
-#'     the following componentes:
+#'     the following components:
 #'
 #' \describe{
 #'

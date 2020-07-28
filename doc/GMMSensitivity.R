@@ -1,13 +1,13 @@
-## ---- include=FALSE, cache=FALSE-----------------------------------------
+## ---- include=FALSE, cache=FALSE----------------------------------------------
 library("knitr")
 knitr::opts_knit$set(self.contained = FALSE)
 knitr::opts_chunk$set(tidy = TRUE, collapse=TRUE, comment = "#>",
                       tidy.opts=list(blank=FALSE, width.cutoff=55))
 
-## ---- echo=FALSE---------------------------------------------------------
+## ---- echo=FALSE--------------------------------------------------------------
 library("GMMSensitivity")
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 ## Construct estimate of initial sensitivity
 blp$k_init <- -drop(blp$H %*% solve(crossprod(blp$G, blp$W %*% blp$G),
                                         crossprod(blp$G, blp$W)))
@@ -29,16 +29,16 @@ M0 <- sqrt(sum(I))
 ## Select columns of B0 corresponding to invalid instruments
 OptEstimator(eo, B0[, I], M=M0, p=2, alpha=0.05, opt.criterion="FLCI")
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 EffBounds(eo, B0[, I], M=M0, p=2)$twosided
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 OptEstimator(eo, B0[, I], M=M0, p=2, alpha=0.05, opt.criterion="Valid")
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 Jtest(eo, B0[, I], M=M0, p=2, alpha=0.05)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 I <- vector(mode="logical", length=nrow(eo$G))
 I[6] <- TRUE
 OptEstimator(eo, B0[, I, drop=FALSE], M=1, p=2, alpha=0.05, opt.criterion="FLCI")

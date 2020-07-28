@@ -34,12 +34,16 @@ lph(eo, B, p = Inf)
     }}
 
 \item{B}{matrix \eqn{B} with full rank and dimension \eqn{d_g} by
-\eqn{d_\gamma}{d_gamma} that determines the set \eqn{C}, where
+\eqn{d_\gamma}{d_gamma} that determines the set \eqn{\mathcal{C}}, where
 \eqn{d_\gamma}{d_gamma} is the number of invalid moments, and \eqn{d_g}
 is the number of moments}
 
-\item{p}{Parameter determining which ell_p norm to use, one of \code{1}, or
-\code{Inf}.}
+\item{p}{Parameter determining which \eqn{\ell_p}{lp} norm to use, one of
+\code{1}, or \code{Inf}.}
+}
+\value{
+Matrix of optimal sensitivites. Each row corresponds to the vector of
+    optimal sensitivity at each step in the solution path.
 }
 \description{
 Computes the vector of optimal sensitivities at each knot of the solution
@@ -50,12 +54,14 @@ takes the form \eqn{c=B\gamma}{c=B*gamma} with the \eqn{\ell_p}{lp} norm of
 \code{\link{OptEstimator}}.
 }
 \details{
-The algorithm is described in Appendix A of Armstrong and Kolesár (2018)
+The algorithm is described in Appendix A of Armstrong and Kolesár (2020)
 }
 \references{
 {
 
-\cite{Armstrong, T. B., and M. Kolesár (2018): Sensitivity Analysis
-    Using Approximate Moment Condition Models, Unpublished manuscript}
+\cite{Armstrong, T. B., and M. Kolesár (2020): Sensitivity Analysis Using
+Approximate Moment Condition Models,
+\url{https://arxiv.org/abs/1808.07387v4}}
+
 }
 }

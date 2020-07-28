@@ -42,7 +42,7 @@ OptEstimator(
     }}
 
 \item{B}{matrix \eqn{B} with full rank and dimension \eqn{d_g} by
-\eqn{d_\gamma}{d_gamma} that determines the set \eqn{C}, where
+\eqn{d_\gamma}{d_gamma} that determines the set \eqn{\mathcal{C}}, where
 \eqn{d_\gamma}{d_gamma} is the number of invalid moments, and \eqn{d_g}
 is the number of moments}
 
@@ -74,8 +74,25 @@ constructing/optimizing confidence intervals.}
 
     }}
 }
+\value{
+Object of class \code{"GMMEstimate"}, which is a list with at least
+    the following components:
+
+\describe{
+
+\item{h}{Point estimate}
+
+\item{bias}{Worst-case bias of estimator}
+
+\item{se}{Standard error of estimator}
+
+\item{hl}{Half-length of confidence interval, so that the confidence interval
+takes the form \eqn{h +- hl}}
+
+}
+}
 \description{
 Computes the optimal sensitivity and the optimal estimator when the set
-\eqn{C} takes the form \eqn{c=B\gamma}{c=B*gamma} with the \eqn{\ell_p}{lp}
-norm of \eqn{\gamma}{gamma} bounded by \eqn{M}.
+\eqn{\mathcal{C}} takes the form \eqn{c=B\gamma}{c=B*gamma} with the
+\eqn{\ell_p}{lp} norm of \eqn{\gamma}{gamma} bounded by \eqn{M}.
 }

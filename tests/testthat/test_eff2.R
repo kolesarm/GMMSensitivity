@@ -67,7 +67,6 @@ test_that("Check l_2 efficiency calculations using BLP data", {
         list(onesisded=effo, twosided=eff2)
     }
 
-
     ## List of different specifications, drop supply for speed
     excluded <- c(6:13, 20:31)
     ivlist <- excluded
@@ -80,8 +79,8 @@ test_that("Check l_2 efficiency calculations using BLP data", {
 
     eo <- list(H=blp$H, G=blp$G, Sig=blp$Sig, n=blp$n, g_init=blp$g_init,
                h_init=blp$h_init)
-
-    for (j in 16:length(ivlist)) {
+    ivlist[1:17] <- NULL
+    for (j in seq_along(ivlist)) {
         I <- vector(mode="logical", length=31)
         I[ivlist[[j]]] <- TRUE
         B <- (abs(blp$perturb) * blp$ZZ)[, I, drop=FALSE]

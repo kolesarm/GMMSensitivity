@@ -3,33 +3,27 @@
 #' Computes the asymptotic efficiency of two-sided fixed-length confidence
 #' intervals at \eqn{c=0}, as well as the efficiency of one-sided confidence
 #' intervals that optimize a given \code{beta} quantile of excess length, when
-#' the set \eqn{C} is characterized by \eqn{\ell_p} constraints.
+#' the set \eqn{\mathcal{C}} is characterized by \eqn{\ell_p} constraints.
 #'
-#' The set \eqn{C} takes the form \eqn{B\gamma}{B*gamma} where the
+#' The set \eqn{\mathcal{C}} takes the form \eqn{B\gamma}{B*gamma} where the
 #' \eqn{\ell_p}{lp} norm of \eqn{\gamma}{gamma} is bounded by \eqn{M}.
 #' @inheritParams OptEstimator
 #' @param beta Quantile of excess length that a one-sided confidence interval is
 #'     optimizing.
-#' @param cvx By default, the efficiency for \code{p=1} and for \code{p=Inf} is
-#'     computed using the homotopy algorithm described in Appendix A of
-#'     Armstrong and Kolesár (2018). If \code{cvx=TRUE} is specified, the
-#'     modulus is computed using the CVX convex optimizer. This option is
-#'     included mostly just to verify that the homotopy solution correct.
+#' @return A list with two elements, \code{"onesided"} for efficiency of
+#'     one-sided CIs and \code{"twosided"} for efficiency of two-sided CIs
 #' @references{
 #'
 #' \cite{Armstrong, T. B., and M. Kolesár (2018): Sensitivity Analysis
 #'     Using Approximate Moment Condition Models, Unpublished manuscript}
 #' }
 #' @export
-EffBounds <- function(eo, B, M, p=2, beta=0.5, alpha=0.05, cvx=FALSE) {
+EffBounds <- function(eo, B, M, p=2, beta=0.5, alpha=0.05) {
     ## One-sided
     zal <- stats::qnorm(1-alpha)
     del0 <- zal + stats::qnorm(beta)
     spath <- if (p!=2) lph(eo, B, p) else NULL
-    if (cvx)
-        mo <- function(del) mod_cvx(del, eo, B, M, p)
-    else
-        mo <- function(del) modulus(del, eo, B, M, p, spath)
+    mo <- function(del) modulus(del, eo, B, M, p, spath)
 
     e1 <- mo(del0)
     eff1 <- mo(2*del0)$omega/(e1$omega+del0*e1$domega)

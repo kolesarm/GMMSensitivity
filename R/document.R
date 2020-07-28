@@ -29,7 +29,7 @@
 #'              elements of \eqn{\theta}{theta}.}
 #'
 #' \item{ZZ}{Gram matrix \eqn{Z'Z} of the instruments, used to specify the
-#' misspecification set \eqn{C}.}
+#' misspecification set \eqn{\mathcal{C}}.}
 #'
 #' \item{Sig}{Estimate of variance of moment condition.}
 #'

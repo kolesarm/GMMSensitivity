@@ -4,7 +4,7 @@
 \alias{EffBounds}
 \title{Efficiency bounds under \eqn{\ell_p}{ell_p} constraints}
 \usage{
-EffBounds(eo, B, M, p = 2, beta = 0.5, alpha = 0.05, cvx = FALSE)
+EffBounds(eo, B, M, p = 2, beta = 0.5, alpha = 0.05)
 }
 \arguments{
 \item{eo}{List containing initial estimates with the following components:
@@ -33,7 +33,7 @@ EffBounds(eo, B, M, p = 2, beta = 0.5, alpha = 0.05, cvx = FALSE)
     }}
 
 \item{B}{matrix \eqn{B} with full rank and dimension \eqn{d_g} by
-\eqn{d_\gamma}{d_gamma} that determines the set \eqn{C}, where
+\eqn{d_\gamma}{d_gamma} that determines the set \eqn{\mathcal{C}}, where
 \eqn{d_\gamma}{d_gamma} is the number of invalid moments, and \eqn{d_g}
 is the number of moments}
 
@@ -47,21 +47,19 @@ optimizing.}
 
 \item{alpha}{determines confidence level, \code{1-alpha}, for
 constructing/optimizing confidence intervals.}
-
-\item{cvx}{By default, the efficiency for \code{p=1} and for \code{p=Inf} is
-computed using the homotopy algorithm described in Appendix A of
-Armstrong and Kolesár (2018). If \code{cvx=TRUE} is specified, the
-modulus is computed using the CVX convex optimizer. This option is
-included mostly just to verify that the homotopy solution correct.}
+}
+\value{
+A list with two elements, \code{"onesided"} for efficiency of
+    one-sided CIs and \code{"twosided"} for efficiency of two-sided CIs
 }
 \description{
 Computes the asymptotic efficiency of two-sided fixed-length confidence
 intervals at \eqn{c=0}, as well as the efficiency of one-sided confidence
 intervals that optimize a given \code{beta} quantile of excess length, when
-the set \eqn{C} is characterized by \eqn{\ell_p} constraints.
+the set \eqn{\mathcal{C}} is characterized by \eqn{\ell_p} constraints.
 }
 \details{
-The set \eqn{C} takes the form \eqn{B\gamma}{B*gamma} where the
+The set \eqn{\mathcal{C}} takes the form \eqn{B\gamma}{B*gamma} where the
 \eqn{\ell_p}{lp} norm of \eqn{\gamma}{gamma} is bounded by \eqn{M}.
 }
 \references{
