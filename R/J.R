@@ -31,7 +31,7 @@ FindZero <- function(f, ival=1.1, negative=TRUE) {
 #'
 #' \item{pC}{P-value for J-test that  allows for local misspecification}
 #'
-#' \item{Mmin}{Minimum value of \eqn{M} for which the J-test would not reject} }
+#' \item{Mmin}{Minimum value of \eqn{M} for which the J-test does not reject} }
 #' @export
 Jtest <- function(eo, B, M, p=2, alpha=0.05) {
     J <- eo$n*drop(crossprod(eo$g_init, solve(eo$Sig, eo$g_init)))

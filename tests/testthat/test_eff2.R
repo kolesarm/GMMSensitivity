@@ -68,27 +68,20 @@ test_that("Check l_2 efficiency calculations using BLP data", {
     }
 
 
-    ## List of different specifications
+    ## List of different specifications, drop supply for speed
     excluded <- c(6:13, 20:31)
     ivlist <- excluded
     names(ivlist) <- blp$names$iv[excluded]
     ivlist <- as.list(ivlist)
     ivlist$demand_firm <- 6:9
     ivlist$demand_rival <- 10:13
-    ivlist$supply_firm <- 20:25
-    ivlist$supply_rival <- 26:30
     ivlist$demand <- c(ivlist$demand_firm, ivlist$demand_rival)
-    ivlist$supply <- c(ivlist$supply_firm, ivlist$supply_rival, 31)
     ivlist$all <- excluded
 
-    eo <- list(H=blp$H,
-               G=blp$G,
-               Sig=blp$Sig,             #solve(blp$W)
-               n=blp$n,
-               g_init=blp$g_init,
+    eo <- list(H=blp$H, G=blp$G, Sig=blp$Sig, n=blp$n, g_init=blp$g_init,
                h_init=blp$h_init)
 
-    for (j in 11:length(ivlist)) {
+    for (j in 16:length(ivlist)) {
         I <- vector(mode="logical", length=31)
         I[ivlist[[j]]] <- TRUE
         B <- (abs(blp$perturb) * blp$ZZ)[, I, drop=FALSE]

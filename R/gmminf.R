@@ -8,20 +8,24 @@
 #' \eqn{p=\infty}{p=Inf}. This path is used as an input to
 #' \code{\link{OptEstimator}}.
 #'
-#' The algorithm is described in Appendix A of Armstrong and Kolesár (2018)
+#' The algorithm is described in Appendix A of Armstrong and Kolesár (2020)
 #' @inheritParams OptEstimator
-#' @param p Parameter determining which ell_p norm to use, one of \code{1}, or
-#'     \code{Inf}.
+#' @param p Parameter determining which \eqn{\ell_p}{lp} norm to use, one of
+#'     \code{1}, or \code{Inf}.
+#' @return Matrix of optimal sensitivites. Each row corresponds to the vector of
+#'     optimal sensitivities at each step in the solution path.
 #' @references{
 #'
-#' \cite{Armstrong, T. B., and M. Kolesár (2018): Sensitivity Analysis
-#'     Using Approximate Moment Condition Models, Unpublished manuscript}
+#' \cite{Armstrong, T. B., and M. Kolesár (2020): Sensitivity Analysis Using
+#' Approximate Moment Condition Models,
+#' \url{https://arxiv.org/abs/1808.07387v4}}
+#'
 #' }
 #' @export
 lph <- function(eo, B, p=Inf) {
     if (ncol(B)==0)
-        return(cbind(0, -eo$H %*% solve(crossprod(eo$G, solve(eo$Sig, eo$G)),
-                                   t(solve(eo$Sig, eo$G))), 0))
+        return(-eo$H %*% solve(crossprod(eo$G, solve(eo$Sig, eo$G)),
+                                        t(solve(eo$Sig, eo$G))))
 
     ## Get orthogonalized homotopy, first B_{\perp}
     Bp <- if (nrow(B)>ncol(B)) {
@@ -37,8 +41,8 @@ lph <- function(eo, B, p=Inf) {
         kts <- linfh0(Tm %*% eo$G, Sigt, eo$H, I)[, 1:(nrow(B)+1)]
     else
         kts <- l1h0(Tm %*% eo$G, Sigt, eo$H, I)[, 1:(nrow(B)+1)]
-    ## Return sensitivities at each step
-    cbind(kts[, 1], kts[, -1] %*% Tm, rowSums(kts[, -1]==0))
+    ## Return sensitivities at each step. Drop lambda
+    kts[, -1] %*% Tm
 }
 
 ## Next step in l_infty homotopy algorithm

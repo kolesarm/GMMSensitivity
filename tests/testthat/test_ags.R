@@ -21,3 +21,35 @@ expect_equal(unname(round(tblII[subs], 4)),
 expect_lt(max(abs(figIV)), 0.15)
 
 })
+
+## test_that("Check we match AGS results", {
+##     ## TODO: Objective function: 0.42715, Table II and Figure IV
+## })
+
+
+
+    ## 0.1 Replicate AGS Table II (for blp.tex writeup)
+    if(FALSE) {
+        t2i <- t2o <- data.frame()
+        B1 <- blp$ZZ %*% diag(sqrt(blp$n)*abs(blp$perturb))
+        for (j in c(1, 10, 16, 2, 6)) {
+            I <- vector(mode="logical", length=nrow(eo$G))
+            I[ivlist[[j]]] <- TRUE
+            oe <- function(oc) {
+                r <- data.frame(OptEstimator(eo, B1[, I, drop=FALSE], 1, 2,
+                                             alpha=0.05, opt.criterion=oc)[-1])
+                ## Convert to %
+                r[c(1:4, 6)] <- 100*r[c(1:4, 6)]
+                r
+            }
+            t2i <- rbind(t2i, oe("Valid"))
+            t2o <- rbind(t2o, oe("FLCI"))
+        }
+        t2i$name <- t2o$name <- names(ivlist[c(1, 10, 16, 2, 6)])
+        t2i$group <- "Initial"
+        t2o$group <- "Optimal"
+        t2o$kap <- NULL
+        t2 <- rbind(t2i, t2o)
+        print(t2)
+    }
+    ## Let's back out the biases instead from Figure IV

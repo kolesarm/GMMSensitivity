@@ -56,7 +56,21 @@
 #'    misspecification}
 #'
 #'     }
+#' @return Object of class \code{"GMMEstimate"}, which is a list with at least
+#'     the following componentes:
 #'
+#' \describe{
+#'
+#' \item{h}{Point estimate}
+#'
+#' \item{bias}{Worst-case bias of estimator}
+#'
+#' \item{se}{Standard error of estimator}
+#'
+#' \item{hl}{Half-length of confidence interval, so that the confidence interval
+#' takes the form \eqn{h +- hl}}
+#'
+#' }
 #' @export
 OptEstimator <- function(eo, B, M, p=2, spath=NULL, alpha=0.05,
                          opt.criterion="FLCI") {
@@ -71,9 +85,6 @@ OptEstimator <- function(eo, B, M, p=2, spath=NULL, alpha=0.05,
 
     if (is.null(spath))
         spath <- lph(eo, B, p)
-    nd <- spath[, ncol(spath)]          # #dropped moments
-    ## drop lambda/barB and #dropped moments
-    spath <- spath[, -c(1, ncol(spath)), drop=FALSE]
     ep <- be(spath)
 
     ## Index of criterion to optimize
@@ -88,7 +99,7 @@ OptEstimator <- function(eo, B, M, p=2, spath=NULL, alpha=0.05,
     while(ip<=nrow(spath) && isTRUE(all.equal(spath[i, ], spath[ip, ])))
         ip <- ip+1
 
-    if (ip<=nrow(spath)) {
+    if (ip <= nrow(spath)) {
         f1 <- function(w)
             be((1-w)*spath[i, ]+w*spath[i+1, ])[[idx]]
         opt1 <- stats::optimize(f1, interval=c(0, 1), tol=tol)
@@ -112,8 +123,7 @@ OptEstimator <- function(eo, B, M, p=2, spath=NULL, alpha=0.05,
             }
     r <- be(kopt)
     r$opt.criterion <- opt.criterion
-    ## Return number of active moments
-    r$nd <- if (opt1$objective < opt0$objective) nd[i] else nd[max(i-1, 1)]
+
     r
 }
 
@@ -124,6 +134,9 @@ OptEstimator <- function(eo, B, M, p=2, spath=NULL, alpha=0.05,
 BuildEstimator <- function(k, eo, B, M, p=Inf, alpha=0.05) {
     if (!is.matrix(k)) k <- matrix(k, nrow=1)
     hhat <- drop(eo$h_init + k %*% eo$g_init)
+    se <- sqrt(apply(k, 1, function(k)
+        drop(crossprod(k, eo$Sig %*% k))) / eo$n)
+
     bf <- function(k, p)
         if (p==Inf) {
             sum(abs(crossprod(B, k)))
@@ -132,8 +145,6 @@ BuildEstimator <- function(k, eo, B, M, p=Inf, alpha=0.05) {
         } else {
             sqrt(sum(crossprod(B, k)^2))
         }
-    se <- sqrt(apply(k, 1, function(k)
-        drop(crossprod(k, eo$Sig %*% k))) / eo$n)
     bias <- if (ncol(B)==0) 0*se else M * apply(k, 1, bf, p) / sqrt(eo$n)
     hl <- cvb(bias/se, alpha) * se
 

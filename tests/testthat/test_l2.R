@@ -48,7 +48,7 @@ test_that("Replicate initial analysis by Soonwoo", {
                  0.0350762430871, 0.0348995214706, 0.0367805352046,
                  0.0465497658943, 0.0403230027212, 0.0392036204477,
                  0.0495483930567, 0.0427226902476, 0.0817657198387)
-    expect_lt(max(diff), 0)
+    expect_lt(max(diff), 1e-10)
     ## Should be approx equal
 
     diffh <- round(res$h, 3) -

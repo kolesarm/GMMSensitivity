@@ -55,7 +55,6 @@ modulus <- function(delta, eo, B, M, p=2, spath=NULL) {
     if (p != 2) {
         if (is.null(spath))
             spath <- lph(eo, B, p)
-        spath <- spath[, -c(1, ncol(spath)), drop=FALSE]
     }
 
     Vk <- function(k) drop(crossprod(k, eo$Sig %*% k))
@@ -97,13 +96,10 @@ modulus <- function(delta, eo, B, M, p=2, spath=NULL) {
             }
         }
 
-        den <- if (p==Inf) {
-                   max(abs(gam))
-               } else if (p==2) {
-                   sqrt(sum(gam^2))
-               } else if (p==1) {
-                   sum(abs(gam))
-               }
+        den <- switch(as.character(p),
+                      "Inf" = max(abs(gam)),
+                      "2"=sqrt(sum(gam^2)),
+                      "1"=sum(abs(gam)))
         M * drop(B %*% gam) / den
     }
 

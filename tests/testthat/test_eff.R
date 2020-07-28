@@ -1,7 +1,6 @@
 context("Lp Efficiency")
 
 test_that("Check l_1, l_2, l_inf efficiency agree with one invalid moment", {
-
     ## List of different specifications
     excluded <- c(6:13, 20:31)
     ivlist <- excluded
@@ -15,11 +14,7 @@ test_that("Check l_1, l_2, l_inf efficiency agree with one invalid moment", {
     ivlist$supply <- c(ivlist$supply_firm, ivlist$supply_rival, 31)
     ivlist$all <- excluded
 
-    eo <- list(H=blp$H,
-               G=blp$G,
-               Sig=blp$Sig,             #solve(blp$W)
-               n=blp$n,
-               g_init=blp$g_init,
+    eo <- list(H=blp$H, G=blp$G, Sig=blp$Sig, n=blp$n, g_init=blp$g_init,
                h_init=blp$h_init)
 
     for (j in 1:10) {
@@ -33,7 +28,6 @@ test_that("Check l_1, l_2, l_inf efficiency agree with one invalid moment", {
         expect_lt(max(abs(eI-e2)), 1e-6)
     }
 })
-
 
 
 test_that("Check modulus solution against brute force", {
@@ -50,14 +44,10 @@ test_that("Check modulus solution against brute force", {
     ivlist$supply <- c(ivlist$supply_firm, ivlist$supply_rival, 31)
     ivlist$all <- excluded
 
-    eo <- list(H=blp$H,
-               G=blp$G,
-               Sig=blp$Sig,             #solve(blp$W)
-               n=blp$n,
-               g_init=blp$g_init,
+    eo <- list(H=blp$H, G=blp$G, Sig=blp$Sig, n=blp$n, g_init=blp$g_init,
                h_init=blp$h_init)
 
-    dels <- c(seq(0, 2, by=0.1), 4, 6)
+    dels <- c(seq(0, 2, by=0.3), 4, 6)
     for(p in c(1, 2, Inf)) {
         for (j in c(11, 21:27)) {
             I <- vector(mode="logical", length=31)
@@ -72,11 +62,3 @@ test_that("Check modulus solution against brute force", {
         }
     }
 })
-
-## Modulus at zero:
-
-## BG <- crossprod(B, eo$G)
-## Gp <- (qr.Q(qr(eo$G), complete=TRUE)[, (ncol(eo$G)+1):nrow(eo$G)])
-## BGp <- crossprod(B, Gp)
-## Bkv <- drop(crossprod(B, kv))
-## 2*sqrt(sum((Bkv-BGp %*% solve(crossprod(BGp), crossprod(BGp, Bkv)))^2))

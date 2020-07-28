@@ -14,11 +14,8 @@ r:
 r_packages:
   - covr
   - lintr
-script:
-  - R CMD build .
-  - travis_wait 25 R CMD check GMM*tar.gz --as-cran
 after_script:
   - R CMD INSTALL $PKG_TARBALL
   - Rscript -e 'lintr::lint_package()'
 after_success:
-  - travis_wait 25 Rscript -e 'covr::codecov()'
+  - Rscript -e 'covr::codecov()'
