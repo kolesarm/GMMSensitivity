@@ -36,7 +36,15 @@ EffBounds(eo, B0[, I], M=M0, p=2)$twosided
 OptEstimator(eo, B0[, I], M=M0, p=2, alpha=0.05, opt.criterion="Valid")
 
 ## -----------------------------------------------------------------------------
-Jtest(eo, B0[, I], M=M0, p=2, alpha=0.05)
+## Update eo so that Sig corresponds to the initial estimate of
+## Sigma, so that thetahat_initial minimizes n*g(theta)Sig^{-1} g(theta),
+## and the J statistic is given by the value of this minimum.
+eoJ <- eo
+eoJ$Sig <- solve(blp$W)
+jt <- Jtest(eoJ, B0[, I], M=M0, p=2, alpha=0.05)
+
+## -----------------------------------------------------------------------------
+jt$Mmin/M0
 
 ## -----------------------------------------------------------------------------
 I <- vector(mode="logical", length=nrow(eo$G))
@@ -44,5 +52,5 @@ I[6] <- TRUE
 OptEstimator(eo, B0[, I, drop=FALSE], M=1, p=2, alpha=0.05, opt.criterion="FLCI")
 EffBounds(eo, B0[, I, drop=FALSE], M=1, p=2)$twosided
 OptEstimator(eo, B0[, I, drop=FALSE], M=1, p=2, alpha=0.05, opt.criterion="Valid")
-Jtest(eo, B0[, I, drop=FALSE], M=1, p=2, alpha=0.05)
+Jtest(eoJ, B0[, I, drop=FALSE], M=1, p=2, alpha=0.05)
 

@@ -38,25 +38,29 @@ intervals using the demand model for automobiles from  @blp95.
 
 The package includes the dataset `blp`, which contains estimates of the @blp95
 model, as implemented by @ags17. A description of the dataset can be obtained
-via the documentation in R, using `?blp`. For convenience, we give the
-description here:
+via the documentation in R, using `?blp`. We give additional description here:
 
 `G`
 : Matrix with 31 rows and 17 columns, estimate of derivative of the moment
-  condition $G$
+  condition $G=\partial E[g(w_i,\theta)]/\partial \theta$, evaluated at initial
+  estimate $\hat{\theta}_{\text{initial}}$. The initial estimate corresponds to
+  a second-step GMM estimate, as computed by @ags17.
 
 `H`
-: Vector of length 17, estimate of derivative of average markup $h(\theta)$.
+: Vector of length 17, estimate of derivative of average markup $h(\theta)$,
+  evaluated at $\hat{\theta}_{\text{initial}}$.
 
 `W`
-: Weight matrix used to obtain the estimate of theta.
+: Weight matrix used to obtain the estimate $\hat{\theta}_{\text{initial}}$. It
+  corresponds to an esitmate of the inverse of the variance of the moment
+  condition $\Sigma$.
 
 `g_init`
-: Average moment condition, evaluated at estimate $\hat{\theta}$ of $\theta$
- from @blp95.
+: Average moment condition $n^{-1}\sum_{i=1}^{n}g(w_i,\theta)$, evaluated at
+ estimate $\hat{\theta}_{\text{initial}}$ of $\theta$ from @blp95.
 
 `h_init`
-: Estimate of the average markup, $h(\hat{\theta})$.
+: Estimate of the average markup, $h(\hat{\theta}_{\text{initial}})$.
 
 `names`
 : Two lists, one for names of the moment conditions, and one for elements of theta
@@ -65,7 +69,8 @@ description here:
 : Gram matrix of the instruments, used to specify the set $\mathcal{C}$
 
 `Sig`
-: Variance of moment condition, estimate of $\Sigma$.
+: Variance of moment condition, estimate of $\Sigma$, given by the sample
+  variance of the moment condition evaluated at $\hat{\theta}_{\text{initial}}$.
 
 `sdZ`
 : vector of standard deviations of the instruments
@@ -97,7 +102,7 @@ library("GMMSensitivity")
 The package implements estimators, confidence intervals, and efficiency
 calculations for the model (in the notation of @ak18sensitivity)
 \begin{equation*}
-g(\theta_{0})=c,\quad c=B\gamma,\quad \norm{\gamma}_{p}\leq M.
+g(\theta_{0})=c/\sqrt{n},\quad c\in \mathcal{C},\quad \mathcal{C}=\{B\gamma\colon \norm{\gamma}_{p}\leq M\}.
 \end{equation*}
 
 Suppose that we want to allow all excluded instruments in the @blp95 application
@@ -152,13 +157,23 @@ A specification test for whether the value $M=M0$ is too low, that is a test of
 the hypothesis $H_0\colon M\leq M0$, can be conducted using the `Jtest`
 function:
 
-```{r}
-Jtest(eo, B0[, I], M=M0, p=2, alpha=0.05)
-```
 
+
+```{r}
+## Update eo so that Sig corresponds to the initial estimate of
+## Sigma, so that thetahat_initial minimizes n*g(theta)Sig^{-1} g(theta),
+## and the J statistic is given by the value of this minimum.
+eoJ <- eo
+eoJ$Sig <- solve(blp$W)
+jt <- Jtest(eoJ, B0[, I], M=M0, p=2, alpha=0.05)
+```
 Here `J` is the $J$-statistic, `p0` is the p-value of the usual $J$-test (that
 assumes $M=0$ under the null), `pC` is the $p$-value of the test, and `Mmin` is
-the smallest value of $M$ that is not rejected.
+the smallest value of $M$ that is not rejected. Rescaling by $\sqrt{\# I}$, we
+obtain the result in Table 1 in @ak18sensitivity:
+```{r}
+jt$Mmin/M0
+```
 
 If were only concerned about the validity of the demand-side instrument
 `"demand_firm_const"` (number of cars produced by the same firm), then since
@@ -170,7 +185,7 @@ I[6] <- TRUE
 OptEstimator(eo, B0[, I, drop=FALSE], M=1, p=2, alpha=0.05, opt.criterion="FLCI")
 EffBounds(eo, B0[, I, drop=FALSE], M=1, p=2)$twosided
 OptEstimator(eo, B0[, I, drop=FALSE], M=1, p=2, alpha=0.05, opt.criterion="Valid")
-Jtest(eo, B0[, I, drop=FALSE], M=1, p=2, alpha=0.05)
+Jtest(eoJ, B0[, I, drop=FALSE], M=1, p=2, alpha=0.05)
 ```
 
 # References
