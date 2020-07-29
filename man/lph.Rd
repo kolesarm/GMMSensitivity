@@ -25,7 +25,7 @@ lph(eo, B, p = Inf)
 
     \item{n}{sample size}
 
-    \item{h_init}{Estimate of \eqn{h(\theta)}{h(theta)}}
+    \item{h_init}{Initial estimate of \eqn{h(\theta)}{h(theta)}}
 
     \item{k_init}{Initial sensitivity}
 

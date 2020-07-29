@@ -33,7 +33,7 @@ OptEstimator(
 
     \item{n}{sample size}
 
-    \item{h_init}{Estimate of \eqn{h(\theta)}{h(theta)}}
+    \item{h_init}{Initial estimate of \eqn{h(\theta)}{h(theta)}}
 
     \item{k_init}{Initial sensitivity}
 
@@ -95,4 +95,28 @@ takes the form \eqn{h +- hl}}
 Computes the optimal sensitivity and the optimal estimator when the set
 \eqn{\mathcal{C}} takes the form \eqn{c=B\gamma}{c=B*gamma} with the
 \eqn{\ell_p}{lp} norm of \eqn{\gamma}{gamma} bounded by \eqn{M}.
+}
+\examples{
+## Replicates estimates in first line of Figure 1 in Armstrong and Kolesár
+## (2020)
+## 1. Compute matrix B when all instruments are invalid
+I <- vector(mode="logical", length=nrow(blp$G))
+I[c(6:13, 20:31)] <- TRUE
+B <- blp$ZZ \%*\% diag(sqrt(blp$n)*abs(blp$perturb)/blp$sdZ)[, I, drop=FALSE]
+## 2. Collect initial estimates
+blp$k_init <- -drop(blp$H \%*\% solve(crossprod(blp$G, blp$W \%*\% blp$G),
+                                    crossprod(blp$G, blp$W)))
+eo <- list(H=blp$H, G=blp$G, Sig=blp$Sig, n=blp$n, g_init=blp$g_init,
+           k_init=blp$k_init, h_init= blp$h_init)
+OptEstimator(eo, B, M=sqrt(sum(I)), p=2, alpha=0.05, opt.criterion="Valid")
+OptEstimator(eo, B, M=sqrt(sum(I)), p=2, alpha=0.05, opt.criterion="FLCI")
+}
+\references{
+{
+
+\cite{Armstrong, T. B., and M. Kolesár (2020): Sensitivity Analysis Using
+Approximate Moment Condition Models,
+\url{https://arxiv.org/abs/1808.07387}}
+
+}
 }

@@ -1,6 +1,6 @@
 Package: GMMSensitivity
-Title: Confidence intervals for sensitivity analysis in GMM
-Version: 0.1.1
+Title: Optimal Sensitivity Analysis in Generalized Method of Moments Models
+Version: 0.1.2
 Authors@R: c(person(given = "Michal",
                   family = "Kolesár",
                   role = c("aut", "cre"),
@@ -11,7 +11,7 @@ Authors@R: c(person(given = "Michal",
                   role = "ctb",
                   email = "tim.b.armstrong@gmail.com"))
 Description: Construct confidence intervals in generalized method of moments
-    (GMM) models that are valid under local misspecification.
+    models that are valid and optimal under local misspecification.
 Depends: R (>= 4.0.0)
 License: GPL-3
 Encoding: UTF-8

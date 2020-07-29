@@ -4,7 +4,7 @@
 \alias{Jtest}
 \title{J-test of overidentifying restrictions under local misspecification}
 \usage{
-Jtest(eo, B, M, p = 2, alpha = 0.05)
+Jtest(eo, B, M = 1, p = 2, alpha = 0.05)
 }
 \arguments{
 \item{eo}{List containing initial estimates with the following components:
@@ -19,14 +19,7 @@ Jtest(eo, B, M, p = 2, alpha = 0.05)
     dimension \eqn{d_g} by \eqn{d_\theta}{d_theta}, where
     \eqn{d_\theta}{d_theta} is the dimension of \eqn{\theta}{theta}}
 
-    \item{H}{Estimate of derivative of \eqn{h(\theta)}{h(theta)}. A vector of
-    length \eqn{d_\theta}{d_theta}}
-
     \item{n}{sample size}
-
-    \item{h_init}{Estimate of \eqn{h(\theta)}{h(theta)}}
-
-    \item{k_init}{Initial sensitivity}
 
     \item{g_init}{Moment condition evaluated at initial estimate}
 
@@ -60,6 +53,31 @@ List with three elements: \describe{
 Computes J-test of overidentifying restrictions with critical value adjusted
 to allow for local misspecification, when the parameter \eqn{c} takes the
 form \eqn{c=B\gamma}{c=B*gamma} with the \eqn{\ell_p}{lp} norm of
-\eqn{\gamma}{gamma} bounded by \eqn{M}. Assumes initial estimator in
-\code{eo} is optimal under correct specification.
+\eqn{\gamma}{gamma} bounded by \eqn{M}.
+}
+\details{
+The test assumes initial estimator in \code{eo} is optimal under correct
+specification, computed using \code{eo$Sig} as the weight matrix. The test is
+based on a J statistic using critical values that account for local
+misspecification; see appendix B in Armstrong and Kolesár (2020) for details.
+}
+\examples{
+## Replicates first line of Table 1 in Armstrong and Kolesár (2020)
+## 1. Compute matrix B when instrument D/F # cars is invalid
+I <- vector(mode="logical", length=nrow(blp$G))
+I[6] <- TRUE
+B <- (blp$ZZ \%*\% diag(sqrt(blp$n)*abs(blp$perturb)/blp$sdZ))[, I, drop=FALSE]
+## 2. Make sure Sig corresponds to inverse of weight matrix
+eo <- list(G=blp$G, Sig=solve(blp$W), n=blp$n, g_init=blp$g_init)
+Jtest(eo, B, M=1, p=2, alpha=0.05)
+Jtest(eo, B, M=1, p=Inf, alpha=0.05)
+}
+\references{
+{
+
+\cite{Armstrong, T. B., and M. Kolesár (2020): Sensitivity Analysis Using
+Approximate Moment Condition Models,
+\url{https://arxiv.org/abs/1808.07387}}
+
+}
 }

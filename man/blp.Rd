@@ -11,21 +11,23 @@ A list, consisting 11 objects:
 
 \item{G}{Matrix with 31 rows and 17 columns, estimate of derivative of the
          moment condition evaluated at initial estimate of \eqn{\theta} from
-         Berry, Levinsohn, and Pakes (1995), \eqn{\hat{\theta}}{thetahat}.}
+         Berry, Levinsohn, and Pakes (1995),
+         \eqn{\hat{\theta}_{initial}}{thetahat_init}.}
 
 \item{H}{Vector of length 17, estimate of derivative of average markup
   \eqn{h(\theta)}{h(theta)} with respect to model parameters
-  \eqn{\theta}{theta}, evaluated at \eqn{\hat{\theta}}{thetahat}.}
+  \eqn{\theta}{theta}, evaluated at
+  \eqn{\hat{\theta}_{initial}}{thetahat_init}.}
 
 \item{W}{Weight matrix used to obtain the estimate
-         \eqn{\hat{\theta}}{thetahat}, preliminary estimate of variance of
-         moment conditions.}
+         \eqn{\hat{\theta}_{initial}}{thetahat_init}, preliminary estimate of
+         variance of moment conditions.}
 
 \item{g_init}{Average moment condition, evaluated at
-              \eqn{\hat{\theta}}{thetahat}.}
+              \eqn{\hat{\theta}_{initial}}{thetahat_init}.}
 
 \item{h_init}{Estimate of the average markup,
-              \eqn{h(\hat{\theta})}{h(thetahat)}.}
+              \eqn{h(\hat{\theta}_{initial})}{h(thetahat_init)}.}
 
 \item{names}{Two lists, one for names of the moment conditions, and one for
              elements of \eqn{\theta}{theta}.}

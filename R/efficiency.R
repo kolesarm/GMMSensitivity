@@ -8,10 +8,38 @@
 #' The set \eqn{\mathcal{C}} takes the form \eqn{B\gamma}{B*gamma} where the
 #' \eqn{\ell_p}{lp} norm of \eqn{\gamma}{gamma} is bounded by \eqn{M}.
 #' @inheritParams OptEstimator
+#' @param eo List containing initial estimates with the following components:
+#'
+#'     \describe{
+#'
+#'     \item{Sig}{Estimate of variance of the moment condition, matrix with
+#'        dimension \eqn{d_g} by \eqn{d_g}, where \eqn{d_g} is the number of
+#'        moments}
+#'
+#'     \item{G}{Estimate of derivative of the moment condition, matrix with
+#'     dimension \eqn{d_g} by \eqn{d_\theta}{d_theta}, where
+#'     \eqn{d_\theta}{d_theta} is the dimension of \eqn{\theta}{theta}}
+#'
+#'     \item{H}{Estimate of derivative of \eqn{h(\theta)}{h(theta)}. A vector of
+#'     length \eqn{d_\theta}{d_theta}}
+#'
+#'     \item{n}{sample size}
+#'
+#'     \item{g_init}{Moment condition evaluated at initial estimate}
+#'
+#'     }
 #' @param beta Quantile of excess length that a one-sided confidence interval is
 #'     optimizing.
 #' @return A list with two elements, \code{"onesided"} for efficiency of
 #'     one-sided CIs and \code{"twosided"} for efficiency of two-sided CIs
+#' @examples
+#' ## Replicates first line of Table 2 in Armstrong and Kolesár (2020)
+#' ## First compute matrix B
+#' I <- vector(mode="logical", length=nrow(blp$G))
+#' I[6] <- TRUE
+#' B <- (blp$ZZ %*% diag(sqrt(blp$n)*abs(blp$perturb)/blp$sdZ))[, I, drop=FALSE]
+#' eo <- list(H=blp$H, G=blp$G, Sig=solve(blp$W), n=blp$n, g_init=blp$g_init)
+#' EffBounds(eo, B, M=1, p=Inf, beta=0.5, alpha=0.05)
 #' @references{
 #'
 #' \cite{Armstrong, T. B., and M. Kolesár (2020): Sensitivity Analysis Using

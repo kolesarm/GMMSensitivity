@@ -24,10 +24,6 @@ EffBounds(eo, B, M, p = 2, beta = 0.5, alpha = 0.05)
 
     \item{n}{sample size}
 
-    \item{h_init}{Estimate of \eqn{h(\theta)}{h(theta)}}
-
-    \item{k_init}{Initial sensitivity}
-
     \item{g_init}{Moment condition evaluated at initial estimate}
 
     }}
@@ -61,6 +57,15 @@ the set \eqn{\mathcal{C}} is characterized by \eqn{\ell_p} constraints.
 \details{
 The set \eqn{\mathcal{C}} takes the form \eqn{B\gamma}{B*gamma} where the
 \eqn{\ell_p}{lp} norm of \eqn{\gamma}{gamma} is bounded by \eqn{M}.
+}
+\examples{
+## Replicates first line of Table 2 in Armstrong and Kolesár (2020)
+## First compute matrix B
+I <- vector(mode="logical", length=nrow(blp$G))
+I[6] <- TRUE
+B <- (blp$ZZ \%*\% diag(sqrt(blp$n)*abs(blp$perturb)/blp$sdZ))[, I, drop=FALSE]
+eo <- list(H=blp$H, G=blp$G, Sig=solve(blp$W), n=blp$n, g_init=blp$g_init)
+EffBounds(eo, B, M=1, p=Inf, beta=0.5, alpha=0.05)
 }
 \references{
 {
