@@ -16,10 +16,11 @@ Foundation under grant numbers SES-1628939 (Armstrong) and SES-1628878
 
 ## Installation
 
-You can get the current development version from GitHub:
-
+You can install the development version from GitHub:
 ``` r
-install.packages("remotes") # if the remotes package is not installed
+if (!requireNamespace("remotes")) {
+  install.packages("remotes")
+}
 remotes::install_github("kolesarm/GMMSensitivity")
 ```
 
