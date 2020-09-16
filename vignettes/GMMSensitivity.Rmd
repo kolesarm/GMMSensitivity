@@ -52,7 +52,7 @@ via the documentation in R, using `?blp`. We give additional description here:
 
 `W`
 : Weight matrix used to obtain the estimate $\hat{\theta}_{\text{initial}}$. It
-  corresponds to an esitmate of the inverse of the variance of the moment
+  corresponds to an estimate of the inverse of the variance of the moment
   condition $\Sigma$.
 
 `g_init`
