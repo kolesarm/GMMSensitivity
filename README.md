@@ -1,4 +1,4 @@
-[![Travis build status](https://travis-ci.org/kolesarm/GMMSensitivity.svg?branch=master)](https://travis-ci.org/kolesarm/GMMSensitivity) [![Coverage status](https://codecov.io/gh/kolesarm/GMMSensitivity/branch/master/graph/badge.svg)](https://codecov.io/github/kolesarm/GMMSensitivity?branch=master)
+[![Travis build status](https://travis-ci.com/kolesarm/GMMSensitivity.svg?branch=master)](https://travis-ci.org/kolesarm/GMMSensitivity) [![Coverage status](https://codecov.io/gh/kolesarm/GMMSensitivity/branch/master/graph/badge.svg)](https://codecov.io/github/kolesarm/GMMSensitivity?branch=master)
 
 # GMMSensitivity
 
