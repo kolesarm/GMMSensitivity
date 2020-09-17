@@ -1,6 +1,6 @@
 Package: GMMSensitivity
 Title: Optimal Sensitivity Analysis in Generalized Method of Moments Models
-Version: 0.1.2
+Version: 0.1.2.9000
 Authors@R: c(person(given = "Michal",
                   family = "Kolesár",
                   role = c("aut", "cre"),
